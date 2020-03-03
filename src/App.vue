@@ -20,7 +20,7 @@
                 dark
                 flat
               >
-                <v-toolbar-title>Login form</v-toolbar-title>
+                <v-toolbar-title>Iniciar sesión</v-toolbar-title>
                 <v-spacer />
                 <v-tooltip bottom>
                 </v-tooltip>
@@ -42,22 +42,23 @@
               <v-card-text>
                 <v-form>
                   <v-text-field
-                    label="Login"
+                    label="Usuario"
                     name="login"
                     type="text"
                   />
 
                   <v-text-field
                     id="password"
-                    label="Password"
+                    label="Contraseña"
                     name="password"
                     type="password"
                   />
                 </v-form>
               </v-card-text>
+              
               <v-card-actions>
                 <v-spacer />
-                <v-btn color="primary">Login</v-btn>
+                <v-btn color="primary">Ingresar</v-btn>
               </v-card-actions>
             </v-card>
           </v-col>
