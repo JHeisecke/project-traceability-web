@@ -24,17 +24,6 @@
                 <v-spacer />
                 <v-tooltip bottom>
                 </v-tooltip>
-                <v-tooltip right>
-                  <template v-slot:activator="{ on }">
-                    <v-btn 
-                    color="white" 
-                    class="black--text"
-                    v-on="on">
-                      Registrarse
-                    </v-btn>
-                  </template>
-                  <span>Se necesitara un correo</span>
-                </v-tooltip>
               </v-toolbar>
               <v-card-text>
                 <v-form>
@@ -68,6 +57,7 @@
 
 <script>
   export default {
+    name: 'PopupLogin',
     props: {
       source: String,
     },
