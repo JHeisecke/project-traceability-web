@@ -1,5 +1,43 @@
 <template>
   <v-app id="inspire">
+    <v-navigation-drawer
+      v-model="drawer"
+      app
+    >
+      <v-list dense>
+        <v-list-item link>
+          <v-list-item-action>
+            <v-icon>mdi-home</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>Home</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+      </v-list>
+    </v-navigation-drawer>
+
+    <v-app-bar
+      app
+      color="indigo"
+      dark
+    >
+      <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
+      <v-toolbar-title>Project Traceability</v-toolbar-title>
+      <template>
+        <v-spacer />
+          <v-btn color="primary" @click="showCard" >Ingresar</v-btn>
+      </template>
+      <v-card-actions>
+        <v-btn 
+        color="white" 
+        class="black--text"
+        v-on="on">
+        Registrarse
+        </v-btn>
+      </v-card-actions>
+      
+    </v-app-bar>
+    
     <v-content>
       <v-container
         class="fill-height"
@@ -9,65 +47,19 @@
           align="center"
           justify="center"
         >
-          <v-col
-            cols="12"
-            sm="8"
-            md="4"
-          >
-            <v-card class="elevation-12">
-              <v-toolbar
-                color="primary"
-                dark
-                flat
-              >
-                <v-toolbar-title>Iniciar sesión</v-toolbar-title>
-                <v-spacer />
-                <v-tooltip bottom>
-                </v-tooltip>
-                <v-tooltip right>
-                  <template v-slot:activator="{ on }">
-                    <v-btn
-                      icon
-                      large
-                      href="https://github.com/JHeisecke/project-traceability-web"
-                      target="_blank"
-                      v-on="on"
-                    >
-                      <v-icon>mdi-codepen</v-icon>
-                    </v-btn>
-                  </template>
-                  <span>Source</span>
-                </v-tooltip>
-              </v-toolbar>
-              <v-card-text>
-                <v-form>
-                  <v-text-field
-                    label="Usuario"
-                    name="login"
-                    type="text"
-                  />
-
-                  <v-text-field
-                    id="password"
-                    label="Contraseña"
-                    name="password"
-                    type="password"
-                  />
-                </v-form>
-              </v-card-text>
-              
-              <v-card-actions>
-                <v-spacer />
-                <v-btn color="primary">Ingresar</v-btn>
-              </v-card-actions>
-            </v-card>
+          <v-col class="text-center">
           </v-col>
         </v-row>
       </v-container>
     </v-content>
+    <v-footer
+      color="indigo"
+      app
+    >
+      <span class="white--text">&copy; Facultad Politecnica - LCIK - 2020</span>
+    </v-footer>
   </v-app>
 </template>
-
 
 <script>
   export default {
@@ -75,40 +67,7 @@
       source: String,
     },
     data: () => ({
-      dialog: false,
       drawer: null,
-      items: [
-        { icon: 'mdi-contacts', text: 'Contacts' },
-        { icon: 'mdi-history', text: 'Frequently contacted' },
-        { icon: 'mdi-content-copy', text: 'Duplicates' },
-        {
-          icon: 'mdi-chevron-up',
-          'icon-alt': 'mdi-chevron-down',
-          text: 'Labels',
-          model: true,
-          children: [
-            { icon: 'mdi-plus', text: 'Create label' },
-          ],
-        },
-        {
-          icon: 'mdi-chevron-up',
-          'icon-alt': 'mdi-chevron-down',
-          text: 'More',
-          model: false,
-          children: [
-            { text: 'Import' },
-            { text: 'Export' },
-            { text: 'Print' },
-            { text: 'Undo changes' },
-            { text: 'Other contacts' },
-          ],
-        },
-        { icon: 'mdi-settings', text: 'Settings' },
-        { icon: 'mdi-message', text: 'Send feedback' },
-        { icon: 'mdi-help-circle', text: 'Help' },
-        { icon: 'mdi-cellphone-link', text: 'App downloads' },
-        { icon: 'mdi-keyboard', text: 'Go to the old version' },
-      ],
     }),
   }
 </script>
