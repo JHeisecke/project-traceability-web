@@ -38,7 +38,7 @@
               
               <v-card-actions>
                 <v-spacer/>
-                <v-btn color="primary" @click="loginUser()">Ingresar</v-btn>
+                <v-btn color="primary" @click="loginUser()"  :to="{ name: 'Home'}">Ingresar</v-btn>
               </v-card-actions>
             </v-card>
             <!-- Popup de login, solo se muestra si showRegister es true
@@ -89,7 +89,7 @@
               
               <v-card-actions>
                 <v-spacer />
-                <v-btn color="primary" @click="registerUser()">Registrar</v-btn>
+                <v-btn color="primary" @click="registerUser()"  :to="{ name: 'Home'}">Registrar</v-btn>
               </v-card-actions>
             </v-card>
           </v-col> 

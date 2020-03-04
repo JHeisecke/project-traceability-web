@@ -4,10 +4,10 @@
       <v-toolbar-title>Project Traceability</v-toolbar-title>
       <template>
         <v-spacer />
-          <v-btn color="primary" @click="showPopupLogin()" >Ingresar</v-btn>
+          <v-btn color="primary" @click="showPopupLogin()" :to="{ name: 'login'}" >Ingresar</v-btn>
       </template>
       <v-card-actions>
-        <v-btn color="white" class="black--text" @click="showPopupRegister()"> Registrarse </v-btn>
+        <v-btn color="white" class="black--text" @click="showPopupRegister()"  :to="{ name: 'Registrar'}"> Registrarse </v-btn>
       </v-card-actions>
       
     </v-app-bar>
