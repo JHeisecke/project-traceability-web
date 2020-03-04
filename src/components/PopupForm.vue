@@ -57,7 +57,7 @@
 
 <script>
   export default {
-    name: 'PopupLogin',
+    name: 'PopupForm',
     props: {
       source: String,
       showLogin: Boolean,
