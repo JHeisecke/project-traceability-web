@@ -1,25 +1,11 @@
 <template>
   <v-app id="inspire">
     <v-content>
-      <v-container
-        class="fill-height"
-        fluid
-      >
-        <v-row
-          align="center"
-          justify="center"
-        >
-          <v-col
-            cols="12"
-            sm="8"
-            md="4"
-          >
-            <v-card v-model="showCard" class="elevation-12">
-              <v-toolbar
-                color="primary"
-                dark
-                flat
-              >
+      <v-container class="fill-height" fluid>
+        <v-row align="center" justify="center">
+          <v-col cols="12" sm="8" md="4">
+            <v-card v-show="showLogin" class="elevation-12">
+              <v-toolbar color="primary" dark flat >
                 <v-toolbar-title>Iniciar sesión</v-toolbar-title>
                 <v-spacer />
                 <v-tooltip bottom>
@@ -27,24 +13,38 @@
               </v-toolbar>
               <v-card-text>
                 <v-form>
-                  <v-text-field
-                    label="Usuario"
-                    name="login"
-                    type="text"
-                  />
-
-                  <v-text-field
-                    id="password"
-                    label="Contraseña"
-                    name="password"
-                    type="password"
-                  />
+                  <v-text-field label="Usuario" prepend-icon="person" name="login" type="text" />
+                  <v-text-field id="password" prepend-icon="lock" label="Contraseña" name="password" type="password"/>
                 </v-form>
               </v-card-text>
               
               <v-card-actions>
                 <v-spacer />
                 <v-btn color="primary">Ingresar</v-btn>
+              </v-card-actions>
+            </v-card>
+            <v-card v-show="showRegister" class="elevation-12">
+              <v-toolbar color="primary" dark flat >
+                <v-toolbar-title>Registrarse</v-toolbar-title>
+                <v-spacer />
+                <v-tooltip bottom>
+                </v-tooltip>
+              </v-toolbar>
+              <v-card-text>
+                <v-form>
+                  <v-text-field label="Usuario" prepend-icon="person" name="login" type="text" />
+                  <v-text-field id="email" prepend-icon="mdi-email" label="Correo electrónico" name="email" type="email"/>
+                  <v-text-field id="password" prepend-icon="lock" 
+                    label="Contraseña" name="password" type="password"
+                    class="input-group--focused"/>
+                  <v-text-field id="confirmedPass" prepend-icon="lock" 
+                    label="Confirmar contraseña" name="confirmedPass" type="password"/>
+                </v-form>
+              </v-card-text>
+              
+              <v-card-actions>
+                <v-spacer />
+                <v-btn color="primary">Registrar</v-btn>
               </v-card-actions>
             </v-card>
           </v-col>
@@ -60,11 +60,11 @@
     name: 'PopupLogin',
     props: {
       source: String,
+      showLogin: Boolean,
+      showRegister: Boolean,
     },
     data: () => ({
       dialog: false,
-      drawer: null,
-      showCard: false,
       items: [
         { icon: 'mdi-contacts', text: 'Contacts' },
         { icon: 'mdi-history', text: 'Frequently contacted' },

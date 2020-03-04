@@ -1,43 +1,17 @@
 <template>
   <v-app id="inspire">
-    <v-navigation-drawer
-      v-model="drawer"
-      app
-    >
-      <v-list dense>
-        <v-list-item link>
-          <v-list-item-action>
-            <v-icon>mdi-home</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>
-            <v-list-item-title>Home</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-      </v-list>
-    </v-navigation-drawer>
-
-    <v-app-bar
-      app
-      color="indigo"
-      dark
-    >
-      <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
+    <v-app-bar app color="indigo" dark>
       <v-toolbar-title>Project Traceability</v-toolbar-title>
       <template>
         <v-spacer />
-          <v-btn color="primary" @click="showCard" >Ingresar</v-btn>
+          <v-btn color="primary" @click="showPopupLogin()" >Ingresar</v-btn>
       </template>
       <v-card-actions>
-        <v-btn 
-        color="white" 
-        class="black--text"
-        v-on="on">
-        Registrarse
-        </v-btn>
+        <v-btn color="white" class="black--text" @click="showPopupRegister()"> Registrarse </v-btn>
       </v-card-actions>
       
     </v-app-bar>
-    <PopupLogin/>
+    <PopupForm :showLogin="showLogin" :showRegister="showRegister"/>
     <v-content>
       <v-container
         class="fill-height"
@@ -62,16 +36,27 @@
 </template>
 
 <script>
-import PopupLogin from '@/components/PopupLogin.vue'
+import PopupForm from '@/components/PopupForm.vue'
   export default {
     props: {
       source: String,
     },
     data: () => ({
-      drawer: null,
+      showLogin     : false,
+      showRegister  : false
     }),
     components: {
-        PopupLogin
+        PopupForm
+    },
+    methods: {
+      showPopupLogin() {
+        this.showLogin = !this.showLogin
+        this.showRegister = false
+      },
+      showPopupRegister() {
+        this.showRegister = !this.showRegister
+        this.showLogin = false
+      }
     }
   }
 </script>
