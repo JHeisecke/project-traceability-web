@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import Login from './components/Login.vue'
+import Login from './views/Login.vue'
 import 'material-design-icons-iconfont/dist/material-design-icons.css';
 
 export default {
