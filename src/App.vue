@@ -1,18 +1,17 @@
 <template>
   <div id="app">
-    <Home/>
+    <router-view/>
   </div>
 </template>
 
 <script>
-import Home from './views/Home.vue'
 import 'material-design-icons-iconfont/dist/material-design-icons.css';
 
 export default {
   name: 'App',
 
   components: {
-    Home
+    
   }
 }
 </script>

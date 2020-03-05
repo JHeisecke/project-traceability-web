@@ -36,7 +36,7 @@
               
               <v-card-actions>
                 <v-spacer/>
-                <v-btn color="primary" @click="loginUser()"  :to="{ name: 'Home'}">Ingresar</v-btn>
+                <v-btn color="primary" @click="loginUser()">Ingresar</v-btn>
               </v-card-actions>
             </v-card>
           </v-col> 
@@ -73,7 +73,7 @@
         if(!this.validForm) {
           return false;
         }
-        alert("formulario validado")
+        this.$router.push({name: 'traceability-menu'});
       }
     }
   }
