@@ -1,18 +1,18 @@
 <template>
   <div id="app">
-    <Login/>
+    <Home/>
   </div>
 </template>
 
 <script>
-import Login from './views/Login.vue'
+import Home from './views/Home.vue'
 import 'material-design-icons-iconfont/dist/material-design-icons.css';
 
 export default {
   name: 'App',
 
   components: {
-    Login
+    Home
   }
 }
 </script>

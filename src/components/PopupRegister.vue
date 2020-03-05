@@ -1,49 +1,11 @@
 <template>
-  <v-app id="inspire">
+  <v-app id="registerapp">
     <v-content>
       <v-container class="fill-height" fluid>
         <v-row align="center" justify="center">
           <v-col cols="12" sm="8" md="4">
-            <!-- Popup de login, solo se muestra si showLogin es true
-            showLogin viene de Login.vue-->
-            <v-card v-show="showLogin" class="elevation-12">
-              <v-toolbar color="primary" dark flat >
-                <v-toolbar-title>Iniciar sesión</v-toolbar-title>
-                <v-spacer />
-                <v-tooltip bottom>
-                </v-tooltip>
-              </v-toolbar>
-              <v-card-text>
-                <!-- Formulario de login-->
-                <v-form v-model="validForm" ref="formLogin">
-                  <v-text-field 
-                    required 
-                    label="Usuario" 
-                    prepend-icon="person"
-                    :rules="nameRules" 
-                    name="login" 
-                    type="text" 
-                    v-model="existingUser.username"/>
-                  <v-text-field 
-                    required 
-                    id="password" 
-                    prepend-icon="lock" 
-                    :rules="passwordRules"
-                    label="Contraseña" 
-                    name="password" 
-                    type="password"
-                    v-model="existingUser.password"/>
-                </v-form>
-              </v-card-text>
-              
-              <v-card-actions>
-                <v-spacer/>
-                <v-btn color="primary" @click="loginUser()"  :to="{ name: 'Home'}">Ingresar</v-btn>
-              </v-card-actions>
-            </v-card>
-            <!-- Popup de login, solo se muestra si showRegister es true
-            showRegister viene de Login.vue-->
-            <v-card v-show="showRegister" class="elevation-12">
+
+            <v-card class="elevation-12">
               <v-toolbar color="primary" dark flat >
                 <v-toolbar-title>Registrarse</v-toolbar-title>
                 <v-spacer />
@@ -77,7 +39,7 @@
                     name="password" 
                     type="password"/>
                   <v-text-field
-                    v-model="newUser.confirmPassword" 
+                    v-model="confirmPassword" 
                     id="confirmPass" 
                     prepend-icon="lock" 
                     label="Confirmar contraseña"
@@ -102,16 +64,14 @@
 
 <script>
   export default {
-    name: 'PopupForm',
+    name: 'PopupRegister',
     props: {
-      source: String,
-      showLogin: Boolean,
-      showRegister: Boolean,
+      source: String
     },
     data: () => ({
-      validForm     : false,
+      validForm       : false,
+      confirmPassword : "",
       //objetos
-      existingUser	: {},     
       newUser       : {},
       //reglas para campos de formularios
       nameRules: [
@@ -130,14 +90,6 @@
       ]
     }),
     methods: {
-      //Funcion que llamara al servicio de login en backend
-      loginUser() {
-        this.$refs.formLogin.validate();
-        if(!this.validForm) {
-          return false;
-        }
-        alert("formulario validado")
-      },
       //Funcion que llamara al servicio de registro en backend
       registerUser() {
         this.$refs.formRegister.validate();
@@ -155,7 +107,7 @@
       */
       passwordConfirmationRule() {
         return () =>
-          this.newUser.password === this.newUser.confirmPassword || "Las contraseñas son distintas";
+          this.newUser.password === this.confirmPassword || "Las contraseñas son distintas";
       }
     }
   }
