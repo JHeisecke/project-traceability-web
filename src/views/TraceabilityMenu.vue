@@ -46,7 +46,7 @@
     </v-app-bar>
 
     <v-content>
-      <vueTable :headers="headers" :items="desserts" :itemsPerPage="itemsPerPage"></vueTable>
+      <vueTable :headers="headers" :items="items" :itemsPerPage="itemsPerPage"></vueTable>
     </v-content>
     <v-footer
       color="indigo"
@@ -80,7 +80,7 @@
           { text: 'Estado', value: 'estate' },
           { text: 'Acciones', value: 'actions' },
       ],
-      desserts: [
+      items: [
         {
           projectCode: '1',
           projectName: 'Aplicacion iOS para BNF',
