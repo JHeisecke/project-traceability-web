@@ -48,6 +48,7 @@
 
 
 <script>
+const axios = require('axios');
   export default {
     name: 'PopupLogin',
     props: {
@@ -56,7 +57,10 @@
     data: () => ({
       validForm     : false,
       //objetos
-      existingUser	: {},     
+      existingUser	: {
+        username: "",
+        password: ""
+      },     
       //reglas para campos de formularios
       nameRules: [
         v => !!v || "Usuario es requerido",
@@ -73,7 +77,13 @@
         if(!this.validForm) {
           return false;
         }
-        this.$router.push({name: 'traceability-menu'});
+        axios.post("localhost:8081/api/login",this.existingUser,{headers:{'X-Requested-With':'XMLHttpRequest'}})
+        .then(response => {
+          console.log(`success ${response}`)
+          this.$router.push({name: 'traceability-menu'});
+        }).catch(errorResponse => {
+          console.log(`catcheamos error ${errorResponse}`)
+        })
       }
     }
   }
