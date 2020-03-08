@@ -58,6 +58,8 @@ const axios = require('axios');
       validForm     : false,
       //objetos
       existingUser	: {
+        id: "",
+        nombreCompleto: "",
         username: "",
         password: ""
       },     
@@ -77,7 +79,7 @@ const axios = require('axios');
         if(!this.validForm) {
           return false;
         }
-        axios.post("localhost:8081/api/login",this.existingUser,{headers:{'X-Requested-With':'XMLHttpRequest'}})
+        axios.post("http://localhost:8081/api/login",this.existingUser,{headers:{'X-Requested-With':'XMLHttpRequest'}})
         .then(response => {
           console.log(`success ${response}`)
           this.$router.push({name: 'traceability-menu'});
