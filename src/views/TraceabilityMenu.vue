@@ -4,31 +4,73 @@
       v-model="drawer"
       app
     >
-      <v-list dense>
-        <v-list-item link>
-          <v-list-item-action>
-            <v-icon>mdi-settings</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>
-            <v-list-item-title>Modulo de Gestion de Configuración</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-        <v-list-item link>
-          <v-list-item-action>
-            <v-icon>mdi-account-multiple</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>
-            <v-list-item-title>Módulo de Administración</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-        <v-list-item link>
-          <v-list-item-action>
-            <v-icon>mdi-source-merge</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>
-            <v-list-item-title>Módulo de Desarrollo</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>        
+      <v-list-item>
+        <v-list-item-content>
+          <v-list-item-title class="title">
+            Módulos
+          </v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
+  <v-list dense>
+        <v-list-group prepend-icon="mdi-settings" value="true">
+          <template v-slot:activator>
+            <v-list-item-title>Gestion de Configuración</v-list-item-title>
+          </template>
+          <v-list-item link>
+            <v-list-item-title >option 1</v-list-item-title>
+              <v-list-item-icon>
+                <v-icon>mdi-settings</v-icon>
+              </v-list-item-icon>
+            </v-list-item>
+          <v-list-item link>
+            <v-list-item-title >option 2</v-list-item-title>
+              <v-list-item-icon>
+                <v-icon>mdi-settings</v-icon>
+              </v-list-item-icon>
+            </v-list-item>
+        </v-list-group>
+        <v-list-group
+          prepend-icon="mdi-account-multiple"
+          value="true"
+        >
+          <template v-slot:activator>
+            <v-list-item-title>Administración</v-list-item-title>
+          </template>
+  
+      
+  
+            <v-list-item link>
+              <v-list-item-title >option 1</v-list-item-title>
+              <v-list-item-icon>
+                <v-icon>mdi-settings</v-icon>
+              </v-list-item-icon>
+            </v-list-item>
+            <v-list-item link>
+              <v-list-item-title >option 2</v-list-item-title>
+              <v-list-item-icon>
+                <v-icon>mdi-settings</v-icon>
+              </v-list-item-icon>
+            </v-list-item>
+            
+
+        </v-list-group>
+                <v-list-group prepend-icon="mdi-account-multiple" value="true">
+          <template v-slot:activator>
+            <v-list-item-title>Desarrollo</v-list-item-title>
+          </template>
+          <v-list-item link>
+            <v-list-item-title >option 1</v-list-item-title>
+              <v-list-item-icon>
+                <v-icon>mdi-settings</v-icon>
+              </v-list-item-icon>
+            </v-list-item>
+          <v-list-item link>
+            <v-list-item-title >option 2</v-list-item-title>
+              <v-list-item-icon>
+                <v-icon>mdi-settings</v-icon>
+              </v-list-item-icon>
+            </v-list-item>
+        </v-list-group>
       </v-list>
     </v-navigation-drawer>
 
@@ -118,6 +160,16 @@
           actions: '',        
         },        
       ],
+    admins: [
+      ['Management', 'people_outline'],
+      ['Settings', 'settings'],
+    ],
+    cruds: [
+      ['Create', 'add'],
+      ['Read', 'insert_drive_file'],
+      ['Update', 'update'],
+      ['Delete', 'delete'],
+    ],
     }),
   }
 </script>
