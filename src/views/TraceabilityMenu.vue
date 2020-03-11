@@ -16,59 +16,41 @@
           <template v-slot:activator>
             <v-list-item-title>Gestion de Configuración</v-list-item-title>
           </template>
-          <v-list-item link>
-            <v-list-item-title >option 1</v-list-item-title>
-              <v-list-item-icon>
-                <v-icon>mdi-settings</v-icon>
-              </v-list-item-icon>
+            <v-list-item link>
+              <v-list-item-title >Proyectos</v-list-item-title>
             </v-list-item>
-          <v-list-item link>
-            <v-list-item-title >option 2</v-list-item-title>
-              <v-list-item-icon>
-                <v-icon>mdi-settings</v-icon>
-              </v-list-item-icon>
+            <v-list-item link>
+              <v-list-item-title >Fases</v-list-item-title>
+            </v-list-item>
+            <v-list-item link>
+              <v-list-item-title>Usuarios</v-list-item-title>
             </v-list-item>
         </v-list-group>
-        <v-list-group
-          prepend-icon="mdi-account-multiple"
-          value="true"
-        >
+        <v-list-group prepend-icon="folder_open" value="true">
           <template v-slot:activator>
             <v-list-item-title>Administración</v-list-item-title>
           </template>
-  
-      
-  
+
             <v-list-item link>
-              <v-list-item-title >option 1</v-list-item-title>
-              <v-list-item-icon>
-                <v-icon>mdi-settings</v-icon>
-              </v-list-item-icon>
+              <v-list-item-title >Permisos</v-list-item-title>
             </v-list-item>
             <v-list-item link>
-              <v-list-item-title >option 2</v-list-item-title>
-              <v-list-item-icon>
-                <v-icon>mdi-settings</v-icon>
-              </v-list-item-icon>
+              <v-list-item-title >Usuarios</v-list-item-title>
             </v-list-item>
-            
+            <v-list-item link>
+              <v-list-item-title >Proyectos</v-list-item-title>
+            </v-list-item>
 
         </v-list-group>
-                <v-list-group prepend-icon="mdi-account-multiple" value="true">
+        <v-list-group prepend-icon="mdi-code-array" value="true">
           <template v-slot:activator>
             <v-list-item-title>Desarrollo</v-list-item-title>
           </template>
-          <v-list-item link>
-            <v-list-item-title >option 1</v-list-item-title>
-              <v-list-item-icon>
-                <v-icon>mdi-settings</v-icon>
-              </v-list-item-icon>
+            <v-list-item link>
+              <v-list-item-title >Proyecto</v-list-item-title>
             </v-list-item>
-          <v-list-item link>
-            <v-list-item-title >option 2</v-list-item-title>
-              <v-list-item-icon>
-                <v-icon>mdi-settings</v-icon>
-              </v-list-item-icon>
+            <v-list-item link>
+              <v-list-item-title >Items</v-list-item-title>
             </v-list-item>
         </v-list-group>
       </v-list>
@@ -160,16 +142,6 @@
           actions: '',        
         },        
       ],
-    admins: [
-      ['Management', 'people_outline'],
-      ['Settings', 'settings'],
-    ],
-    cruds: [
-      ['Create', 'add'],
-      ['Read', 'insert_drive_file'],
-      ['Update', 'update'],
-      ['Delete', 'delete'],
-    ],
     }),
   }
 </script>
