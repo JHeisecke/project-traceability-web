@@ -6,13 +6,8 @@
         <v-spacer />
           <v-btn color="primary" @click="showPopupLogin()">Ingresar</v-btn>
       </template>
-      <v-card-actions>
-        <v-btn color="white" class="black--text" @click="showPopupRegister()"> Registrarse </v-btn>
-      </v-card-actions>
       
     </v-app-bar>
-    <!-- Popup de login, solo se muestra si showRegister es true showRegister viene de Login.vue-->
-    <PopupRegister v-show="showRegister"/>
     <!-- Popup de login, solo se muestra si showLogin es true showLogin viene de Login.vue-->
     <PopupLogin v-show="showLogin"/>
     <v-content>
@@ -40,28 +35,20 @@
 
 <script>
 import PopupLogin from '@/components/PopupLogin.vue';
-import PopupRegister from '@/components/PopupRegister.vue';
   export default {
     props: {
       source: String,
     },
     data: () => ({
       showLogin     : false,
-      showRegister  : false
     }),
     components: {
         PopupLogin,
-        PopupRegister
     },
     methods: {
       showPopupLogin() {
         this.showLogin = !this.showLogin
-        this.showRegister = false
       },
-      showPopupRegister() {
-        this.showRegister = !this.showRegister
-        this.showLogin = false
-      }
     }
   }
 </script>
