@@ -24,7 +24,6 @@
           <template v-slot:activator>
             <v-list-item-title>Administración</v-list-item-title>
           </template>
-
             <v-list-item link>
               <v-list-item-title @click="showingUsers()">Usuarios</v-list-item-title>
             </v-list-item>
@@ -34,7 +33,6 @@
             <v-list-item link>
               <v-list-item-title >Permisos</v-list-item-title>
             </v-list-item>
-
         </v-list-group>
         <v-list-group prepend-icon="mdi-code-array" value="true">
           <template v-slot:activator>
@@ -64,8 +62,7 @@
     </v-app-bar>
 
     <v-content>
-      <vueTableUsers  :headers="headers" :items="items" :itemsPerPage="itemsPerPage" 
-      v-if="section == 'users'"></vueTableUsers>       
+      <vueTableUsers  :headers="headers" :items="items" :itemsPerPage="itemsPerPage"></vueTableUsers>       
     </v-content>
     <v-footer
       color="indigo"
@@ -97,41 +94,38 @@
             sortable: false,
             value: 'username',
           },
-          { text: 'Nombre', value: 'nombre' },
+          { text: 'Nombre Completo', value: 'nombreCompleto' },
           { text: 'E-mail', value: 'email' },
           { text: 'Acciones', value: 'actions' }
       ],
       items: [
         {
           username: 'jheisecke',
-          nombre: 'Javier Heisecke',
+          nombreCompleto: 'Javier Heisecke',
           email: 'jheisecke@gmail.com',
-          actions: '',
+          password: '123456',
         },    
         {
           username: 'pvillagra',
-          nombre: 'Paula Villagra',
+          nombreCompleto: 'Paula Villagra',
           email: 'pvillagra@gmail.com',
-          actions: '',
+          password: '123456',
         },  
         {
           username: 'ylopez',
-          nombre: 'Yesshua Lopez',
+          nombreCompleto: 'Yesshua Lopez',
           email: 'ylopez@gmail.com',
-          actions: '',
+          password: '123456',
         }, 
         {
           username: 'mfare',
-          nombre: 'Matias Fare',
+          nombreCompleto: 'Matias Fare',
           email: 'mfare@gmail.com',
-          actions: '',
+          password: '123456',
         }                         
       ],
     }),
     methods: {
-      showingUsers() {
-        this.section = "users"
-      },
       showingProjects() {
         this.$router.push({name: 'traceability-menu'});
       }

@@ -11,7 +11,7 @@
           </v-list-item-title>
         </v-list-item-content>
       </v-list-item>
-  <v-list dense>
+      <v-list dense>
         <v-list-group prepend-icon="mdi-settings" value="true">
           <template v-slot:activator>
             <v-list-item-title>Gestion de Configuración</v-list-item-title>
