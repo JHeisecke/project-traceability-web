@@ -4,31 +4,49 @@
       v-model="drawer"
       app
     >
-      <v-list dense>
-        <v-list-item link>
-          <v-list-item-action>
-            <v-icon>mdi-settings</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>
-            <v-list-item-title>Usuarios</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-        <v-list-item link>
-          <v-list-item-action>
-            <v-icon>mdi-account-multiple</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>
-            <v-list-item-title>Módulo de Administración</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-        <v-list-item link>
-          <v-list-item-action>
-            <v-icon>mdi-source-merge</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>
-            <v-list-item-title>Módulo de Desarrollo</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>        
+      <v-list-item>
+        <v-list-item-content>
+          <v-list-item-title class="title">
+            Módulos
+          </v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
+    <v-list dense>
+        <v-list-group prepend-icon="mdi-settings" value="true">
+          <template v-slot:activator>
+            <v-list-item-title>Gestion de Configuración</v-list-item-title>
+          </template>
+            <v-list-item link>
+              <v-list-item-title>Linea Bases</v-list-item-title>
+            </v-list-item>
+        </v-list-group>
+        <v-list-group prepend-icon="folder_open" value="true">
+          <template v-slot:activator>
+            <v-list-item-title>Administración</v-list-item-title>
+          </template>
+
+            <v-list-item link>
+              <v-list-item-title @click="showingUsers()">Usuarios</v-list-item-title>
+            </v-list-item>
+            <v-list-item link>
+              <v-list-item-title >Roles</v-list-item-title>
+            </v-list-item>
+            <v-list-item link>
+              <v-list-item-title >Permisos</v-list-item-title>
+            </v-list-item>
+
+        </v-list-group>
+        <v-list-group prepend-icon="mdi-code-array" value="true">
+          <template v-slot:activator>
+            <v-list-item-title>Desarrollo</v-list-item-title>
+          </template>
+            <v-list-item link>
+              <v-list-item-title :to="{ name: 'vue-table-projects'}" @click="showingProjects()">Proyectos</v-list-item-title>
+            </v-list-item>
+            <v-list-item link>
+              <v-list-item-title >Items</v-list-item-title>
+            </v-list-item>
+        </v-list-group>
       </v-list>
     </v-navigation-drawer>
 
@@ -40,16 +58,14 @@
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
       <v-toolbar-title>Project Traceability</v-toolbar-title>
       <template>
-          <v-spacer/>
-          <v-btn color="primary"><v-icon>mdi-home</v-icon></v-btn>
-      </template>
-      <v-card-actions>
+        <v-spacer />   
           <v-btn color="primary"><v-icon>mdi-logout</v-icon>SALIR</v-btn>
-      </v-card-actions>         
+      </template>
     </v-app-bar>
 
     <v-content>
-      <UserForm></UserForm>
+      <vueTableUsers  :headers="headers" :items="items" :itemsPerPage="itemsPerPage" 
+      v-if="section == 'users'"></vueTableUsers>       
     </v-content>
     <v-footer
       color="indigo"
@@ -61,17 +77,38 @@
 </template>
 
 <script>
-  import UserForm from '@/components/administration/UserForm.vue';
+  import vueTableUsers from '@/components/administration/vue-table-users.vue';
   export default {
     components: {
-        UserForm
+        vueTableUsers
     },
     props: {
       source: String,
+      section: String
     },
     data: () => ({
       drawer: null,
-      
+      showUsers: false,
+      itemsPerPage: 5,
+      headers: [
+          {
+            text: 'Código',
+            align: 'start',
+            sortable: false,
+            value: 'projectCode',
+          },
+          { text: 'Proyecto', value: 'projectName' },
+          { text: 'Estado', value: 'estate' },
+          { text: 'Acciones', value: 'actions' },
+      ],
+      items: [
+        {
+          projectCode: '1',
+          projectName: 'Aplicacion iOS para BNF',
+          estate: 'EN CURSO',
+          actions: '',
+        },        
+      ],
     }),
   }
 </script>

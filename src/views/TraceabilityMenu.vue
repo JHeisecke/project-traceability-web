@@ -17,37 +17,29 @@
             <v-list-item-title>Gestion de Configuración</v-list-item-title>
           </template>
             <v-list-item link>
-              <v-list-item-title >Proyectos</v-list-item-title>
-            </v-list-item>
-            <v-list-item link>
-              <v-list-item-title >Fases</v-list-item-title>
-            </v-list-item>
-            <v-list-item link>
-              <v-list-item-title>Usuarios</v-list-item-title>
+              <v-list-item-title>Linea Bases</v-list-item-title>
             </v-list-item>
         </v-list-group>
         <v-list-group prepend-icon="folder_open" value="true">
           <template v-slot:activator>
             <v-list-item-title>Administración</v-list-item-title>
           </template>
-
-            <v-list-item link>
-              <v-list-item-title >Permisos</v-list-item-title>
-            </v-list-item>
-            <v-list-item link>
-              <v-list-item-title >Usuarios</v-list-item-title>
-            </v-list-item>
-            <v-list-item link>
-              <v-list-item-title >Proyectos</v-list-item-title>
-            </v-list-item>
-
+          <v-list-item link>
+            <v-list-item-title @click="showingAdminstrationUsers()">Usuarios</v-list-item-title>
+          </v-list-item>
+          <v-list-item link>
+            <v-list-item-title @click="showingAdminstrationRoles()">Roles</v-list-item-title>
+          </v-list-item>
+          <v-list-item link>
+            <v-list-item-title @click="showingAdminstrationPermissions()">Permisos</v-list-item-title>
+          </v-list-item>
         </v-list-group>
         <v-list-group prepend-icon="mdi-code-array" value="true">
           <template v-slot:activator>
             <v-list-item-title>Desarrollo</v-list-item-title>
           </template>
             <v-list-item link>
-              <v-list-item-title >Proyecto</v-list-item-title>
+              <v-list-item-title :to="{ name: 'vue-table-projects'}" @click="showingProjects()">Proyectos</v-list-item-title>
             </v-list-item>
             <v-list-item link>
               <v-list-item-title >Items</v-list-item-title>
@@ -70,7 +62,7 @@
     </v-app-bar>
 
     <v-content>
-      <vueTable :headers="headers" :items="items" :itemsPerPage="itemsPerPage"></vueTable>
+      <vueTableProjects :headers="headers" :items="items" :itemsPerPage="itemsPerPage"></vueTableProjects>   
     </v-content>
     <v-footer
       color="indigo"
@@ -82,10 +74,10 @@
 </template>
 
 <script>
-  import vueTable from '@/components/vue-table.vue';
+  import vueTableProjects from '@/components/vue-table-projects.vue';
   export default {
     components: {
-        vueTable
+        vueTableProjects,
     },
     props: {
       source: String,
@@ -143,5 +135,17 @@
         },        
       ],
     }),
+    method: {
+      showingAdminstrationUsers() {
+        alert("asd")
+        //this.$router.push({name: 'administration-menu', params: {section:"users"}});
+      },
+      showingAdminstrationRoles() {
+
+      },
+      showingAdminstrationPermissions() {
+
+      }
+    }
   }
 </script>
