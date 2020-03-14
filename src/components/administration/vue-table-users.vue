@@ -1,29 +1,33 @@
 <template>
-<v-data-table
-    :headers="headers"
-    :items="items"
-    :items-per-page="itemsPerPage"
-    class="elevation-1">
+  <div id="app">
+    <v-data-table
+        :headers="headers"
+        :items="items"
+        :items-per-page="itemsPerPage"
+        class="elevation-1">
 
-    <template v-slot:item.actions="{ item }">
-          <tr>
-            <td>
-                <v-btn class="mx-1" fab dark small color="blue" @click="viewUser(item.username)">
-                    <v-icon dark>mdi-eye</v-icon>
-                </v-btn>                 
-                <v-btn class="mx-1" fab dark small color="blue" @click="editUser(item.username)">
-                    <v-icon dark>mdi-lead-pencil</v-icon>
-                </v-btn>                  
-                <v-btn class="mx-1" fab dark small color="blue" @click="deleteUser(item.username)">
-                    <v-icon dark>mdi-delete</v-icon>
-                </v-btn>                           
-            </td>
-          </tr>
-    </template>
-</v-data-table>
+        <template v-slot:item.actions="{ item }">
+              <tr>
+                <td>
+                    <v-btn class="mx-1" fab dark small color="blue" @click="viewUser(item.username)">
+                        <v-icon dark>mdi-eye</v-icon>
+                    </v-btn>                 
+                    <v-btn class="mx-1" fab dark small color="blue" @click="editUser(item.username)">
+                        <v-icon dark>mdi-lead-pencil</v-icon>
+                    </v-btn>                  
+                    <v-btn class="mx-1" fab dark small color="blue" @click="deleteUser(item.username)">
+                        <v-icon dark>mdi-delete</v-icon>
+                    </v-btn>                           
+                </td>
+              </tr>
+        </template>
+    </v-data-table>
+    <UserForm :showUserForm="showUserForm"></UserForm>   
+  </div> 
 </template>
 
 <script>
+  import UserForm from '@/components/administration/UserForm.vue';
   export default {
     props: {
       source: String,
@@ -31,8 +35,15 @@
       itemsPerPage: String,
       items: [],
     },
+    components: {
+      UserForm
+    },
+    data: () => ({ 
+      showUserForm : false
+    }),
     methods: {
       editUser (codigo) {
+        this.showUserForm = true
         alert(`estas editando el usuario ${codigo}`)
       },
       deleteUser (codigo) {

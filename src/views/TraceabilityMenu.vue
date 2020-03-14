@@ -39,7 +39,7 @@
             <v-list-item-title>Desarrollo</v-list-item-title>
           </template>
             <v-list-item link>
-              <v-list-item-title :to="{ name: 'vue-table-projects'}" @click="showingProjects()">Proyectos</v-list-item-title>
+              <v-list-item-title @click="showingProjects()">Proyectos</v-list-item-title>
             </v-list-item>
             <v-list-item link>
               <v-list-item-title >Items</v-list-item-title>
@@ -137,7 +137,7 @@
     }),
     methods: {
       showingAdminstrationUsers() {      
-        this.$router.push({name: 'administration-menu'});
+        this.$router.push({name: 'administration-user-menu'});
       },
       showingAdminstrationRoles() {
 
