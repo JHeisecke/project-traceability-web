@@ -41,7 +41,7 @@
             <v-list-item-title>Desarrollo</v-list-item-title>
           </template>
             <v-list-item link>
-              <v-list-item-title :to="{ name: 'vue-table-projects'}" @click="showingProjects()">Proyectos</v-list-item-title>
+              <v-list-item-title @click="showingProjects()">Proyectos</v-list-item-title>
             </v-list-item>
             <v-list-item link>
               <v-list-item-title >Items</v-list-item-title>
@@ -84,31 +84,57 @@
     },
     props: {
       source: String,
-      section: String
     },
     data: () => ({
       drawer: null,
       showUsers: false,
-      itemsPerPage: 5,
+      usersPerPage: "5",
+      section: "users",
       headers: [
           {
-            text: 'Código',
+            text: 'Username',
             align: 'start',
             sortable: false,
-            value: 'projectCode',
+            value: 'username',
           },
-          { text: 'Proyecto', value: 'projectName' },
-          { text: 'Estado', value: 'estate' },
-          { text: 'Acciones', value: 'actions' },
+          { text: 'Nombre', value: 'nombre' },
+          { text: 'E-mail', value: 'email' },
+          { text: 'Acciones', value: 'actions' }
       ],
       items: [
         {
-          projectCode: '1',
-          projectName: 'Aplicacion iOS para BNF',
-          estate: 'EN CURSO',
+          username: 'jheisecke',
+          nombre: 'Javier Heisecke',
+          email: 'jheisecke@gmail.com',
           actions: '',
-        },        
+        },    
+        {
+          username: 'pvillagra',
+          nombre: 'Paula Villagra',
+          email: 'pvillagra@gmail.com',
+          actions: '',
+        },  
+        {
+          username: 'ylopez',
+          nombre: 'Yesshua Lopez',
+          email: 'ylopez@gmail.com',
+          actions: '',
+        }, 
+        {
+          username: 'mfare',
+          nombre: 'Matias Fare',
+          email: 'mfare@gmail.com',
+          actions: '',
+        }                         
       ],
     }),
+    methods: {
+      showingUsers() {
+        this.section = "users"
+      },
+      showingProjects() {
+        this.$router.push({name: 'traceability-menu'});
+      }
+    }
   }
 </script>

@@ -135,10 +135,9 @@
         },        
       ],
     }),
-    method: {
-      showingAdminstrationUsers() {
-        alert("asd")
-        //this.$router.push({name: 'administration-menu', params: {section:"users"}});
+    methods: {
+      showingAdminstrationUsers() {      
+        this.$router.push({name: 'administration-menu'});
       },
       showingAdminstrationRoles() {
 
