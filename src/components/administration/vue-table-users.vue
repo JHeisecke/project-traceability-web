@@ -7,7 +7,7 @@
         :items="items"
         class="elevation-1">
         <template v-slot:top>
-          <v-toolbar flat color="indigo accent-1">
+          <v-toolbar flat color="blue darken-1">
             <v-toolbar-title>USUARIOS</v-toolbar-title>
             <v-divider hidden inset vertical></v-divider>
             <v-spacer></v-spacer>            
