@@ -1,65 +1,79 @@
 
 <template>
-  <v-data-table
-    :headers="headers"
-    :items="listaroles"
-    sort-by="calories"
-    class="elevation-1"
-  >
-    <template v-slot:top>
-      <v-toolbar flat color="white">
-        <v-toolbar-title>ROLES</v-toolbar-title>
-        <!-- Barra Vertical -->
-        <v-divider lass="mx-4" inset vertical></v-divider>
-        <v-spacer></v-spacer>
-        <!-- button New Rol -->
-        <v-dialog v-model="dialog" max-width="500px">
-          <template v-slot:activator="{ on }">
-            <v-btn color="primary" dark class="mb-2" v-on="on">New Rol</v-btn>
-          </template>
-          <v-card>
-            <v-card-title>
-              <span class="headline">{{ formTitle }}</span>
-            </v-card-title>
-            <!-- V-car para new Roll-->
-            <v-card-text>
-              <v-container>
-                <v-row>
-                    <v-text-field v-model="editedItem.name" label="Rol name"></v-text-field>
-                    <v-text-field v-model="editedItem.carbs" label="Description"></v-text-field>
-                </v-row>
-              </v-container>
-            </v-card-text>
-
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
-              <v-btn color="blue darken-1" text @click="save">Save</v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
-      </v-toolbar>
-    </template>
-    <!-- button Actions -->
-    <template v-slot:item.actions="{ item }">
-      <v-icon
-        small
-        class="mr-2"
-        @click="editItem(item)"
-      >
-        mdi-pencil
-      </v-icon>
-      <v-icon
-        small
-        @click="deleteItem(item)"
-      >
-        mdi-delete
-      </v-icon>
-    </template>
-    <template v-slot:no-data>
-      <v-btn color="primary" @click="initialize">Reset</v-btn>
-    </template>
-  </v-data-table>
+  <div id="app">
+    
+    <v-data-table
+      :headers="headers"
+      :items="listaroles"
+      sort-by="calories"
+      class="elevation-1"
+    >
+      <template v-slot:top>
+        <v-toolbar flat color="white">
+          <v-toolbar-title>ROLES</v-toolbar-title>
+          <!-- Barra Vertical -->
+          <v-divider lass="mx-4" inset vertical></v-divider>
+          <v-spacer></v-spacer>
+        </v-toolbar>
+      </template>
+      <template v-slot:item.actions="{ item }">
+                <tr>
+                  <td>
+                      <v-btn class="mx-1" fab dark small color="blue" @click="viewRole(item)">
+                          <v-icon dark>mdi-eye</v-icon>
+                      </v-btn>                 
+                      <v-btn class="mx-1" fab dark small color="blue" @click="editRole(item)">
+                          <v-icon dark>mdi-lead-pencil</v-icon>
+                      </v-btn>                  
+                      <v-btn class="mx-1" fab dark small color="blue" @click="deleteRole(item)">
+                          <v-icon dark>mdi-delete</v-icon>
+                      </v-btn>                           
+                  </td>
+                </tr>
+        </template>
+      <template v-slot:no-data>
+        <v-btn color="primary" @click="methods">Reset</v-btn>
+      </template>
+    </v-data-table>
+    <div class="text-center pt-2">
+        <v-btn color="primary" class="mr-2" @click="createRole()">NEW ROLE</v-btn>
+    </div>
+    <v-dialog v-model="showRoleForm" persistent>      
+      <v-card class="elevation-12">
+        <v-toolbar color="primary" dark flat >
+          <v-toolbar-title>Usuario</v-toolbar-title>
+          <v-spacer/>
+          <v-tooltip bottom>
+          </v-tooltip>
+        </v-toolbar>
+        <v-card-text>
+          <v-form v-model="validForm" ref="form" v-if="editMode">
+            <v-text-field  
+              v-model="rol.nombre"
+              label="Nombre del Nuevo Rol" 
+              prepend-icon="person"
+              :rules="nameRolRules"
+              name="nombre" 
+              type="text" />
+            <v-text-field 
+              v-model="rol.descripcion"
+              label="Descripcion" 
+              prepend-icon="person"
+              :rules="userRolRules"
+              name="descripcion" 
+              type="text" />
+          </v-form>
+          <div v-else>            
+          </div>
+        </v-card-text>             
+        <v-card-actions>
+          <v-spacer />
+          <v-btn color="success" @click="saveRole()">Guardar</v-btn>
+          <v-btn color="error" @click="close()">Cancelar</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>	   
+  </div>
 </template>
 
 <script>
@@ -68,6 +82,8 @@ const axios = require('axios');
     data: () => ({
       dialog: false,
       items:[],
+      validForm  : false,
+      showRoleForm: false,
       rol : {
         id : null,
         nombre : null,
@@ -85,27 +101,13 @@ const axios = require('axios');
         { text: 'Actions', value: 'actions', sortable: false },
       ],
       listaroles: [],
+      /*Almacena permisos por rol*/
+      permisosrol: [],
       editedIndex: -1,
-      editedItem: {
-        name: '',
-        calories: 0,
-        fat: 0,
-        carbs: 0,
-        protein: 0,
-      },
-      defaultItem: {
-        name: '',
-        calories: 0,
-        fat: 0,
-        carbs: 0,
-        protein: 0,
-      },
+      nameRolRules: [
+        v => !!v || "Nombre Rol es requerido"
+      ],
     }),
-    computed: {
-      formTitle () {
-        return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
-      },
-    },
     watch: {
       dialog (val) {
         val || this.close()
@@ -115,32 +117,38 @@ const axios = require('axios');
       this.initialize()
     },
     methods: {
-
-      initialize () {
-        this.listaroles = [
-        {
-          id: 1,
-          nombre: 'root',
-          descripcion: 'acceso total al sistema',
-        }
-        ]
+      createRole(){
+        this.showRoleForm = true        
+        this.rol.id = ""
+        this.rol.nombre = ""
+        this.rol.descripcion = ""
+        this.editMode = true
+        this.showRoleForm = true
       },
-      editItem (item) {
-        this.editedIndex = this.listaroles.indexOf(item)
-        this.editedItem = Object.assign({}, item)
-        this.dialog = true
+      saveRole(){
+        this.loadingDialogShow = true
+        //axios
+        this.listaroles.push(this.rol)
+        this.loadingDialogShow = false
+        this.showRoleForm = false
       },
-      deleteItem (item) {
-        const index = this.listaroles.indexOf(item)
-        confirm('Are you sure you want to delete this item?') && this.listaroles.splice(index, 1)
+      editRole (item) {
+        alert(`estas editando el Rol ${item.nombre}`)
+        //axios edit role
+      },
+      deleteRole (item) {
+        alert(`estas borrando el Rol ${item.nombre}`)
+        //axios delete role
       },
       close () {
         this.dialog = false
+        this.showRoleForm = false
         setTimeout(() => {
           this.editedItem = Object.assign({}, this.defaultItem)
           this.editedIndex = -1
         }, 300)
       },
+      /*Permite guardar un rol editado*/
       save () {
         if (this.editedIndex > -1) {
           Object.assign(this.listaroles[this.editedIndex], this.editedItem)

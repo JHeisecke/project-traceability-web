@@ -64,7 +64,7 @@
     <v-content>
       <!-- Inserta tabla de roles -->
       <!-- <vueTableRol  :headers="headers" :items="items" :itemsPerPage="itemsPerPage"></vueTableRol>     -->
-      <vueTableRol  :headers="headers"></vueTableRol>
+      <vueTableRol></vueTableRol>
     </v-content>
     <v-footer
       color="indigo"
