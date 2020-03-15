@@ -138,6 +138,7 @@ const axios = require('axios');
         this.rol.id = ""
         this.rol.nombre = ""
         this.rol.descripcion = ""
+        this.rol.permisos = []
         this.editMode = true
         this.showRoleForm = true
       },
