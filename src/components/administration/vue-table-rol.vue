@@ -38,10 +38,11 @@
     <div class="text-center pt-2">
         <v-btn color="primary" class="mr-2" @click="createRole()">NEW ROLE</v-btn>
     </div>
-    <v-dialog v-model="showRoleForm" persistent>      
+    <!--Form crear Role--->
+    <v-dialog width=800 v-model="showRoleForm" persistent>      
       <v-card class="elevation-12">
         <v-toolbar color="primary" dark flat >
-          <v-toolbar-title>Usuario</v-toolbar-title>
+          <v-toolbar-title>NUEVO ROL</v-toolbar-title>
           <v-spacer/>
           <v-tooltip bottom>
           </v-tooltip>
@@ -50,7 +51,7 @@
           <v-form v-model="validForm" ref="form" v-if="editMode">
             <v-text-field  
               v-model="rol.nombre"
-              label="Nombre del Nuevo Rol" 
+              label="Nombre Rol" 
               prepend-icon="person"
               :rules="nameRolRules"
               name="nombre" 
@@ -62,6 +63,23 @@
               :rules="userRolRules"
               name="descripcion" 
               type="text" />
+              <v-row align="center">
+      <v-col cols="12" sm="6">
+        <v-subheader v-text="'PERMISOS'"></v-subheader>
+      </v-col>
+
+      <v-col cols="12" sm="6">
+        <v-select
+          v-model="permissions"
+          :items="listpermissions"
+          label="Select"
+          multiple
+          chips
+          hint="Que permisos desea asignar?"
+          persistent-hint
+        ></v-select>
+      </v-col>
+    </v-row>
           </v-form>
           <div v-else>            
           </div>
@@ -72,8 +90,9 @@
           <v-btn color="error" @click="close()">Cancelar</v-btn>
         </v-card-actions>
       </v-card>
-    </v-dialog>	   
+    </v-dialog>    
   </div>
+
 </template>
 
 <script>
@@ -82,13 +101,18 @@ const axios = require('axios');
     data: () => ({
       dialog: false,
       items:[],
+      permissions:[],
       validForm  : false,
       showRoleForm: false,
+      showPermissionsForm: true,        
       rol : {
         id : null,
         nombre : null,
         descripcion : null
       },
+      listpermissions: [
+        'ABM Proyecto', 'ABM Usuario', 'ABM Permisos',
+      ],
       headers: [
         {
           text: 'RolNumber',
