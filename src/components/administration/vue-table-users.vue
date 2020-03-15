@@ -247,7 +247,7 @@ import loadingDialog from '@/components/loading-dialog.vue';
       this.loadingDialogShow = true
       this.loadingMessage = "Obteniendo usuarios en el sistema"
       //obtencion de usuarios
-      axios.get("http://localhost:8081/api/usuario")
+      axios.get("http://localhost:8081/api/usuarios")
       .then(response => {
           this.items = response.data.list
       }).catch(errorResponse => {
