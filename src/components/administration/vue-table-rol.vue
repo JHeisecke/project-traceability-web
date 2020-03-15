@@ -42,7 +42,7 @@
     <v-dialog width=800 v-model="showRoleForm" persistent>      
       <v-card class="elevation-12">
         <v-toolbar color="primary" dark flat >
-          <v-toolbar-title>NUEVO ROL</v-toolbar-title>
+          <v-toolbar-title>ROL</v-toolbar-title>
           <v-spacer/>
           <v-tooltip bottom>
           </v-tooltip>
@@ -67,10 +67,9 @@
       <v-col cols="12" sm="6">
         <v-subheader v-text="'PERMISOS'"></v-subheader>
       </v-col>
-
       <v-col cols="12" sm="6">
         <v-select
-          v-model="permissions"
+          v-model="rol.permisos"
           :items="listpermissions"
           label="Select"
           multiple
@@ -101,25 +100,19 @@ const axios = require('axios');
     data: () => ({
       dialog: false,
       items:[],
-      permissions:[],
       validForm  : false,
       showRoleForm: false,
       showPermissionsForm: true,        
       rol : {
         id : null,
         nombre : null,
-        descripcion : null
+        descripcion : null,
+        permisos: [],
       },
       listpermissions: [
         'ABM Proyecto', 'ABM Usuario', 'ABM Permisos',
       ],
       headers: [
-        {
-          text: 'RolNumber',
-          align: 'start',
-          sortable: false,
-          value: 'id',
-        },
         { text: 'Nombre Rol', value: 'nombre' },
         { text: 'Descripción', value: 'descripcion' },
         { text: 'Actions', value: 'actions', sortable: false },
@@ -142,7 +135,6 @@ const axios = require('axios');
     },
     methods: {
       createRole(){
-        this.showRoleForm = true        
         this.rol.id = ""
         this.rol.nombre = ""
         this.rol.descripcion = ""
@@ -150,18 +142,29 @@ const axios = require('axios');
         this.showRoleForm = true
       },
       saveRole(){
-        this.loadingDialogShow = true
-        //axios
-        this.listaroles.push(this.rol)
-        this.loadingDialogShow = false
+        if (this.editedIndex > -1) {
+          Object.assign(this.listaroles[this.editedIndex], this.rol)
+          //axios update
+        } else {
+          this.listaroles.push(this.rol)
+          //axios save
+        }
+        this.close()
         this.showRoleForm = false
+        this.editMode = false
       },
       editRole (item) {
-        alert(`estas editando el Rol ${item.nombre}`)
+        //alert(`estas editando el Rol ${item.nombre}`)
+        this.editedIndex = this.listaroles.indexOf(item)
+        this.rol = Object.assign({}, item)
+        this.editMode = true
+        this.showRoleForm = true
         //axios edit role
       },
       deleteRole (item) {
-        alert(`estas borrando el Rol ${item.nombre}`)
+        //alert(`estas borrando el Rol ${item.nombre}`)
+        const index = this.listaroles.indexOf(item)
+        confirm('Are you sure you want to delete this role?') && this.listaroles.splice(index, 1)
         //axios delete role
       },
       close () {
@@ -171,15 +174,6 @@ const axios = require('axios');
           this.editedItem = Object.assign({}, this.defaultItem)
           this.editedIndex = -1
         }, 300)
-      },
-      /*Permite guardar un rol editado*/
-      save () {
-        if (this.editedIndex > -1) {
-          Object.assign(this.listaroles[this.editedIndex], this.editedItem)
-        } else {
-          this.listaroles.push(this.editedItem)
-        }
-        this.close()
       },
     },
     mounted: function() {
