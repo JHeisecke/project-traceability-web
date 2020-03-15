@@ -78,10 +78,10 @@ const axios = require('axios');
           text: 'RolNumber',
           align: 'start',
           sortable: false,
-          value: 'rolId',
+          value: 'id',
         },
-        { text: 'Nombre Rol', value: 'rolname' },
-        { text: 'Descripción', value: 'description' },
+        { text: 'Nombre Rol', value: 'nombre' },
+        { text: 'Descripción', value: 'descripcion' },
         { text: 'Actions', value: 'actions', sortable: false },
       ],
       listaroles: [],
@@ -119,15 +119,10 @@ const axios = require('axios');
       initialize () {
         this.listaroles = [
         {
-          rolId: 1,
-          rolname: 'root',
-          description: 'acceso total al sistema',
-        },    
-        {
-          rolId: 2,
-          rolname: 'administrador',
-          description: 'acceso al modulo administracion',
-        }  
+          id: 1,
+          nombre: 'root',
+          descripcion: 'acceso total al sistema',
+        }
         ]
       },
       editItem (item) {
@@ -157,11 +152,12 @@ const axios = require('axios');
     },
     mounted: function() {
       axios.get("http://localhost:8081/api/roles")
-      .them(response =>{
-        console.log(`success ${response}`)
-        this.items = response.data.list
+      .then(response => {
+        console.log(`${response.data.listaroles}`)
+        this.listaroles = response.data.list
       }).catch(errorResponse => {
-        alert(`ERROR ${errorResponse.errorCode} - ${errorResponse.message}`)
+          this.loadingDialogShow = false
+          alert(`ERROR ${errorResponse.errorCode} - ${errorResponse.message}`)
       })
     }
   }
