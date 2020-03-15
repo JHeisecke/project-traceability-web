@@ -1,187 +1,168 @@
-<template>
-  <div id="app">
-		<v-dialog v-model="loadingDialogShow" persistent="persistent" width="300">
-      <v-card color="primary" dark="dark">
-          <v-card-text>
-            Aguarde...
-            <v-progress-linear color="white" indeterminate="indeterminate" class="mb-0"></v-progress-linear>
-          </v-card-text>
-      </v-card>
-    </v-dialog>    
-    <v-data-table
-        :headers="headers"
-        :items="datos"
-        :items-per-page="itemsPerPage"
-        class="elevation-1">
 
-        <template v-slot:item.actions="{ item }">
-              <tr>
-                <td>
-                    <v-btn class="mx-1" fab dark small color="blue" @click="viewUser(datos)">
-                        <v-icon dark>mdi-eye</v-icon>
-                    </v-btn>                 
-                    <v-btn class="mx-1" fab dark small color="blue" @click="editUser(item)">
-                        <v-icon dark>mdi-lead-pencil</v-icon>
-                    </v-btn>                  
-                    <v-btn class="mx-1" fab dark small color="blue" @click="deleteUser(item)">
-                        <v-icon dark>mdi-delete</v-icon>
-                    </v-btn>                           
-                </td>
-              </tr>
-        </template>
-    </v-data-table>
-    <v-btn @click="createUser()">NEW ROL</v-btn>
-    <!-- DIALOGO CON EL FORMULARIO PARA CREACION/EDICION DE USUARIOS-->
-    <v-dialog v-model="showRolForm" persistent>      
-      <v-card class="elevation-12">
-        <v-toolbar color="primary" dark flat >
-          <v-toolbar-title>Usuario</v-toolbar-title>
-          <v-spacer/>
-          <v-tooltip bottom>
-          </v-tooltip>
-        </v-toolbar>
-        <!-- Formulario para nuevo rol-->
-        <v-card-text>
-          <v-form v-model="validForm" ref="form" v-if="editMode">
-            <v-text-field  
-              v-model="user.nombreCompleto"
-              label="Nombre Rol" 
-              prepend-icon="person"
-              :rules="nameRules"
-              name="fullName" 
-              type="text" />
-            <v-text-field 
-              v-model="user.username"
-              label="Descripción" 
-              prepend-icon="person"
-              :rules="usernameRules"
-              name="username" 
-              type="text" />
-          </v-form>
-          <div v-else>
-            <v-text-field  
-              v-model="user.nombreCompleto"
-              readonly 
-              prepend-icon="person"
-              name="fullName" 
-              type="text" />
-            <v-text-field 
-              v-model="user.username"
-              readonly
-              prepend-icon="person"
-              name="username" 
-              type="text" />            
-            <v-text-field v-model="user.email"
-              prepend-icon="mdi-email"
-              readonly="" 
-              name="email" 
-              type="email"/>            
-            <v-text-field v-model="user.password" readonly prepend-icon="lock" name="confirmPass" type="password"/>            
-          </div>
-        </v-card-text>             
-        <v-card-actions>
-          <v-spacer />
-          <v-btn color="success" @click="saveUser()">Guardar</v-btn>
-          <v-btn color="error" @click="closeForm()">Cancelar</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>	   
-  </div> 
+<template>
+  <v-data-table
+    :headers="headers"
+    :items="listaroles"
+    sort-by="calories"
+    class="elevation-1"
+  >
+    <template v-slot:top>
+      <v-toolbar flat color="white">
+        <v-toolbar-title>ROLES</v-toolbar-title>
+        <!-- Barra Vertical -->
+        <v-divider lass="mx-4" inset vertical></v-divider>
+        <v-spacer></v-spacer>
+        <!-- button New Rol -->
+        <v-dialog v-model="dialog" max-width="500px">
+          <template v-slot:activator="{ on }">
+            <v-btn color="primary" dark class="mb-2" v-on="on">New Rol</v-btn>
+          </template>
+          <v-card>
+            <v-card-title>
+              <span class="headline">{{ formTitle }}</span>
+            </v-card-title>
+            <!-- V-car para new Roll-->
+            <v-card-text>
+              <v-container>
+                <v-row>
+                    <v-text-field v-model="editedItem.name" label="Rol name"></v-text-field>
+                    <v-text-field v-model="editedItem.carbs" label="Description"></v-text-field>
+                </v-row>
+              </v-container>
+            </v-card-text>
+
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
+              <v-btn color="blue darken-1" text @click="save">Save</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+      </v-toolbar>
+    </template>
+    <!-- button Actions -->
+    <template v-slot:item.actions="{ item }">
+      <v-icon
+        small
+        class="mr-2"
+        @click="editItem(item)"
+      >
+        mdi-pencil
+      </v-icon>
+      <v-icon
+        small
+        @click="deleteItem(item)"
+      >
+        mdi-delete
+      </v-icon>
+    </template>
+    <template v-slot:no-data>
+      <v-btn color="primary" @click="initialize">Reset</v-btn>
+    </template>
+  </v-data-table>
 </template>
 
 <script>
 const axios = require('axios');
   export default {
-    props: {
-      source: String,
-      headers: [],
-      itemsPerPage: String,
-    },
-    data: () => ({ 
-      showRolForm : false,
-      loadingDialogShow : false,
-      datos: [],
+    data: () => ({
+      dialog: false,
+      items:[],
       rol : {
-        rolname : null,
-        description : null
+        id : null,
+        nombre : null,
+        descripcion : null
       },
-      editMode : Boolean,
-      validForm  : false,
-      //reglas para campos de formularios
-      nameRules: [
-        v => !!v || "Nombre completo es requerido"
+      headers: [
+        {
+          text: 'RolNumber',
+          align: 'start',
+          sortable: false,
+          value: 'rolId',
+        },
+        { text: 'Nombre Rol', value: 'rolname' },
+        { text: 'Descripción', value: 'description' },
+        { text: 'Actions', value: 'actions', sortable: false },
       ],
-      usernameRules: [
-        v => !!v || "Usuario es requerido",
-        v => (v && v.length <= 10) || "El Usuario debe ser menor a 10 caracteres"
-      ],
-      emailRules: [
-        v => !!v || "E-mail es requerido",
-        v => /.+@.+/.test(v) || "E-mail debe ser valido"
-      ],
-      confirmPasswordRules: [
-        v => !!v || "Confirmar la contraseña es requerida"
-      ]      
+      listaroles: [],
+      editedIndex: -1,
+      editedItem: {
+        name: '',
+        calories: 0,
+        fat: 0,
+        carbs: 0,
+        protein: 0,
+      },
+      defaultItem: {
+        name: '',
+        calories: 0,
+        fat: 0,
+        carbs: 0,
+        protein: 0,
+      },
     }),
-    methods: {
-      editUser (datos) {
-        this.showRolForm = true
-        this.user.nombreCompleto = item.nombreCompleto
-        this.user.username = item.username
-        this.user.password = item.password
-        this.user.email = item.email
-        this.editMode = true
-      },
-      deleteUser (datos) {
-        alert(`estas borrando al usuario ${item.nombreCompleto}`)
-        //axios delete user
-      },
-      createUser(){
-        this.user.nombreRol = ""
-        this.user.username = ""
-        this.user.password = ""
-        this.user.email = ""
-        this.editMode = true
-        this.showRolForm = true
-      },
-      viewUser (data) {
-        this.editMode = false
-        this.showRolForm = true
-        this.user.nombreRol = item.nombreRol
-        this.user.username = item.username
-        this.user.password = item.password
-        this.user.email = item.email        
-      },
-      saveUser() {
-        this.showRolForm = false
-        this.loadingDialogShow = true
-        //axios
-        this.items.push(this.user)
-        this.loadingDialogShow = false
-      },
-      closeForm() {
-        this.showRolForm = !this.showRolForm
-      }      
-    },
     computed: {
-      /*
-        * Concatenamos regla de contraseñas iguales, porque no existe una forma de validacion por vuetify
-        * va en el computed porque confirmPassword DEPENDEN de password, Vue sabe en que momento ejecutar
-        * este metodo 
-      */
-      passwordConfirmationRule() {
-        return () =>
-          this.newUser.password === this.newUser.confirmPassword || "Las contraseñas son distintas";
+      formTitle () {
+        return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
       },
-    }, 
+    },
+    watch: {
+      dialog (val) {
+        val || this.close()
+      },
+    },
+    created () {
+      this.initialize()
+    },
+    methods: {
+
+      initialize () {
+        this.listaroles = [
+        {
+          rolId: 1,
+          rolname: 'root',
+          description: 'acceso total al sistema',
+        },    
+        {
+          rolId: 2,
+          rolname: 'administrador',
+          description: 'acceso al modulo administracion',
+        }  
+        ]
+      },
+      editItem (item) {
+        this.editedIndex = this.listaroles.indexOf(item)
+        this.editedItem = Object.assign({}, item)
+        this.dialog = true
+      },
+      deleteItem (item) {
+        const index = this.listaroles.indexOf(item)
+        confirm('Are you sure you want to delete this item?') && this.listaroles.splice(index, 1)
+      },
+      close () {
+        this.dialog = false
+        setTimeout(() => {
+          this.editedItem = Object.assign({}, this.defaultItem)
+          this.editedIndex = -1
+        }, 300)
+      },
+      save () {
+        if (this.editedIndex > -1) {
+          Object.assign(this.listaroles[this.editedIndex], this.editedItem)
+        } else {
+          this.listaroles.push(this.editedItem)
+        }
+        this.close()
+      },
+    },
     mounted: function() {
-      axios.get("http://localhost:8081/api/users")
-        .then(response => {
-          console.log(`success ${response}`)
-          this.items = response.data.list
-        }).catch(errorResponse => {
-          alert(`ERROR ${errorResponse.errorCode} - ${errorResponse.message}`)
-        })
+      axios.get("http://localhost:8081/api/roles")
+      .them(response =>{
+        console.log(`success ${response}`)
+        this.items = response.data.list
+      }).catch(errorResponse => {
+        alert(`ERROR ${errorResponse.errorCode} - ${errorResponse.message}`)
+      })
     }
   }
 </script>

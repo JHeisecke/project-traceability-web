@@ -140,7 +140,7 @@
         this.$router.push({name: 'administration-user-menu'});
       },
       showingAdminstrationRoles() {
-
+        this.$router.push({name: 'administration-rol-menu'});
       },
       showingAdminstrationPermissions() {
 

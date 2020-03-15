@@ -62,13 +62,9 @@
     </v-app-bar>
 
     <v-content>
-      <!-- <vueTableRol  :headers="headers" :items="items" :itemsPerPage="itemsPerPage"></vueTableRol>   -->
-      <v-data-table
-      :headers="headers"
-      :items="desserts"
-      :items-per-page="5"
-      class="elevation-1"
-    ></v-data-table>    
+      <!-- Inserta tabla de roles -->
+      <!-- <vueTableRol  :headers="headers" :items="items" :itemsPerPage="itemsPerPage"></vueTableRol>     -->
+      <vueTableRol  :headers="headers"></vueTableRol>
     </v-content>
     <v-footer
       color="indigo"
@@ -80,10 +76,10 @@
 </template>
 
 <script>
-  /*import vueTableRol from '@/components/administration/vue-table-rol.vue'*/
+  import vueTableRol from '@/components/administration/vue-table-rol.vue'
   export default {
     components: {
-        /*vueTableRol*/
+        vueTableRol
     },
     props: {
       source: String,
@@ -93,27 +89,6 @@
       showUsers: false,
       usersPerPage: "5",
       section: "users",
-      headers: [
-          {
-            text: 'Rol',
-            align: 'start',
-            sortable: false,
-            value: 'username',
-          },
-          { text: 'Nombre Rol', value: 'rolname' },
-          { text: 'Descripción', value: 'description' },
-          { text: 'Acciones', value: 'actions' }
-      ],
-      desserts: [
-        {
-          rolname: 'root',
-          description: 'acceso total al sistema',
-        },    
-        {
-          rolname: 'administrador',
-          description: 'acceso al modulo administracion',
-        }                     
-      ],
     }),
     methods: {
       showingRol() {
