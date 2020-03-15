@@ -1,19 +1,19 @@
 <template>
   <div id="app">
-		<v-dialog v-model="loadingDialogShow" persistent="persistent" width="300">
-      <v-card color="primary" dark="dark">
-          <v-card-text>
-            Aguarde...
-            <v-progress-linear color="white" indeterminate="indeterminate" class="mb-0"></v-progress-linear>
-          </v-card-text>
-      </v-card>
-    </v-dialog>    
+    <loadingDialog :loadingMessage="loadingMessage" :loadingDialogShow="loadingDialogShow"></loadingDialog>
     <v-data-table
         :headers="headers"
-        :items="items"
         :items-per-page="itemsPerPage"
+        :items="items"
         class="elevation-1">
-
+        <template v-slot:top>
+          <v-toolbar flat color="indigo accent-1">
+            <v-toolbar-title>USUARIOS</v-toolbar-title>
+            <v-divider hidden inset vertical></v-divider>
+            <v-spacer></v-spacer>            
+            <v-btn @click="createUser()" color="indigo accent-2">NEW USER</v-btn>
+          </v-toolbar>
+        </template>
         <template v-slot:item.actions="{ item }">
               <tr>
                 <td>
@@ -30,7 +30,6 @@
               </tr>
         </template>
     </v-data-table>
-    <v-btn @click="createUser()">NEW USER</v-btn>
     <!-- DIALOGO CON EL FORMULARIO PARA CREACION/EDICION DE USUARIOS-->
     <v-dialog v-model="showUserForm" persistent>      
       <v-card class="elevation-12">
@@ -56,6 +55,14 @@
               :rules="usernameRules"
               name="username" 
               type="text" />
+            <v-select
+              v-model="idroles"
+              :items="roles"
+              filled
+              chips
+              label="Roles del Usuario"
+              multiple
+            ></v-select>              
             <v-text-field 
               v-model="user.email"
               id="email" 
@@ -115,25 +122,31 @@
 
 <script>
 const axios = require('axios');
+import loadingDialog from '@/components/loading-dialog.vue';
   export default {
     props: {
       source: String,
       headers: [],
       itemsPerPage: String,
     },
+    components : {
+      loadingDialog
+    },
     data: () => ({ 
       showUserForm : false,
       loadingDialogShow : false,
-      items: [],
       user : {
         nombreCompleto : null,
         username : null,
         password : null,
         email    : null
       },
+      roles  : [],
+      idroles: [],
       editMode : Boolean,
       validForm  : false,
       confirmPassword : "",
+      loadingMessage  : "",
       //reglas para campos de formularios
       nameRules: [
         v => !!v || "Nombre completo es requerido"
@@ -188,9 +201,18 @@ const axios = require('axios');
       saveUser() {
         this.showUserForm = false
         this.loadingDialogShow = true
-        //axios
-        this.items.push(this.user)
-        this.loadingDialogShow = false
+        this.loadingMessage = "Guardando Usuario"
+        axios.post("http://localhost:8081/api/usuario/save",this.user,{headers:{'X-Requested-With':'XMLHttpRequest'}})
+        .then(response => {
+          console.log(response.data)
+          this.loadingDialogShow = false
+          window.location.reload()
+        }).catch(errorResponse => {
+          this.loadingDialogShow = false
+          alert(`ERROR ${errorResponse.errorCode} - ${errorResponse.message}`)
+        })
+        
+        
       },
       closeForm() {
         this.showUserForm = !this.showUserForm
@@ -208,13 +230,29 @@ const axios = require('axios');
       },
     }, 
     mounted: function() {
-      axios.get("http://localhost:8081/api/users")
-        .then(response => {
-          console.log(`success ${response}`)
+      this.loadingDialogShow = true
+      this.loadingMessage = "Obteniendo usuarios en el sistema"
+      //obtencion de usuarios
+      axios.get("http://localhost:8081/api/usuario")
+      .then(response => {
           this.items = response.data.list
-        }).catch(errorResponse => {
+      }).catch(errorResponse => {
           alert(`ERROR ${errorResponse.errorCode} - ${errorResponse.message}`)
-        })
+      })
+      
+      //obtencion de roles
+      this.loadingMessage = "Obteniendo roles en el sistema"
+      axios.get("http://localhost:8081/api/roles")
+      .then(response => {
+        for(var rol in response.data.list){
+          this.idroles.push(response.data.list[rol].id);
+          this.roles.push(response.data.list[rol].nombre)
+        }
+        this.loadingDialogShow = false
+      }).catch(errorResponse => {
+          this.loadingDialogShow = false
+          alert(`ERROR ${errorResponse.errorCode} - ${errorResponse.message}`)
+      })
     }
   }
 </script>
