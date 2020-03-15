@@ -61,6 +61,7 @@
               filled
               chips
               label="Roles del Usuario"
+              multiple
             ></v-select>              
             <v-text-field 
               v-model="user.email"
@@ -108,6 +109,7 @@
               readonly
               chips
               label="Roles del Usuario"
+              multiple
             ></v-select>                        
             <v-text-field v-model="user.email"
               prepend-icon="mdi-email"
@@ -145,7 +147,7 @@ import loadingDialog from '@/components/loading-dialog.vue';
       user : {
         nombreCompleto : "",
         username : "",
-        roles    : {},
+        roles    : [],
         password : "",
         email    : ""
       },
@@ -179,7 +181,15 @@ import loadingDialog from '@/components/loading-dialog.vue';
         this.user.nombreCompleto = item.nombreCompleto
         this.user.username = item.username
         this.user.password = item.password
-        //this.user.roles = item.roles
+        let rol
+        this.user.roles = []
+        for(var index in item.roles){
+          rol = {}
+          rol["value"] = item.roles[index].id  
+          rol["text"] = item.roles[index].nombre
+          this.user.roles.push(rol)
+        }   
+        console.log(this.user.roles) 
         this.confirmPassword = item.password
         this.user.email = item.email
         this.editMode = true
@@ -203,7 +213,15 @@ import loadingDialog from '@/components/loading-dialog.vue';
         this.showUserForm = true
         this.user.nombreCompleto = item.nombreCompleto
         this.user.username = item.username
-        //this.user.roles = item.roles
+        let rol
+        this.user.roles = []
+        for(var index in item.roles){
+          rol = {}
+          rol["value"] = item.roles[index].id  
+          rol["text"] = item.roles[index].nombre
+          this.user.roles.push(rol)
+        }     
+        console.log(this.user.roles)   
         this.user.password = item.password
         this.confirmPassword = item.password
         this.user.email = item.email        
