@@ -17,7 +17,7 @@
                 <v-btn class="mx-1" fab dark small color="blue" @click="editProject(item.projectCode)">
                     <v-icon dark>mdi-lead-pencil</v-icon>
                 </v-btn>                  
-                <v-btn class="mx-1" fab dark small color="blue" @click="seeProjectUsers(item.projectCode)">
+                <v-btn class="mx-1" fab dark small color="blue" @click="listProjectUsers(item.projectCode)">
                     <v-icon dark>mdi-account-edit</v-icon>
                 </v-btn>                           
             </td>
@@ -43,7 +43,7 @@
       editProject (codigo) {
         alert(`estas editando el proyecto n°${codigo}`)
       },
-      seeProjectUsers (codigo) {
+      listProjectUsers (codigo) {
         alert(`estas viendo los usuarios del proyecto n°${codigo}`)
       },
       viewProject (codigo) {

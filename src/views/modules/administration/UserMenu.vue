@@ -11,7 +11,7 @@
           </v-list-item-title>
         </v-list-item-content>
       </v-list-item>
-      <v-list dense>
+    <v-list dense>
         <v-list-group prepend-icon="mdi-settings" value="true">
           <template v-slot:activator>
             <v-list-item-title>Gestion de Configuración</v-list-item-title>
@@ -24,15 +24,15 @@
           <template v-slot:activator>
             <v-list-item-title>Administración</v-list-item-title>
           </template>
-          <v-list-item link>
-            <v-list-item-title @click="showingAdminstrationUsers()">Usuarios</v-list-item-title>
-          </v-list-item>
-          <v-list-item link>
-            <v-list-item-title @click="showingAdminstrationRoles()">Roles</v-list-item-title>
-          </v-list-item>
-          <v-list-item link>
-            <v-list-item-title @click="showingAdminstrationPermissions()">Permisos</v-list-item-title>
-          </v-list-item>
+            <v-list-item link>
+              <v-list-item-title @click="showingUsers()">Usuarios</v-list-item-title>
+            </v-list-item>
+            <v-list-item link>
+              <v-list-item-title >Roles</v-list-item-title>
+            </v-list-item>
+            <v-list-item link>
+              <v-list-item-title >Permisos</v-list-item-title>
+            </v-list-item>
         </v-list-group>
         <v-list-group prepend-icon="mdi-code-array" value="true">
           <template v-slot:activator>
@@ -62,7 +62,7 @@
     </v-app-bar>
 
     <v-content>
-      <vueTableProjects :headers="headers" :items="items" :itemsPerPage="itemsPerPage"></vueTableProjects>   
+      <vueTableUsers  :headers="headers" :items="items" :itemsPerPage="itemsPerPage"></vueTableUsers>       
     </v-content>
     <v-footer
       color="indigo"
@@ -74,76 +74,60 @@
 </template>
 
 <script>
-  import vueTableProjects from '@/components/vue-table-projects.vue';
+  import vueTableUsers from '@/components/administration/vue-table-users.vue';
   export default {
     components: {
-        vueTableProjects,
+        vueTableUsers
     },
     props: {
       source: String,
     },
     data: () => ({
       drawer: null,
-      itemsPerPage: 5,
+      showUsers: false,
+      usersPerPage: "5",
+      section: "users",
       headers: [
           {
-            text: 'Código',
+            text: 'Username',
             align: 'start',
             sortable: false,
-            value: 'projectCode',
+            value: 'username',
           },
-          { text: 'Proyecto', value: 'projectName' },
-          { text: 'Estado', value: 'estate' },
-          { text: 'Acciones', value: 'actions' },
+          { text: 'Nombre Completo', value: 'nombreCompleto' },
+          { text: 'E-mail', value: 'email' },
+          { text: 'Acciones', value: 'actions' }
       ],
       items: [
         {
-          projectCode: '1',
-          projectName: 'Aplicacion iOS para BNF',
-          estate: 'EN CURSO',
-          actions: '',
-        },
+          username: 'jheisecke',
+          nombreCompleto: 'Javier Heisecke',
+          email: 'jheisecke@gmail.com',
+          password: '123456',
+        },    
         {
-          projectCode: '2',
-          projectName: 'Herramienta de Evaluacion de PYMES',
-          estate: 'EN CURSO',
-          actions: '',
-        },
+          username: 'pvillagra',
+          nombreCompleto: 'Paula Villagra',
+          email: 'pvillagra@gmail.com',
+          password: '123456',
+        },  
         {
-          projectCode: '3',
-          projectName: 'Pago de servicios automático',
-          estate: 'EN PRODUCCIÓN',
-          actions: '',        
-        },
+          username: 'ylopez',
+          nombreCompleto: 'Yesshua Lopez',
+          email: 'ylopez@gmail.com',
+          password: '123456',
+        }, 
         {
-          projectCode: '4',
-          projectName: 'Herramienta CRM 2.0',
-          estate: 'EN PRODUCCIÓN',
-          actions: '',        
-        },
-        {
-          projectCode: '5',
-          projectName: 'Encuestas para clientes de la web',
-          estate: 'ANÁLISIS',
-          actions: '',          
-        },
-        {
-          projectCode: '6',
-          projectName: 'Prestamos desde ATM',
-          estate: 'EN PRODUCCIÓN',
-          actions: '',        
-        },        
+          username: 'mfare',
+          nombreCompleto: 'Matias Fare',
+          email: 'mfare@gmail.com',
+          password: '123456',
+        }                         
       ],
     }),
     methods: {
-      showingAdminstrationUsers() {      
-        this.$router.push({name: 'administration-user-menu'});
-      },
-      showingAdminstrationRoles() {
-
-      },
-      showingAdminstrationPermissions() {
-
+      showingProjects() {
+        this.$router.push({name: 'traceability-menu'});
       }
     }
   }
