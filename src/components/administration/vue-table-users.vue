@@ -189,7 +189,6 @@ import loadingDialog from '@/components/loading-dialog.vue';
           rol["text"] = item.roles[index].nombre
           this.user.roles.push(rol)
         }   
-        console.log(this.user.roles) 
         this.confirmPassword = item.password
         this.user.email = item.email
         this.editMode = true
@@ -220,11 +219,10 @@ import loadingDialog from '@/components/loading-dialog.vue';
           rol["value"] = item.roles[index].id  
           rol["text"] = item.roles[index].nombre
           this.user.roles.push(rol)
-        }     
-        console.log(this.user.roles)   
+        }        
         this.user.password = item.password
         this.confirmPassword = item.password
-        this.user.email = item.email        
+        this.user.email = item.email  
       },
       saveUser() {
         this.$refs.form.validate();
@@ -234,9 +232,17 @@ import loadingDialog from '@/components/loading-dialog.vue';
         this.showUserForm = false
         this.loadingDialogShow = true
         this.loadingMessage = "Guardando Usuario"
+        let rol
+        let userBackup = this.user.roles
+        this.user.roles = []
+        for(var index in userBackup){
+          rol = {}
+          rol["id"] = userBackup[index]  
+          this.user.roles.push(rol)
+        } 
         axios.post("http://localhost:8081/api/usuario/save",this.user,{headers:{'X-Requested-With':'XMLHttpRequest'}})
         .then(response => {
-          console.log(response.data)
+          console.log(response)
           this.loadingDialogShow = false
           window.location.reload()
         }).catch(errorResponse => {
@@ -267,7 +273,7 @@ import loadingDialog from '@/components/loading-dialog.vue';
       //obtencion de usuarios
       axios.get("http://localhost:8081/api/usuarios")
       .then(response => {
-          this.items = response.data.list
+        this.items = response.data.list
       }).catch(errorResponse => {
           alert(`ERROR ${errorResponse.errorCode} - ${errorResponse.message}`)
       })
