@@ -56,12 +56,11 @@
               name="username" 
               type="text" />
             <v-select
-              v-model="idroles"
+              v-model="user.roles"
               :items="roles"
               filled
               chips
               label="Roles del Usuario"
-              multiple
             ></v-select>              
             <v-text-field 
               v-model="user.email"
@@ -101,7 +100,15 @@
               readonly
               prepend-icon="person"
               name="username" 
-              type="text" />            
+              type="text" />  
+            <v-select
+              v-model="user.roles"
+              :items="roles"
+              filled
+              readonly
+              chips
+              label="Roles del Usuario"
+            ></v-select>                        
             <v-text-field v-model="user.email"
               prepend-icon="mdi-email"
               readonly="" 
@@ -138,11 +145,11 @@ import loadingDialog from '@/components/loading-dialog.vue';
       user : {
         nombreCompleto : "",
         username : "",
+        roles    : {},
         password : "",
         email    : ""
       },
       roles  : [],
-      idroles: [],
       editMode : Boolean,
       validForm  : false,
       confirmPassword : "",
@@ -172,6 +179,7 @@ import loadingDialog from '@/components/loading-dialog.vue';
         this.user.nombreCompleto = item.nombreCompleto
         this.user.username = item.username
         this.user.password = item.password
+        //this.user.roles = item.roles
         this.confirmPassword = item.password
         this.user.email = item.email
         this.editMode = true
@@ -185,6 +193,7 @@ import loadingDialog from '@/components/loading-dialog.vue';
         this.user.username = ""
         this.user.password = ""
         this.user.email = ""
+        this.user.roles = null
         this.confirmPassword = ""
         this.editMode = true
         this.showUserForm = true
@@ -194,6 +203,7 @@ import loadingDialog from '@/components/loading-dialog.vue';
         this.showUserForm = true
         this.user.nombreCompleto = item.nombreCompleto
         this.user.username = item.username
+        //this.user.roles = item.roles
         this.user.password = item.password
         this.confirmPassword = item.password
         this.user.email = item.email        
@@ -248,9 +258,12 @@ import loadingDialog from '@/components/loading-dialog.vue';
       this.loadingMessage = "Obteniendo roles en el sistema"
       axios.get("http://localhost:8081/api/roles")
       .then(response => {
-        for(var rol in response.data.list){
-          this.idroles.push(response.data.list[rol].id);
-          this.roles.push(response.data.list[rol].nombre)
+        var rol
+        for(var index in response.data.list){
+          rol = {}
+          rol["value"] = response.data.list[index].id  
+          rol["text"] = response.data.list[index].nombre
+          this.roles.push(rol)
         }
         this.loadingDialogShow = false
       }).catch(errorResponse => {
