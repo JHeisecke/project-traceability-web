@@ -1,5 +1,13 @@
 <template>
   <div id="app">
+		<v-dialog v-model="loadingDialogShow" persistent="persistent" width="300">
+      <v-card color="primary" dark="dark">
+          <v-card-text>
+            Aguarde...
+            <v-progress-linear color="white" indeterminate="indeterminate" class="mb-0"></v-progress-linear>
+          </v-card-text>
+      </v-card>
+    </v-dialog>    
     <v-data-table
         :headers="headers"
         :items="items"
@@ -106,15 +114,17 @@
 </template>
 
 <script>
+const axios = require('axios');
   export default {
     props: {
       source: String,
       headers: [],
       itemsPerPage: String,
-      items: [],
     },
     data: () => ({ 
       showUserForm : false,
+      loadingDialogShow : false,
+      items: [],
       user : {
         nombreCompleto : null,
         username : null,
@@ -176,7 +186,11 @@
         this.user.email = item.email        
       },
       saveUser() {
-          //axios
+        this.showUserForm = false
+        this.loadingDialogShow = true
+        //axios
+        this.items.push(this.user)
+        this.loadingDialogShow = false
       },
       closeForm() {
         this.showUserForm = !this.showUserForm
@@ -191,7 +205,16 @@
       passwordConfirmationRule() {
         return () =>
           this.newUser.password === this.newUser.confirmPassword || "Las contraseñas son distintas";
-      }
-    }    
+      },
+    }, 
+    mounted: function() {
+      axios.get("http://localhost:8081/api/users")
+        .then(response => {
+          console.log(`success ${response}`)
+          this.items = response.data.list
+        }).catch(errorResponse => {
+          alert(`ERROR ${errorResponse.errorCode} - ${errorResponse.message}`)
+        })
+    }
   }
 </script>
