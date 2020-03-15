@@ -136,10 +136,10 @@ import loadingDialog from '@/components/loading-dialog.vue';
       showUserForm : false,
       loadingDialogShow : false,
       user : {
-        nombreCompleto : null,
-        username : null,
-        password : null,
-        email    : null
+        nombreCompleto : "",
+        username : "",
+        password : "",
+        email    : ""
       },
       roles  : [],
       idroles: [],
@@ -199,6 +199,10 @@ import loadingDialog from '@/components/loading-dialog.vue';
         this.user.email = item.email        
       },
       saveUser() {
+        this.$refs.form.validate();
+        if(!this.validForm) {
+          return false;
+        }        
         this.showUserForm = false
         this.loadingDialogShow = true
         this.loadingMessage = "Guardando Usuario"
@@ -226,7 +230,7 @@ import loadingDialog from '@/components/loading-dialog.vue';
       */
       passwordConfirmationRule() {
         return () =>
-          this.newUser.password === this.newUser.confirmPassword || "Las contraseñas son distintas";
+          this.user.password === this.confirmPassword || "Las contraseñas son distintas";
       },
     }, 
     mounted: function() {
