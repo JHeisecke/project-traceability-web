@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <v-app id="inspire">
     <div id="system" v-if="authenticated">
       <v-navigation-drawer v-model="drawer" app>
         <v-list-item>
@@ -22,13 +22,13 @@
             <template v-slot:activator>
               <v-list-item-title>Administración</v-list-item-title>
             </template>
-               <!--<router-link to="/trazabilidad/administracion/usuarios">-->
+               <router-link to="/trazabilidad/administracion/usuarios">
                 <v-list-item link>
                   <v-list-item-title @click="showingAdminstrationUsers()">
                   Usuarios
                   </v-list-item-title>
                 </v-list-item>
-               <!--</router-link>-->
+               </router-link>
               <v-list-item link>
                 <v-list-item-title @click="showingAdminstrationRoles()">Roles</v-list-item-title>
               </v-list-item>
@@ -87,7 +87,7 @@
         <span class="white--text">&copy; Facultad Politecnica - LCIK - 2020</span>
       </v-footer>    
     </div>
-  </div>
+  </v-app>
 </template>
 
 <script>
