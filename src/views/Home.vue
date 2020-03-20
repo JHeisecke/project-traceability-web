@@ -9,25 +9,11 @@
       
     </v-app-bar>
     <!-- Popup de login, solo se muestra si showLogin es true showLogin viene de Login.vue-->
-    <PopupLogin v-show="showLogin"/>
+    
     <v-content>
-      <v-container
-        class="fill-height"
-        fluid
-      >
-        <v-row
-          align="center"
-          justify="center"
-        >
-          <v-col class="text-center">
-          </v-col>
-        </v-row>
-      </v-container>
+      <PopupLogin v-show="showLogin"/>
     </v-content>
-    <v-footer
-      color="indigo"
-      app
-    >
+    <v-footer color="indigo" app>
       <span class="white--text">&copy; Facultad Politecnica - LCIK - 2020</span>
     </v-footer>
   </v-app>
