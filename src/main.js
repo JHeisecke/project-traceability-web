@@ -10,7 +10,6 @@ import 'vuetify/dist/vuetify.min.css';
 Vue.use(vuetify);
 Vue.config.productionTip = false
 Vue.use(VueRouter)
-//const router = new VueRouter({routes});
 const router = new VueRouter({routes, mode: 'history'});
 
 new Vue({

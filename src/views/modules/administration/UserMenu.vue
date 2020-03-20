@@ -1,9 +1,5 @@
 <template>
-  <v-app id="inspire">
-    <v-content>
-      <vueTableUsers  :headers="headers" :items="items" :itemsPerPage="itemsPerPage"></vueTableUsers>       
-    </v-content>
-  </v-app>
+      <vueTableUsers  :headers="headers" :items="items"></vueTableUsers>       
 </template>
 
 <script>

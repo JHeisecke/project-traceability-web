@@ -1,8 +1,6 @@
 <template>
   <v-app id="inspire">
-    <v-content>
       <vueTableProjects :headers="headers" :items="items" :itemsPerPage="itemsPerPage"></vueTableProjects>   
-    </v-content>
   </v-app>
 </template>
 
@@ -67,7 +65,6 @@
           actions: '',        
         },        
       ],
-    }),
-
+    })
   }
 </script>

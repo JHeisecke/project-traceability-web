@@ -4,7 +4,7 @@
     <v-data-table
         :headers="headers"
         :items-per-page="itemsPerPage"
-        :items="items"
+        :items="listausuarios"
         class="elevation-1">
         <template v-slot:top>
           <v-toolbar flat color="blue darken-1">
@@ -153,6 +153,7 @@ import loadingDialog from '@/components/loading-dialog.vue';
         email    : ""
       },
       roles  : [],
+      listausuarios : [],
       editMode : Boolean,
       validForm  : false,
       confirmPassword : "",
@@ -274,7 +275,8 @@ import loadingDialog from '@/components/loading-dialog.vue';
       //obtencion de usuarios
       axios.get("http://localhost:8081/api/usuarios")
       .then(response => {
-        this.items = response.data.list
+        this.listausuarios = response.data.list
+        console.log(response.data.list  )
       }).catch(errorResponse => {
           alert(`ERROR ${errorResponse.errorCode} - ${errorResponse.message}`)
       })
