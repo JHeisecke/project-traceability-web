@@ -62,10 +62,8 @@
           <v-btn v-if="authenticated" color="primary"><v-icon>mdi-logout</v-icon>SALIR</v-btn>
       </template>
     </v-app-bar>  
-    <v-content>
-      <!--COMPONENTES -->
-      <router-view/>
-    </v-content>
+    <!--COMPONENTES -->
+    <router-view/>
     <v-footer color="indigo" app >
       <span class="white--text">&copy; Facultad Politecnica - LCIK - 2020</span>
     </v-footer>
@@ -105,9 +103,6 @@ export default {
   }),
   components: {
     PopupLogin
-  },
-  props: {
-    source: String,
   },
   methods: {
     setAuthentication(userDTO){
