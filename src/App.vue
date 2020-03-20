@@ -1,6 +1,6 @@
 <template>
   <v-app id="app">
-  <div id="system" v-if="authenticated == 'true'">
+  <div id="system" v-if="authenticated == 'true'" key ="burger-menu">
     <v-navigation-drawer v-model="drawer" app>
       <v-list-item>
         <v-list-item-content>
@@ -109,13 +109,13 @@
     methods: {
       setAuthentication(userDTO){
         if(userDTO.id != null){
+          location.reload()
           localStorage.setItem('authenticated', true)
           this.authenticated = true
-          location.reload()
         }
       },
       showingAdminstrationUsers() {      
-        this.$router.push({name: 'administration-user-menu'});
+        this.$router.push({name: 'administration-user-menu'}).catch({name: 'traceability-menu'});
       },
       showingAdminstrationRoles() {
         this.$router.push({name: 'administration-rol-menu'});
@@ -125,10 +125,12 @@
       },
       logOut(){
         this.$router.push({name: 'home'});
+        localStorage.removeItem('authenticated')
+        this.authenticated = false
+        location.reload()
       },
       showPopupLogin() {
         this.showLogin = !this.showLogin
-        
       },
     }
   }

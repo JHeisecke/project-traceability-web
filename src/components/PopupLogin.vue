@@ -1,6 +1,4 @@
 <template>
-  <v-app id="inspire">
-    <v-content>
       <v-container class="fill-height" fluid>
         <v-row align="center" justify="center">
           <v-col cols="12" sm="8" md="4">
@@ -42,8 +40,6 @@
           </v-col> 
         </v-row>
       </v-container>
-    </v-content>
-  </v-app>
 </template>
 
 
@@ -55,6 +51,7 @@ const axios = require('axios');
       source: String
     },
     data: () => ({
+      usuarioDTO    : null,
       validForm     : false,
       //objetos
       existingUser	: {
@@ -72,6 +69,11 @@ const axios = require('axios');
         v => !!v || "Contraseña es requerida"
       ]
     }),
+    mounted() {
+      if(this.usuarioDTO == 'null'){
+        this.usuarioDTO = localStorage.usuarioDTO;
+      }
+    },
     methods: {
       //Funcion que llamara al servicio de login en backend
       loginUser() {
@@ -82,8 +84,11 @@ const axios = require('axios');
         axios.post("http://localhost:8081/api/login",this.existingUser,{headers:{'X-Requested-With':'XMLHttpRequest'}})
         .then(response => {
           this.$emit("authenticatedUser",response.data.dto)
-          console.log(response)          
-          //this.$router.push({name: 'traceability-menu'});
+          console.log(response)
+          localStorage.setItem('usuarioDTO', JSON.stringify(response.data.dto))
+          location.reload()          
+          this.$router.push({name: 'traceability-menu'});
+          // Persite objeto Usuario en memoria.
         }).catch(errorResponse => {
           console.log(`catcheamos error ${errorResponse}`)
         })
