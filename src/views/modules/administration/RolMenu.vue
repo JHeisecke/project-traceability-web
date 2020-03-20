@@ -96,6 +96,9 @@
       },
       showingProjects() {
         this.$router.push({name: 'traceability-menu'});
+      },
+      showingUsers() {
+        this.$router.push({name: 'administration-user-menu'});
       }
     }
   }
