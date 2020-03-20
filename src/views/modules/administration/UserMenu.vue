@@ -28,7 +28,7 @@
               <v-list-item-title @click="showingUsers()">Usuarios</v-list-item-title>
             </v-list-item>
             <v-list-item link>
-              <v-list-item-title >Roles</v-list-item-title>
+              <v-list-item-title @click="showingRoles()">Roles</v-list-item-title>
             </v-list-item>
             <v-list-item link>
               <v-list-item-title >Permisos</v-list-item-title>
@@ -128,6 +128,9 @@
     methods: {
       showingProjects() {
         this.$router.push({name: 'traceability-menu'});
+      },
+      showingRoles() {
+        this.$router.push({name: 'administration-rol-menu'});
       }
     }
   }
