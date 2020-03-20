@@ -81,8 +81,8 @@ const axios = require('axios');
         }
         axios.post("http://localhost:8081/api/login",this.existingUser,{headers:{'X-Requested-With':'XMLHttpRequest'}})
         .then(response => {
-          console.log(`success ${response}`)
-          this.$router.push({name: 'traceability-menu'});
+          this.$emit("authenticatedUser",response.data.dto)          
+          //this.$router.push({name: 'traceability-menu'});
         }).catch(errorResponse => {
           console.log(`catcheamos error ${errorResponse}`)
         })
