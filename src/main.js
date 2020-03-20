@@ -5,9 +5,7 @@ import vuetify from './plugins/vuetify'
 import routes from './routes'
 import 'roboto-fontface/css/roboto/roboto-fontface.css'
 import '@mdi/font/css/materialdesignicons.css'
-import 'vuetify/dist/vuetify.min.css';
 
-Vue.use(vuetify);
 Vue.config.productionTip = false
 Vue.use(VueRouter)
 //const router = new VueRouter({routes});
