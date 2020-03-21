@@ -86,8 +86,8 @@ const axios = require('axios');
           this.$emit("authenticatedUser",response.data.dto)
           console.log(response)
           localStorage.setItem('usuarioDTO', JSON.stringify(response.data.dto))
-          location.reload()          
           this.$router.push({name: 'traceability-menu'});
+          location.reload()          
           // Persite objeto Usuario en memoria.
         }).catch(errorResponse => {
           alert(errorResponse)
