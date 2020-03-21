@@ -96,12 +96,15 @@
     data: () => ({
       authenticated : false,
       showLogin     : false,
-      drawer        : null
+      drawer        : null,
+      userDTO       : {}
     }),
     mounted: function() {
       // Crea el objeto autenticated en el storage cliente
       if (localStorage.authenticated) {
         this.authenticated = localStorage.authenticated;
+        this.userDTO = JSON.parse(localStorage.usuarioDTO);
+        console.log(this.userDTO)
       }
     },
     methods: {

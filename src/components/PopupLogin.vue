@@ -84,7 +84,8 @@ const axios = require('axios');
         axios.post("http://localhost:8081/api/login",this.existingUser,{headers:{'X-Requested-With':'XMLHttpRequest'}})
         .then(response => {
           this.$emit("authenticatedUser",response.data.dto)
-          console.log(response)
+          //Borramos el atributo password del objeto usuarioDTO devuelto por el backend y guardamos en localStorage 
+          delete response.data.dto.password;
           localStorage.setItem('usuarioDTO', JSON.stringify(response.data.dto))
           this.$router.push({name: 'traceability-menu'});
           location.reload()          
