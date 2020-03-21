@@ -4,14 +4,13 @@
     <v-data-table
         :headers="headers"
         :items-per-page="itemsPerPage"
-        :items="items"
+        :items="listausuarios"
         class="elevation-1">
         <template v-slot:top>
           <v-toolbar flat color="blue darken-1">
             <v-toolbar-title>USUARIOS</v-toolbar-title>
             <v-divider hidden inset vertical></v-divider>
             <v-spacer></v-spacer>            
-            <v-btn @click="createUser()" color="indigo accent-2">NEW USER</v-btn>
           </v-toolbar>
         </template>
         <template v-slot:item.actions="{ item }">
@@ -30,6 +29,8 @@
               </tr>
         </template>
     </v-data-table>
+              <v-btn @click="createUser()" color="indigo accent-2">NEW USER</v-btn>
+
     <!-- DIALOGO CON EL FORMULARIO PARA CREACION/EDICION DE USUARIOS-->
     <v-dialog v-model="showUserForm" persistent>      
       <v-card class="elevation-12">
@@ -135,8 +136,6 @@ import loadingDialog from '@/components/loading-dialog.vue';
   export default {
     props: {
       source: String,
-      headers: [],
-      itemsPerPage: String,
     },
     components : {
       loadingDialog
@@ -152,6 +151,19 @@ import loadingDialog from '@/components/loading-dialog.vue';
         email    : ""
       },
       roles  : [],
+      listausuarios : [],
+      headers: [
+        {
+          text: 'Username',
+          align: 'start',
+          sortable: false,
+          value: 'username',
+        },
+        { text: 'Nombre Completo', value: 'nombreCompleto' },
+        { text: 'E-mail', value: 'email' },
+        { text: 'Acciones', value: 'actions' }
+      ],
+      itemsPerPage: "5",      
       editMode : Boolean,
       validForm  : false,
       confirmPassword : "",
@@ -273,7 +285,8 @@ import loadingDialog from '@/components/loading-dialog.vue';
       //obtencion de usuarios
       axios.get("http://localhost:8081/api/usuarios")
       .then(response => {
-        this.items = response.data.list
+        this.listausuarios = response.data.list
+        console.log(response.data.list  )
       }).catch(errorResponse => {
           alert(`ERROR ${errorResponse.errorCode} - ${errorResponse.message}`)
       })
