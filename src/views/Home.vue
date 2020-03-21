@@ -2,21 +2,11 @@
   <v-app id="inspire">
     <v-app-bar app color="indigo" dark>
       <v-toolbar-title>Project Traceability</v-toolbar-title>
-      
     </v-app-bar>
-    <!-- Popup de login, solo se muestra si showLogin es true showLogin viene de Login.vue-->
-    
-    <v-content>
-      <PopupLogin v-show="showLogin"/>
-    </v-content>
-    <v-footer color="indigo" app>
-      <span class="white--text">&copy; Facultad Politecnica - LCIK - 2020</span>
-    </v-footer>
   </v-app>
 </template>
 
 <script>
-import PopupLogin from '@/components/PopupLogin.vue';
   export default {
     props: {
       source: String,
@@ -24,9 +14,6 @@ import PopupLogin from '@/components/PopupLogin.vue';
     data: () => ({
       showLogin     : false,
     }),
-    components: {
-        PopupLogin,
-    },
     methods: {
       showPopupLogin() {
         this.showLogin = !this.showLogin
