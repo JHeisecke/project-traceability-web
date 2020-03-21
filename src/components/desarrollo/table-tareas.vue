@@ -1,17 +1,35 @@
 <template>
-  <v-app id="inspire">
-      <vueTableProjects :headers="headers" :items="items" :itemsPerPage="itemsPerPage"></vueTableProjects>   
-  </v-app>
+<div id="app">
+  <v-data-table
+      :headers="headers"
+      :items="listatareas"
+      :items-per-page="itemsPerPage"
+      class="elevation-1">
+
+      <template v-slot:item.estate="{ item }">
+        <v-chip :color="getColor(item.estate)" dark>{{ item.estate }}</v-chip>
+      </template>
+      
+      <template v-slot:item.actions="{ item }">
+            <tr>
+              <td>                 
+                  <v-btn class="mx-1" fab dark small color="blue" @click="editProject(item.projectCode)">
+                      <v-icon dark>mdi-lead-pencil</v-icon>
+                  </v-btn>                                           
+              </td>
+            </tr>
+      </template>
+  </v-data-table>
+</div>
 </template>
 
 <script>
-  import vueTableProjects from '@/components/vue-table-projects.vue';
   export default {
-    components: {
-        vueTableProjects,
-    },
     props: {
       source: String,
+      headers: [],
+      itemsPerPage: String,
+      items: [],
     },
     data: () => ({
       drawer: null,
@@ -27,7 +45,7 @@
           { text: 'Estado', value: 'estate' },
           { text: 'Acciones', value: 'actions' },
       ],
-      items: [
+      listatareas: [
         {
           projectCode: '1',
           projectName: 'Aplicacion iOS para BNF',
@@ -65,6 +83,22 @@
           actions: '',        
         },        
       ],
-    })
+    }),
+    methods: {
+      getColor (estate) {
+        if (estate == "ANÁLISIS") return 'red'
+        else if (estate == "EN CURSO") return 'blue'
+        else return 'green'
+      },
+      editProject (codigo) {
+        alert(`estas editando el proyecto n°${codigo}`)
+      },
+      listProjectUsers (codigo) {
+        alert(`estas viendo los usuarios del proyecto n°${codigo}`)
+      },
+      viewProject (codigo) {
+        alert(`estas viendo el proyecto n°${codigo}`)
+      },
+    },
   }
 </script>
