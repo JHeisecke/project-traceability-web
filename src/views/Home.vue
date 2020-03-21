@@ -2,10 +2,6 @@
   <v-app id="inspire">
     <v-app-bar app color="indigo" dark>
       <v-toolbar-title>Project Traceability</v-toolbar-title>
-      <template>
-        <v-spacer />
-          <v-btn color="primary" @click="showPopupLogin()">Ingresar</v-btn>
-      </template>
       
     </v-app-bar>
     <!-- Popup de login, solo se muestra si showLogin es true showLogin viene de Login.vue-->

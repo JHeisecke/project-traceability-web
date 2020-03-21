@@ -61,13 +61,11 @@
     </v-content>
   </div>
   <!-- LA PANTALLA LOGIN SOLO SE MUESTRA SI NO ESTA LOGGEADO-->
-    <div id="login" v-else-if="!autenticated" key="login">
+    <div id="login" v-else key="login">
       <v-app-bar app color="indigo" dark>
         <v-toolbar-title>Project Traceability</v-toolbar-title>
-        <template>
-          <v-spacer />
-            <v-btn color="primary" @click="showPopupLogin()">Ingresar</v-btn>
-        </template>
+        <v-spacer />
+        <v-btn color="primary" @click="showPopupLogin()">Ingresar</v-btn>
         
       </v-app-bar>
       <!-- Popup de login, solo se muestra si showLogin es true showLogin viene de Login.vue-->
