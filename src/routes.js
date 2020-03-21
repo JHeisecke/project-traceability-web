@@ -2,8 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from './views/Home.vue'
 import TraceabilityMenu from './views/TraceabilityMenu.vue'
-//import UserMenu from './components/administration/vue-table-users.vue'
-import UserMenu from './views/modules/administration/UserMenu.vue'
+import UserMenu from './components/administration/vue-table-users.vue'
 import RolMenu from './components/administration/vue-table-rol.vue'
 
 

@@ -136,8 +136,6 @@ import loadingDialog from '@/components/loading-dialog.vue';
   export default {
     props: {
       source: String,
-      headers: [],
-      itemsPerPage: String,
     },
     components : {
       loadingDialog
@@ -154,6 +152,18 @@ import loadingDialog from '@/components/loading-dialog.vue';
       },
       roles  : [],
       listausuarios : [],
+      headers: [
+        {
+          text: 'Username',
+          align: 'start',
+          sortable: false,
+          value: 'username',
+        },
+        { text: 'Nombre Completo', value: 'nombreCompleto' },
+        { text: 'E-mail', value: 'email' },
+        { text: 'Acciones', value: 'actions' }
+      ],
+      itemsPerPage: "5",      
       editMode : Boolean,
       validForm  : false,
       confirmPassword : "",
