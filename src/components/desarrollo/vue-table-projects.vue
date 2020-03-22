@@ -1,5 +1,6 @@
 <template>
   <div id="projects">
+    <loadingDialog :loadingMessage="loadingMessage" :loadingDialogShow="loadingDialogShow"></loadingDialog>
     <div class="text-center pt-2">
         <v-btn color="primary" class="mr-2" @click="createProject()">NUEVO PROJECTO</v-btn>
     </div>
@@ -69,16 +70,15 @@
                   <v-text-field
                     v-model="project.fechaInicio"
                     label="Fecha Inicio"
-                    hint="DD/MM/YYYY format"
+                    hint="YYYY/MM/DD format"
                     persistent-hint
                     prepend-icon="event"
-                    @blur="project.fechaInicio = parseDate(project.fechaInicio)"
+                    @blur="project.fechaInicio = formatDate(project.fechaInicio)"
                     v-on="on"
                   ></v-text-field>
                 </template>
                 <v-date-picker v-model="project.fechaInicio" no-title @input="menu1 = false"></v-date-picker>
               </v-menu>
-              <p>Date in ISO format: <strong>{{ project.fechaInicio}}</strong></p>
             </v-col>
             <!--Fechas Fin-->
             <v-col cols="12" lg="6">
@@ -92,16 +92,15 @@
                   <v-text-field
                     v-model="project.fechaFin"
                     label="Fecha Fin"
-                    hint="DD/MM/YYYY format"
+                    hint="YYYY/MM/DD format"
                     persistent-hint
                     prepend-icon="event"
-                    @blur="project.fechaFin = parseDate(project.fechaFin)"
+                    @blur="project.fechaFin = formatDate(project.fechaFin)"
                     v-on="on"
                   ></v-text-field>
                 </template>
                 <v-date-picker v-model="project.fechaFin" no-title @input="menu2 = false"></v-date-picker>
               </v-menu>
-              <p>Date in ISO format: <strong>{{ project.fechaFin }}</strong></p>
             </v-col>
           </v-row>
               <v-row align="center">
@@ -137,12 +136,17 @@
 </template>
 
 <script>
+import loadingDialog from '@/components/loading-dialog.vue';
 const axios = require('axios');
   export default {
+    components: {
+      loadingDialog
+    },
     props: {
       source: String,
     },
     data: () => ({
+      loadingDialogShow : false,
       //Permite seleccionar una fecha nueva en menuDate
       date: new Date().toISOString().substr(0, 10),
       validForm  : false,
@@ -211,8 +215,10 @@ const axios = require('axios');
       },
       formatDate (date) {
           if (!date) return null
+          date = date.substring(0, 10)
           const [year, month, day] = date.split('-')
-          return `${day}/${month}/${year}`
+          //console.log(date)
+          return `${year}-${month}-${day}`
       },
       parseDate (date) {
           if (!date) return null
@@ -237,26 +243,26 @@ const axios = require('axios');
         alert(`estas editando el proyecto ${item.nombre}`)
         this.editedProject = item.id
         // Formato de Fecha CAMBIA FORMATO ENVIADO POR EL BACK
+        console.log(item)
         if (item.fechaInicio != null) {
-          item.fechaInicio = this.parseDate(item.fechaInicio)
+          item.fechaInicio = this.formatDate(item.fechaInicio)
         }
         if (item.fechaFin != null) {
-          item.fechaFin = this.parseDate(item.fechaFin)
+          item.fechaFin = this.formatDate(item.fechaFin)
         }
         this.project = Object.assign({}, item)
         this.editMode = true
         this.showProjectForm = true
       },
-      listProjectUsers (codigo) {
-        alert(`estas viendo los usuarios del proyecto n°${codigo}`)
+      listProjectUsers (project) {
+        alert(`estas viendo los usuarios del proyecto "${project.nombre}"`)
       },
-      viewProject (codigo) {
-        alert(`estas viendo el proyecto n°${codigo}`)
+      viewProject (project) {
+        alert(`estas viendo el proyecto "${project.nombre}"`)
       },
       saveProject() {
         if (this.editedProject > -1) {
           console.log(this.project)
-          Object.assign(this.listProjects[this.project.id], this.project)
           //Guarda los cambios en la BD
           this.saveProjectBackEnd(this.project) 
         } else {
@@ -270,25 +276,43 @@ const axios = require('axios');
         this.editMode = false
       },
       saveProjectBackEnd(project) {
+          this.loadingDialogShow = true
+          this.loadingMessage = "Guardando Cambios"
+          project.fechaAlta = this.formatDate(project.fechaAlta)
+          console.log(project.fechaAlta)
+          console.log(project)
           axios.post("http://localhost:8081/api/proyecto/save",project,{headers:{'X-Requested-With':'XMLHttpRequest'}})
           .then(response => {
-              console.log(response)
+              console.log(response.data.dto)
               this.loadingDialogShow = false
-              window.location.reload()
+              //window.location.reload()
+              this.refreshList()
             }).catch(errorResponse => {
               this.loadingDialogShow = false
               console.log(errorResponse)
               alert(`ERROR ${errorResponse.errorCode} - ${errorResponse}`)
             }) 
+      },
+      refreshList(){
+        axios.get("http://localhost:8081/api/proyectos")
+        .then(response => {
+          console.log(response.data.list)
+          this.listProjects = response.data.list
+        }).catch(errorResponse => {
+            this.loadingDialogShow = false
+            alert(`ERROR ${errorResponse.errorCode} - ${errorResponse.message}`)
+        })
       }
     },
     mounted: function() {
+      this.loadingDialogShow = true
+      this.loadingMessage = "Obteniendo proyectos"
       axios.get("http://localhost:8081/api/proyectos")
       .then(response => {
-        console.log(response.data.dto)
-        this.listProjects = response.data.dto
+        this.listProjects = response.data.list
+        this.loadingDialogShow = false
       }).catch(errorResponse => {
-          //this.loadingDialogShow = false
+          this.loadingDialogShow = false
           alert(`ERROR ${errorResponse.errorCode} - ${errorResponse.message}`)
       })
     }
