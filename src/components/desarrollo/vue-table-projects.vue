@@ -25,6 +25,9 @@
                       </v-btn>                  
                       <v-btn class="mx-1" fab dark small color="blue" @click="listProjectUsers(item)">
                           <v-icon dark>mdi-account-edit</v-icon>
+                      </v-btn>
+                      <v-btn class="mx-1" fab dark small color="red" @click="deleteProject(item)">
+                          <v-icon dark>restore_from_trash</v-icon>
                       </v-btn>                           
                 </td>
               </tr>
@@ -260,6 +263,20 @@ const axios = require('axios');
       viewProject (project) {
         alert(`estas viendo el proyecto "${project.nombre}"`)
       },
+      deleteProject (project) {
+        alert(`estas borrando el proyecto "${project.nombre}"`)
+        var URL = `http://localhost:8081/api/proyecto/delete/${project.id}`
+        console.log(URL)
+        //Borra proyecto por ID
+        axios.post(URL)
+          .then(response => {
+              console.log(response.data.dto)
+              this.refreshList()
+            }).catch(errorResponse => {
+              console.log(errorResponse)
+              alert(`ERROR ${errorResponse.errorCode} - ${errorResponse}`)
+            }) 
+      },
       saveProject() {
         if (this.editedProject > -1) {
           console.log(this.project)
@@ -285,7 +302,6 @@ const axios = require('axios');
           .then(response => {
               console.log(response.data.dto)
               this.loadingDialogShow = false
-              //window.location.reload()
               this.refreshList()
             }).catch(errorResponse => {
               this.loadingDialogShow = false
