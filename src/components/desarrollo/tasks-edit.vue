@@ -4,13 +4,13 @@
     
     <v-data-table
       :headers="headers"
-      :items="listaroles"
+      :items="listatareas"
       sort-by="calories"
       class="elevation-1"
     >
       <template v-slot:top>
         <v-toolbar flat color="white">
-          <v-toolbar-title>ROLES</v-toolbar-title>
+          <v-toolbar-title>TAREAS DEL PROYECTO {{codigo}}</v-toolbar-title>
           <!-- Barra Vertical -->
           <v-divider lass="mx-4" inset vertical></v-divider>
           <v-spacer></v-spacer>
@@ -36,7 +36,7 @@
       </template>
     </v-data-table>
     <div class="text-center pt-2">
-        <v-btn color="primary" class="mr-2" @click="createRole()">NEW ROLE</v-btn>
+        <v-btn color="primary" class="mr-2" @click="createRole()">NUEVA TAREA</v-btn>
     </div>
     <!--Form crear Role--->
     <v-dialog width=800 v-model="showRoleForm" persistent>      
@@ -64,24 +64,24 @@
               name="descripcion" 
               type="text" />
               <v-row align="center">
-                <v-col cols="12" sm="6">
-                  <v-subheader v-text="'PERMISOS'"></v-subheader>
-                </v-col>
-                <v-col cols="12" sm="6">
-                  <v-select
-                    v-model="rol.permisos"
-                    :items="listpermissions"
-                    label="Select"
-                    multiple
-                    chips
-                    hint="Que permisos desea asignar?"
-                    persistent-hint
-                  ></v-select>
-                </v-col>
-              </v-row>
+      <v-col cols="12" sm="6">
+        <v-subheader v-text="'PERMISOS'"></v-subheader>
+      </v-col>
+      <v-col cols="12" sm="6">
+        <v-select
+          v-model="rol.permisos"
+          :items="listpermissions"
+          label="Select"
+          multiple
+          chips
+          hint="Que permisos desea asignar?"
+          persistent-hint
+        ></v-select>
+      </v-col>
+    </v-row>
           </v-form>
           <div v-else>            
-        </div>
+          </div>
         </v-card-text>             
         <v-card-actions>
           <v-spacer />
@@ -109,15 +109,15 @@ const axios = require('axios');
         descripcion : null,
         permisos: [],
       },
-      listpermissions: [
+      listaEstados: [
         'ABM Proyecto', 'ABM Usuario', 'ABM Permisos',
       ],
       headers: [
-        { text: 'Nombre Rol', value: 'nombre' },
+        { text: 'Nombre Tarea', value: 'nombre' },
         { text: 'Descripción', value: 'descripcion' },
         { text: 'Actions', value: 'actions', sortable: false },
       ],
-      listaroles: [],
+      listatareas: [],
       /*Almacena permisos por rol*/
       permisosrol: [],
       editedRol: -1,
@@ -130,11 +130,8 @@ const axios = require('axios');
         val || this.close()
       },
     },
-    created () {
-      this.initialize()
-    },
     methods: {
-      createRole(){
+      createTask(){
         this.rol.id = ""
         this.rol.nombre = ""
         this.rol.descripcion = ""
@@ -142,30 +139,30 @@ const axios = require('axios');
         this.editMode = true
         this.showRoleForm = true
       },
-      saveRole(){
+      saveTask(){
         if (this.editedRol > -1) {
-          Object.assign(this.listaroles[this.editedRol], this.rol)
+          Object.assign(this.listatareas[this.editedRol], this.rol)
           //axios update
         } else {
-          this.listaroles.push(this.rol)
+          this.listatareas.push(this.rol)
           //axios save
         }
         this.close()
         this.showRoleForm = false
         this.editMode = false
       },
-      editRole (item) {
+      editTask (item) {
         //alert(`estas editando el Rol ${item.nombre}`)
-        this.editedRol = this.listaroles.indexOf(item)
+        this.editedRol = this.listatareas.indexOf(item)
         this.rol = Object.assign({}, item)
         this.editMode = true
         this.showRoleForm = true
         //axios edit role
       },
-      deleteRole (item) {
+      deleteTask (item) {
         //alert(`estas borrando el Rol ${item.nombre}`)
-        const index = this.listaroles.indexOf(item)
-        confirm('Are you sure you want to delete this role?') && this.listaroles.splice(index, 1)
+        const index = this.listatareas.indexOf(item)
+        confirm('Are you sure you want to delete this role?') && this.listatareas.splice(index, 1)
         //axios delete role
       },
       close () {
@@ -180,8 +177,8 @@ const axios = require('axios');
     mounted: function() {
       axios.get("http://localhost:8081/api/roles")
       .then(response => {
-        console.log(`${response.data.listaroles}`)
-        this.listaroles = response.data.list
+        console.log(`${response.data.listatareas}`)
+        this.listatareas = response.data.list
       }).catch(errorResponse => {
           this.loadingDialogShow = false
           alert(`ERROR ${errorResponse.errorCode} - ${errorResponse.message}`)

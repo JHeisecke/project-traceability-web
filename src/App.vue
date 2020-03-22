@@ -40,7 +40,7 @@
               <v-list-item-title @click="showingProjects()">Proyectos</v-list-item-title>
             </v-list-item>
             <v-list-item link>
-              <v-list-item-title >Items</v-list-item-title>
+              <v-list-item-title @click="showingTaskMenu()">Tareas</v-list-item-title>
             </v-list-item>
         </v-list-group>
       </v-list>
@@ -123,6 +123,9 @@
       },
       showingProjects() {
         this.$router.push({name: 'traceability-menu'});
+      },
+      showingTaskMenu() {
+        this.$router.push({name: 'desarrollo-task-menu'});
       },
       logOut(){
         this.$router.push({name: 'home'});
