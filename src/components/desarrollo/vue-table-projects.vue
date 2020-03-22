@@ -1,100 +1,241 @@
 <template>
   <div id="projects">
+    <div class="text-center pt-2">
+        <v-btn color="primary" class="mr-2" @click="createProject()">NUEVO PROJECTO</v-btn>
+    </div>
     <v-data-table
         :headers="headers"
-        :items="projects"
+        :items="listProjects"
         :items-per-page="itemsPerPage"
         class="elevation-1">
         
-        <template v-slot:item.estate="{ item }">
-          <v-chip :color="getColor(item.estate)" dark>{{ item.estate }}</v-chip>
+        <template v-slot:item.estado="{ item }">
+          <v-chip :color="getColor(item.estado)" dark>{{ item.estado }}</v-chip>
         </template>
 
         <template v-slot:item.actions="{ item }">
               <tr>
                 <td>
-                      <v-btn class="mx-1" fab dark small color="blue" @click="viewProject(item.projectCode)">
+                      <v-btn class="mx-1" fab dark small color="blue" @click="viewProject(item)">
                           <v-icon dark>mdi-eye</v-icon>
                       </v-btn>                 
-                      <v-btn class="mx-1" fab dark small color="blue" @click="editProject(item.projectCode)">
+                      <v-btn class="mx-1" fab dark small color="blue" @click="editProject(item)">
                           <v-icon dark>mdi-lead-pencil</v-icon>
                       </v-btn>                  
-                      <v-btn class="mx-1" fab dark small color="blue" @click="listProjectUsers(item.projectCode)">
+                      <v-btn class="mx-1" fab dark small color="blue" @click="listProjectUsers(item)">
                           <v-icon dark>mdi-account-edit</v-icon>
                       </v-btn>                           
                 </td>
               </tr>
         </template>
     </v-data-table>
+
+    <!--Form crear Proyecto--->
+    <v-dialog width=800 v-model="showProjectForm" persistent>      
+      <v-card class="elevation-12">
+        <v-toolbar color="primary" dark flat >
+          <v-toolbar-title>PROYECTO</v-toolbar-title>
+          <v-spacer/>
+          <v-tooltip bottom>
+          </v-tooltip>
+        </v-toolbar>
+        <v-card-text>
+          <v-form v-model="validForm" ref="form" v-if="editMode">
+            <v-text-field  
+              v-model="project.nombre"
+              label="Nombre Proyecto" 
+              prepend-icon="person"
+              :rules="nameRolRules"
+              name="nombre" 
+              type="text" />
+            <v-text-field 
+              v-model="project.descripcion"
+              label="Descripcion" 
+              prepend-icon="person"
+              :rules="userRolRules"
+              name="descripcion" 
+              type="text" />
+          <!--Seccion de Fechas-->
+          <v-row>
+            <v-col cols="12" lg="6">
+              <v-menu ref="menu1" v-model="fechaInicio"
+                :close-on-content-click="false"
+                transition="scale-transition"
+                offset-y
+                max-width="290px"
+                min-width="290px" >
+                <template v-slot:activator="{ on }">
+                  <v-text-field
+                    v-model="dateFormatted"
+                    label="Fecha Inicio"
+                    hint="MM/DD/YYYY format"
+                    persistent-hint
+                    prepend-icon="event"
+                    @blur="date = parseDate(dateFormatted)"
+                    v-on="on"
+                  ></v-text-field>
+                </template>
+                <v-date-picker v-model="date" no-title @input="menu1 = false"></v-date-picker>
+              </v-menu>
+              <p>Date in ISO format: <strong>{{ date }}</strong></p>
+            </v-col>
+            <v-col cols="12" lg="6">
+              <v-menu ref="menu1" v-model="fechaInicio"
+                :close-on-content-click="false"
+                transition="scale-transition"
+                offset-y
+                max-width="290px"
+                min-width="290px" >
+                <template v-slot:activator="{ on }">
+                  <v-text-field
+                    v-model="dateFormatted"
+                    label="Fecha Fin"
+                    hint="MM/DD/YYYY format"
+                    persistent-hint
+                    prepend-icon="event"
+                    @blur="date = parseDate(dateFormatted)"
+                    v-on="on"
+                  ></v-text-field>
+                </template>
+                <v-date-picker v-model="date" no-title @input="menu1 = false"></v-date-picker>
+              </v-menu>
+              <p>Date in ISO format: <strong>{{ date }}</strong></p>
+            </v-col>
+          </v-row>
+              <v-row align="center">
+                  <v-select
+                    v-model="project.idLider"
+                    :items="listTeamLider"
+                    label="TEAM LEADER"
+                    persistent-hint
+                    item-value="id"
+                    item-text="nombre"
+                  ></v-select>
+                <v-col cols="12" sm="6">
+                  <v-select
+                    v-model="project.estado"
+                    :items="listEstados"
+                    label="ESTADO"
+                    hint="Que estado desea asignar?"
+                    persistent-hint
+                  ></v-select>
+                </v-col>
+              </v-row>
+          </v-form>
+        </v-card-text>             
+        <v-card-actions>
+          <v-spacer />
+          <v-btn color="success" @click="saveProject()">Guardar</v-btn>
+          <v-btn color="error" @click="close()">Cancelar</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
   </div>
 </template>
 
 <script>
+const axios = require('axios');
   export default {
     props: {
       source: String,
     },
     data: () => ({
-      drawer: null,
-      itemsPerPage: "5",
+      //Permite seleccionar una fecha nueva en menuDate
+      date: new Date().toISOString().substr(0, 10),
+      validForm  : false,
+      showProjectForm: false,
+      itemsPerPage: 10,
+      editedProject: -1,
+      listProjects: [],
+      TeamLider : {
+        id : null,
+        nombre : null
+      },
+      project : {
+        id : null,
+        nombre : null,
+        estado : null,
+        fechaInicio : null,
+        fechaFin : null,
+        idLider : null,
+        descripcion : null,
+      },
       headers: [
           {
             text: 'Código',
             align: 'start',
             sortable: false,
-            value: 'projectCode',
+            value: 'id',
           },
-          { text: 'Proyecto', value: 'projectName' },
-          { text: 'Estado', value: 'estate' },
+          { text: 'Proyecto', value: 'nombre' },
+          { text: 'Estado', value: 'estado' },
           { text: 'Acciones', value: 'actions' },
       ],
-      projects: [
-          {
-            projectCode: '1',
-            projectName: 'Aplicacion iOS para BNF',
-            estate: 'EN CURSO',
-            actions: '',
-          },
-          {
-            projectCode: '2',
-            projectName: 'Herramienta de Evaluacion de PYMES',
-            estate: 'EN CURSO',
-            actions: '',
-          },
-          {
-            projectCode: '3',
-            projectName: 'Pago de servicios automático',
-            estate: 'EN PRODUCCIÓN',
-            actions: '',        
-          },
-          {
-            projectCode: '4',
-            projectName: 'Herramienta CRM 2.0',
-            estate: 'EN PRODUCCIÓN',
-            actions: '',        
-          },
-          {
-            projectCode: '5',
-            projectName: 'Encuestas para clientes de la web',
-            estate: 'ANÁLISIS',
-            actions: '',          
-          },
-          {
-            projectCode: '6',
-            projectName: 'Prestamos desde ATM',
-            estate: 'EN PRODUCCIÓN',
-            actions: '',        
-          },        
-        ]
+      listEstados: [
+        'EN CURSO', 'EN PRODUCCIÓN', 'ANÁLISIS'
+      ],
+      listTeamLider: [
+        {
+          id : 0,
+          nombre: 'fare',    
+        },
+        {
+          id : 1,
+          nombre: 'javier',    
+        },
+        {
+          id : 2,
+          nombre: 'test',    
+        }
+      ]
     }),
-    methods: {
-      getColor (estate) {
-        if (estate == "ANÁLISIS") return 'red'
-        else if (estate == "EN CURSO") return 'blue'
-        else return 'green'
+    watch: {
+      date () {
+        this.dateFormatted = this.formatDate(this.date)
       },
-      editProject (codigo) {
-        alert(`estas editando el proyecto n°${codigo}`)
+    },
+    methods: {
+      createProject(){
+        this.project.id = null
+        this.project.nombre = ""
+        this.project.descripcion = ""
+        this.project.idLider = null
+        this.project.estado = ""
+        this.project.fechaInicio = null
+        this.project.fechaFin = null
+        this.editMode = true
+        this.showProjectForm = true
+      },
+      formatDate (date) {
+          if (!date) return null
+          const [year, month, day] = date.split('-')
+          return `${month}/${day}/${year}`
+      },
+      parseDate (date) {
+          if (!date) return null
+          const [month, day, year] = date.split('/')
+          return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
+      },
+      close () {
+        this.showProjectForm = false
+        setTimeout(() => {
+          this.editedItem = Object.assign({}, this.defaultItem)
+          this.editedProject = -1
+        }, 300)
+      },
+      getColor (estado) {
+        if (estado == "ANÁLISIS") return 'green'
+        else if (estado == "EN CURSO") return 'blue'
+        else return 'red'
+      },
+      // Permite editar un Poryecto existente usando el Form de creacion
+      editProject (item) {
+        alert(`estas editando el proyecto ${item.nombre}`)
+        this.editedProject = item.id
+        this.project = Object.assign({}, item)
+        this.editMode = true
+        this.showProjectForm = true
       },
       listProjectUsers (codigo) {
         alert(`estas viendo los usuarios del proyecto n°${codigo}`)
@@ -102,6 +243,50 @@
       viewProject (codigo) {
         alert(`estas viendo el proyecto n°${codigo}`)
       },
+      saveProject() {
+        if (this.editedProject > -1) {
+          console.log(this.listProjects[this.project.id])
+          console.log(this.project)
+          Object.assign(this.listProjects[this.project.id], this.project)
+          //Guarda los cambios en la BD
+          axios.post("http://localhost:8081/api/proyecto/save",this.project,{headers:{'X-Requested-With':'XMLHttpRequest'}})
+          .then(response => {
+              console.log(response)
+              this.loadingDialogShow = false
+              window.location.reload()
+            }).catch(errorResponse => {
+              this.loadingDialogShow = false
+            alert(`ERROR ${errorResponse.errorCode} - ${errorResponse}`)
+            }) 
+        } else {
+          this.listProjects.push(this.project)
+          //Guarda los cambios en la BD
+          axios.post("http://localhost:8081/api/proyecto/save",this.project,{headers:{'X-Requested-With':'XMLHttpRequest'}})
+          .then(response => {
+              console.log(response)
+              this.loadingDialogShow = false
+              window.location.reload()
+            }).catch(errorResponse => {
+              this.loadingDialogShow = false
+              console.log(errorResponse)
+              alert(`ERROR ${errorResponse.errorCode} - ${errorResponse}`)
+            }) 
+        }
+        this.close()
+        this.showRoleForm = false
+        this.editMode = false
+        console.log(this.project) 
+      },
+    },
+    mounted: function() {
+      axios.get("http://localhost:8081/api/proyectos")
+      .then(response => {
+        console.log(response.data.dto)
+        this.listProjects = response.data.dto
+      }).catch(errorResponse => {
+          //this.loadingDialogShow = false
+          alert(`ERROR ${errorResponse.errorCode} - ${errorResponse.message}`)
+      })
     }
   }
 </script>

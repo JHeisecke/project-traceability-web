@@ -64,24 +64,24 @@
               name="descripcion" 
               type="text" />
               <v-row align="center">
-      <v-col cols="12" sm="6">
-        <v-subheader v-text="'PERMISOS'"></v-subheader>
-      </v-col>
-      <v-col cols="12" sm="6">
-        <v-select
-          v-model="rol.permisos"
-          :items="listpermissions"
-          label="Select"
-          multiple
-          chips
-          hint="Que permisos desea asignar?"
-          persistent-hint
-        ></v-select>
-      </v-col>
-    </v-row>
+                <v-col cols="12" sm="6">
+                  <v-subheader v-text="'PERMISOS'"></v-subheader>
+                </v-col>
+                <v-col cols="12" sm="6">
+                  <v-select
+                    v-model="rol.permisos"
+                    :items="listpermissions"
+                    label="Select"
+                    multiple
+                    chips
+                    hint="Que permisos desea asignar?"
+                    persistent-hint
+                  ></v-select>
+                </v-col>
+              </v-row>
           </v-form>
           <div v-else>            
-          </div>
+        </div>
         </v-card-text>             
         <v-card-actions>
           <v-spacer />
