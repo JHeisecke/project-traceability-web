@@ -56,9 +56,10 @@
               name="descripcion" 
               type="text" />
           <!--Seccion de Fechas-->
+          <!--Fechas Inicio-->
           <v-row>
             <v-col cols="12" lg="6">
-              <v-menu ref="menu1" v-model="fechaInicio"
+              <v-menu ref="menu1"
                 :close-on-content-click="false"
                 transition="scale-transition"
                 offset-y
@@ -66,21 +67,22 @@
                 min-width="290px" >
                 <template v-slot:activator="{ on }">
                   <v-text-field
-                    v-model="dateFormatted"
+                    v-model="project.fechaInicio"
                     label="Fecha Inicio"
-                    hint="MM/DD/YYYY format"
+                    hint="DD/MM/YYYY format"
                     persistent-hint
                     prepend-icon="event"
-                    @blur="date = parseDate(dateFormatted)"
+                    @blur="project.fechaInicio = parseDate(project.fechaInicio)"
                     v-on="on"
                   ></v-text-field>
                 </template>
-                <v-date-picker v-model="date" no-title @input="menu1 = false"></v-date-picker>
+                <v-date-picker v-model="project.fechaInicio" no-title @input="menu1 = false"></v-date-picker>
               </v-menu>
-              <p>Date in ISO format: <strong>{{ date }}</strong></p>
+              <p>Date in ISO format: <strong>{{ project.fechaInicio}}</strong></p>
             </v-col>
+            <!--Fechas Fin-->
             <v-col cols="12" lg="6">
-              <v-menu ref="menu1" v-model="fechaInicio"
+              <v-menu ref="menu2"
                 :close-on-content-click="false"
                 transition="scale-transition"
                 offset-y
@@ -88,18 +90,18 @@
                 min-width="290px" >
                 <template v-slot:activator="{ on }">
                   <v-text-field
-                    v-model="dateFormatted"
+                    v-model="project.fechaFin"
                     label="Fecha Fin"
-                    hint="MM/DD/YYYY format"
+                    hint="DD/MM/YYYY format"
                     persistent-hint
                     prepend-icon="event"
-                    @blur="date = parseDate(dateFormatted)"
+                    @blur="project.fechaFin = parseDate(project.fechaFin)"
                     v-on="on"
                   ></v-text-field>
                 </template>
-                <v-date-picker v-model="date" no-title @input="menu1 = false"></v-date-picker>
+                <v-date-picker v-model="project.fechaFin" no-title @input="menu2 = false"></v-date-picker>
               </v-menu>
-              <p>Date in ISO format: <strong>{{ date }}</strong></p>
+              <p>Date in ISO format: <strong>{{ project.fechaFin }}</strong></p>
             </v-col>
           </v-row>
               <v-row align="center">
@@ -202,7 +204,7 @@ const axios = require('axios');
         this.project.descripcion = ""
         this.project.idLider = null
         this.project.estado = ""
-        this.project.fechaInicio = null
+        this.project.fechaInicio = this.date //Por defecto toma fecha del sistema
         this.project.fechaFin = null
         this.editMode = true
         this.showProjectForm = true
@@ -210,12 +212,13 @@ const axios = require('axios');
       formatDate (date) {
           if (!date) return null
           const [year, month, day] = date.split('-')
-          return `${month}/${day}/${year}`
+          return `${day}/${month}/${year}`
       },
       parseDate (date) {
           if (!date) return null
           const [month, day, year] = date.split('/')
-          return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
+          console.log(`${day.padStart(2, '0')}/${month.padStart(2, '0')}/${year}`)
+          return `${day.padStart(2, '0')}/${month.padStart(2, '0')}/${year}`
       },
       close () {
         this.showProjectForm = false
@@ -233,6 +236,13 @@ const axios = require('axios');
       editProject (item) {
         alert(`estas editando el proyecto ${item.nombre}`)
         this.editedProject = item.id
+        // Formato de Fecha CAMBIA FORMATO ENVIADO POR EL BACK
+        if (item.fechaInicio != null) {
+          item.fechaInicio = this.parseDate(item.fechaInicio)
+        }
+        if (item.fechaFin != null) {
+          item.fechaFin = this.parseDate(item.fechaFin)
+        }
         this.project = Object.assign({}, item)
         this.editMode = true
         this.showProjectForm = true
@@ -245,23 +255,22 @@ const axios = require('axios');
       },
       saveProject() {
         if (this.editedProject > -1) {
-          console.log(this.listProjects[this.project.id])
           console.log(this.project)
           Object.assign(this.listProjects[this.project.id], this.project)
           //Guarda los cambios en la BD
-          axios.post("http://localhost:8081/api/proyecto/save",this.project,{headers:{'X-Requested-With':'XMLHttpRequest'}})
-          .then(response => {
-              console.log(response)
-              this.loadingDialogShow = false
-              window.location.reload()
-            }).catch(errorResponse => {
-              this.loadingDialogShow = false
-            alert(`ERROR ${errorResponse.errorCode} - ${errorResponse}`)
-            }) 
+          this.saveProjectBackEnd(this.project) 
         } else {
           this.listProjects.push(this.project)
           //Guarda los cambios en la BD
-          axios.post("http://localhost:8081/api/proyecto/save",this.project,{headers:{'X-Requested-With':'XMLHttpRequest'}})
+          console.log(this.project)
+          this.saveProjectBackEnd(this.project) 
+        }
+        this.close()
+        this.showRoleForm = false
+        this.editMode = false
+      },
+      saveProjectBackEnd(project) {
+          axios.post("http://localhost:8081/api/proyecto/save",project,{headers:{'X-Requested-With':'XMLHttpRequest'}})
           .then(response => {
               console.log(response)
               this.loadingDialogShow = false
@@ -271,12 +280,7 @@ const axios = require('axios');
               console.log(errorResponse)
               alert(`ERROR ${errorResponse.errorCode} - ${errorResponse}`)
             }) 
-        }
-        this.close()
-        this.showRoleForm = false
-        this.editMode = false
-        console.log(this.project) 
-      },
+      }
     },
     mounted: function() {
       axios.get("http://localhost:8081/api/proyectos")
