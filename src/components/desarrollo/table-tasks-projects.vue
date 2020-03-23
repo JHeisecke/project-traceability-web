@@ -2,12 +2,12 @@
   <v-container>
       <v-data-table
           :headers="headers"
-          :items="projects"
+          :items="listProjects"
           :items-per-page="itemsPerPage"
           class="elevation-1">
           
-          <template v-slot:item.estate="{ item }">
-            <v-chip :color="getColor(item.estate)" dark>{{ item.estate }}</v-chip>
+          <template v-slot:item.estado="{ item }">
+            <v-chip :color="getColor(item.estado)" dark>{{ item.estado }}</v-chip>
           </template>
 
           <template v-slot:item.actions="{ item }">
@@ -24,6 +24,7 @@
 </template>
 
 <script>
+const axios = require('axios');
   export default {
     props: {
       source: String,
@@ -31,49 +32,27 @@
     data: () => ({
       drawer: null,
       itemsPerPage: "5",
+      listProjects: [],
+      project : {
+        id : null,
+        nombre : null,
+        estado : null,
+        fechaInicio : null,
+        fechaFin : null,
+        idLider : null,
+        descripcion : null,
+      },
       headers: [
-          { text: 'Proyecto', value: 'projectName' },
-          { text: 'Editar Items', value: 'actions' },
-          { text: 'Estado', value: 'estate' },
-      ],
-      projects: [
           {
-            projectCode: '1',
-            projectName: 'Aplicacion iOS para BNF',
-            estate: 'EN CURSO',
-            actions: '',
+            text: 'Código',
+            align: 'start',
+            sortable: false,
+            value: 'id',
           },
-          {
-            projectCode: '2',
-            projectName: 'Herramienta de Evaluacion de PYMES',
-            estate: 'EN CURSO',
-            actions: '',
-          },
-          {
-            projectCode: '3',
-            projectName: 'Pago de servicios automático',
-            estate: 'EN PRODUCCIÓN',
-            actions: '',        
-          },
-          {
-            projectCode: '4',
-            projectName: 'Herramienta CRM 2.0',
-            estate: 'EN PRODUCCIÓN',
-            actions: '',        
-          },
-          {
-            projectCode: '5',
-            projectName: 'Encuestas para clientes de la web',
-            estate: 'ANÁLISIS',
-            actions: '',          
-          },
-          {
-            projectCode: '6',
-            projectName: 'Prestamos desde ATM',
-            estate: 'EN PRODUCCIÓN',
-            actions: '',        
-          },        
-        ]
+          { text: 'Proyecto', value: 'nombre' },
+          { text: 'Estado', value: 'estado' },
+          { text: 'Acciones', value: 'actions' },
+      ]
     }),
     methods: {
       getColor (estate) {
@@ -84,13 +63,20 @@
       editTasks (codigo) {
         alert(`estas editando tareas del proyecto ${codigo}`)
         this.$router.push({name: 'desarrollo-task-edit'});
-      },
-      listProjectUsers (codigo) {
-        alert(`estas viendo los usuarios del proyecto n°${codigo}`)
-      },
-      viewProject (codigo) {
-        alert(`estas viendo el proyecto n°${codigo}`)
-      },
+      }
+    },
+    mounted: function() {
+      this.loadingDialogShow = true
+      this.loadingMessage = "Obteniendo proyectos"
+      axios.get("http://localhost:8081/api/proyectos")
+      .then(response => {
+        console.log(response.data.list  )
+        this.listProjects = response.data.list
+        this.loadingDialogShow = false
+      }).catch(errorResponse => {
+          this.loadingDialogShow = false
+          alert(`ERROR ${errorResponse.errorCode} - ${errorResponse.message}`)
+      })
     }
   }
 </script>
