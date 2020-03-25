@@ -49,14 +49,14 @@
               v-model="project.nombre"
               label="Nombre Proyecto" 
               prepend-icon="person"
-              :rules="nameRolRules"
+              :rules="emptyRules"
               name="nombre" 
               type="text" />
             <v-text-field 
               v-model="project.descripcion"
               label="Descripcion" 
               prepend-icon="person"
-              :rules="userRolRules"
+              :rules="emptyRules"
               name="descripcion" 
               type="text" />
           <!--Seccion de Fechas-->
@@ -74,6 +74,7 @@
                     v-model="project.fechaInicio"
                     label="Fecha Inicio"
                     hint="YYYY/MM/DD format"
+                    :rules="emptyRules"
                     persistent-hint
                     prepend-icon="event"
                     @blur="project.fechaInicio = formatDate(project.fechaInicio)"
@@ -96,6 +97,7 @@
                     v-model="project.fechaFin"
                     label="Fecha Fin"
                     hint="YYYY/MM/DD format"
+                    :rules="emptyRules"
                     persistent-hint
                     prepend-icon="event"
                     @blur="project.fechaFin = formatDate(project.fechaFin)"
@@ -111,6 +113,7 @@
                     v-model="project.idLider"
                     :items="listTeamLider"
                     label="TEAM LEADER"
+                    :rules="emptyRules"
                     persistent-hint
                     item-value="id"
                     item-text="nombre"
@@ -120,6 +123,7 @@
                     v-model="project.estado"
                     :items="listEstados"
                     label="ESTADO"
+                    :rules="emptyRules"
                     hint="Que estado desea asignar?"
                     persistent-hint
                   ></v-select>
@@ -197,7 +201,11 @@ const axios = require('axios');
           id : 2,
           nombre: 'test',    
         }
-      ]
+      ],
+      // Reglas para campos de furmulario
+      emptyRules: [
+        v => !!v || "El campo es requerido"
+      ],
     }),
     watch: {
       date () {

@@ -163,7 +163,7 @@ import loadingDialog from '@/components/loading-dialog.vue';
         { text: 'E-mail', value: 'email' },
         { text: 'Acciones', value: 'actions' }
       ],
-      itemsPerPage: "5",      
+      itemsPerPage: 5,      
       editMode : Boolean,
       validForm  : false,
       confirmPassword : "",
@@ -286,7 +286,6 @@ import loadingDialog from '@/components/loading-dialog.vue';
       axios.get("http://localhost:8081/api/usuarios")
       .then(response => {
         this.listausuarios = response.data.list
-        console.log(response.data.list  )
       }).catch(errorResponse => {
           alert(`ERROR ${errorResponse.errorCode} - ${errorResponse.message}`)
       })

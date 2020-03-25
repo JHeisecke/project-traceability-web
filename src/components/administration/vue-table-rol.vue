@@ -31,9 +31,6 @@
                   </td>
                 </tr>
         </template>
-      <template v-slot:no-data>
-        <v-btn color="primary" @click="methods">Reset</v-btn>
-      </template>
     </v-data-table>
     <div class="text-center pt-2">
         <v-btn color="primary" class="mr-2" @click="createRole()">NEW ROLE</v-btn>
@@ -48,21 +45,24 @@
           </v-tooltip>
         </v-toolbar>
         <v-card-text>
-          <v-form v-model="validForm" ref="form" v-if="editMode">
+          <v-form v-model="validForm" ref="form" >
             <v-text-field  
               v-model="rol.nombre"
               label="Nombre Rol" 
               prepend-icon="person"
-              :rules="nameRolRules"
+              :rules="emptyRolRules"
               name="nombre" 
-              type="text" />
+              type="text" 
+              :readonly="editMode"
+               />
             <v-text-field 
               v-model="rol.descripcion"
               label="Descripcion" 
               prepend-icon="person"
-              :rules="userRolRules"
+              :rules="emptyRolRules"
               name="descripcion" 
-              type="text" />
+              type="text" 
+              :readonly="editMode"/>
               <v-row align="center">
                 <v-col cols="12" sm="6">
                   <v-subheader v-text="'PERMISOS'"></v-subheader>
@@ -71,6 +71,8 @@
                   <v-select
                     v-model="rol.permisos"
                     :items="listpermissions"
+                    :rules="emptyRolRules"
+                    :readonly="editMode"
                     label="Select"
                     multiple
                     chips
@@ -80,13 +82,11 @@
                 </v-col>
               </v-row>
           </v-form>
-          <div v-else>            
-        </div>
         </v-card-text>             
         <v-card-actions>
           <v-spacer />
-          <v-btn color="success" @click="saveRole()">Guardar</v-btn>
-          <v-btn color="error" @click="close()">Cancelar</v-btn>
+          <v-btn color="success" :disabled="editMode" @click="saveRole()">Guardar</v-btn>
+          <v-btn color="error" @click="close()">Cerrar</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>    
@@ -98,6 +98,7 @@
 const axios = require('axios');
   export default {
     data: () => ({
+      editMode: true,
       dialog: false,
       items:[],
       validForm  : false,
@@ -124,14 +125,15 @@ const axios = require('axios');
       nameRolRules: [
         v => !!v || "Nombre Rol es requerido"
       ],
+      // Reglas para campos de furmulario
+      emptyRolRules: [
+        v => !!v || "El campo es requerido"
+      ],
     }),
     watch: {
       dialog (val) {
         val || this.close()
-      },
-    },
-    created () {
-      this.initialize()
+      }
     },
     methods: {
       createRole(){
@@ -158,12 +160,17 @@ const axios = require('axios');
         //alert(`estas editando el Rol ${item.nombre}`)
         this.editedRol = this.listaroles.indexOf(item)
         this.rol = Object.assign({}, item)
-        this.editMode = true
+        this.editMode = false
         this.showRoleForm = true
         //axios edit role
       },
+      viewRole (item) {
+        this.editedRol = this.listaroles.indexOf(item)
+        this.rol = Object.assign({}, item)
+        this.editMode = true
+        this.showRoleForm = true
+      },
       deleteRole (item) {
-        //alert(`estas borrando el Rol ${item.nombre}`)
         const index = this.listaroles.indexOf(item)
         confirm('Are you sure you want to delete this role?') && this.listaroles.splice(index, 1)
         //axios delete role
@@ -180,7 +187,6 @@ const axios = require('axios');
     mounted: function() {
       axios.get("http://localhost:8081/api/roles")
       .then(response => {
-        console.log(`${response.data.listaroles}`)
         this.listaroles = response.data.list
       }).catch(errorResponse => {
           this.loadingDialogShow = false
