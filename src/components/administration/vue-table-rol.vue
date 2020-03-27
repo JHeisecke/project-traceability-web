@@ -141,7 +141,7 @@ const axios = require('axios');
         this.rol.nombre = ""
         this.rol.descripcion = ""
         this.rol.permisos = []
-        this.editMode = true
+        this.editMode = false
         this.showRoleForm = true
       },
       saveRole(){
