@@ -251,7 +251,6 @@ const axios = require('axios');
       },
       // Permite editar un Poryecto existente usando el Form de creacion
       editProject (item) {
-        alert(`estas editando el proyecto ${item.nombre}`)
         this.editedProject = item.id
         // Formato de Fecha CAMBIA FORMATO ENVIADO POR EL BACK
         console.log(item)
@@ -276,7 +275,7 @@ const axios = require('axios');
         var URL = `http://localhost:8081/api/proyecto/delete/${project.id}`
         console.log(URL)
         //Borra proyecto por ID
-        axios.post(URL)
+        axios.delete(URL)
           .then(response => {
               console.log(response.data.dto)
               this.refreshList()
