@@ -207,7 +207,17 @@ import loadingDialog from '@/components/loading-dialog.vue';
       },
       deleteUser (item) {
         alert(`estas borrando al usuario ${item.nombreCompleto}`)
-        //axios delete user
+        var URL = `http://localhost:8081/api/usuario/delete/${item.username}`
+        console.log(URL)
+        //Borra usuario por username
+        axios.delete(URL)
+          .then(response => {
+              console.log(response)
+              window.location.reload()
+            }).catch(errorResponse => {
+              console.log(errorResponse)
+              alert(`ERROR ${errorResponse.errorCode} - ${errorResponse}`)
+            }) 
       },
       createUser(){
         this.user.nombreCompleto = ""
