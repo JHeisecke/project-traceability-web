@@ -157,7 +157,6 @@ const axios = require('axios');
         this.editMode = false
       },
       editRole (item) {
-        //alert(`estas editando el Rol ${item.nombre}`)
         this.editedRol = this.listaroles.indexOf(item)
         this.rol = Object.assign({}, item)
         this.editMode = false
