@@ -245,9 +245,9 @@ const axios = require('axios');
         }, 300)
       },
       getColor (estado) {
-        if (estado == "ANÁLISIS") return 'green'
+        if (estado == "ANÁLISIS") return 'red'
         else if (estado == "EN CURSO") return 'blue'
-        else return 'red'
+        else return 'green'
       },
       // Permite editar un Poryecto existente usando el Form de creacion
       editProject (item) {
