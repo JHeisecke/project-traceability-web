@@ -127,9 +127,12 @@
 </template>
 
 <script>
-//const axios = require('axios');
+const axios = require('axios');
   export default {
     data: () => ({
+      prop :{
+        projecto : {}
+      },
       dialog: false,
       items:[],
       validForm  : false,
@@ -209,9 +212,26 @@
         if (this.editedTask > -1) {
           Object.assign(this.listatareas[this.editedTask], this.tarea)
           //axios update
+          axios.post("http://localhost:8081/api/item/save",this.tarea,{headers:{'X-Requested-With':'XMLHttpRequest'}})
+            .then(response => {
+              console.log(`${response.data.listatareas}`)
+            this.listatareas = response.data.list
+            }).catch(errorResponse => {
+              this.loadingDialogShow = false
+              alert(`ERROR ${errorResponse.errorCode} - ${errorResponse.message}`)
+            })
         } else {
           this.listatareas.push(this.tarea)
           //axios save
+          axios.post("http://localhost:8081/api/item/save",this.tarea,{headers:{'X-Requested-With':'XMLHttpRequest'}})
+            .then(response => {
+              console.log(`${response.data.listatareas}`)
+            this.listatareas = response.data.list
+            }).catch(errorResponse => {
+              this.loadingDialogShow = false
+              alert(`ERROR ${errorResponse.errorCode} - ${errorResponse.message}`)
+            })
+            window.location.reload()
         }
         this.close()
         this.showTaskForm = false
@@ -240,14 +260,16 @@
       },
     },
     mounted: function() {
-      //axios.get("http://localhost:8081/api/item/1")
-      //.then(response => {
-        //console.log(`${response.data.listatareas}`)
-      // this.listatareas = response.data.list
-      //}).catch(errorResponse => {
-      //   this.loadingDialogShow = false
-      //   alert(`ERROR ${errorResponse.errorCode} - ${errorResponse.message}`)
-      //})
+      //var URL = `http://localhost:8081/api/item/${this.projecto.id}`
+      var URL = `http://localhost:8081/api/item/1`
+      axios.get(URL)
+      .then(response => {
+        console.log(`${response.data.listatareas}`)
+       this.listatareas = response.data.list
+      }).catch(errorResponse => {
+         this.loadingDialogShow = false
+         alert(`ERROR ${errorResponse.errorCode} - ${errorResponse.message}`)
+      })
     }
   }
 </script>
