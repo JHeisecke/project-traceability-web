@@ -1,126 +1,155 @@
 
 <template>
-  <div id="app">
-    
-    <v-data-table
-      :headers="headers"
-      :items="listatareas"
-      sort-by="calories"
-      class="elevation-1"
-    >
-      <template v-slot:top>
-        <v-toolbar flat color="white">
-          <v-toolbar-title>TAREAS DEL PROYECTO {{codigo}}</v-toolbar-title>
-          <!-- Barra Vertical -->
-          <v-divider lass="mx-4" inset vertical></v-divider>
-          <v-spacer></v-spacer>
-        </v-toolbar>
-      </template>
-      <template v-slot:item.actions="{ item }">
-                <tr>
-                  <td>
-                      <v-btn class="mx-1" fab dark small color="blue" @click="viewRole(item)">
-                          <v-icon dark>mdi-eye</v-icon>
-                      </v-btn>                 
-                      <v-btn class="mx-1" fab dark small color="blue" @click="editRole(item)">
-                          <v-icon dark>mdi-lead-pencil</v-icon>
-                      </v-btn>                  
-                      <v-btn class="mx-1" fab dark small color="blue" @click="deleteRole(item)">
-                          <v-icon dark>mdi-delete</v-icon>
-                      </v-btn>                           
-                  </td>
-                </tr>
-        </template>
-      <template v-slot:no-data>
-        <v-btn color="primary" @click="methods">Reset</v-btn>
-      </template>
-    </v-data-table>
-    <div class="text-center pt-2">
-        <v-btn color="primary" class="mr-2" @click="createRole()">NUEVA TAREA</v-btn>
-    </div>
-    <!--Form crear Role--->
-    <v-dialog width=800 v-model="showRoleForm" persistent>      
-      <v-card class="elevation-12">
-        <v-toolbar color="primary" dark flat >
-          <v-toolbar-title>ROL</v-toolbar-title>
-          <v-spacer/>
-          <v-tooltip bottom>
-          </v-tooltip>
-        </v-toolbar>
-        <v-card-text>
-          <v-form v-model="validForm" ref="form" v-if="editMode">
-            <v-text-field  
-              v-model="rol.nombre"
-              label="Nombre Rol" 
-              prepend-icon="person"
-              :rules="nameRolRules"
-              name="nombre" 
-              type="text" />
-            <v-text-field 
-              v-model="rol.descripcion"
-              label="Descripcion" 
-              prepend-icon="person"
-              :rules="userRolRules"
-              name="descripcion" 
-              type="text" />
-              <v-row align="center">
-      <v-col cols="12" sm="6">
-        <v-subheader v-text="'PERMISOS'"></v-subheader>
-      </v-col>
-      <v-col cols="12" sm="6">
-        <v-select
-          v-model="rol.permisos"
-          :items="listpermissions"
-          label="Select"
-          multiple
-          chips
-          hint="Que permisos desea asignar?"
-          persistent-hint
-        ></v-select>
-      </v-col>
-    </v-row>
+  <v-app id="app">
+    <v-card>
+      <v-card-title>
+        TAREAS DEL PROYECTO
+        <v-spacer></v-spacer>
+          <v-btn color="primary" class="mr-2" @click="createTask()">NUEVA TAREA</v-btn>
+        <v-spacer></v-spacer>
+        <!-- BUSCADOR
+        <v-text-field
+          v-model="search"
+          append-icon="mdi-magnify"
+          label="Search"
+          single-line
+          hide-details
+        ></v-text-field>
+        -->
+      </v-card-title>
+      <v-data-table
+        :headers="headers"
+        :items="listatareas"
+        sort-by="calories"
+        class="elevation-1"
+      >
+        <template v-slot:item.actions="{ item }">
+                  <tr>
+                    <td>
+                        <v-btn class="mx-1" fab dark small color="blue" @click="viewRole(item)">
+                            <v-icon dark>mdi-eye</v-icon>
+                        </v-btn>                 
+                        <v-btn class="mx-1" fab dark small color="blue" @click="editRole(item)">
+                            <v-icon dark>mdi-lead-pencil</v-icon>
+                        </v-btn>                  
+                        <v-btn class="mx-1" fab dark small color="blue" @click="deleteRole(item)">
+                            <v-icon dark>mdi-delete</v-icon>
+                        </v-btn>                           
+                    </td>
+                  </tr>
+          </template>
+      </v-data-table>
+      <!--Form crear Role--->
+      <v-dialog width=800 v-model="showTaskForm" persistent>      
+        <v-card class="elevation-12">
+          <v-toolbar color="primary" dark flat >
+            <v-toolbar-title>TAREA</v-toolbar-title>
+            <v-spacer/>
+            <v-tooltip bottom>
+            </v-tooltip>
+          </v-toolbar>
+          <v-card-text>
+            <v-form v-model="validForm" ref="form" v-if="editMode">
+              <v-text-field  
+                v-model="tarea.nombre"
+                label="Nombre Tarea" 
+                prepend-icon="rate_review"
+                :rules="nameRolRules"
+                name="nombre" 
+                type="text" />
+              <v-text-field 
+                v-model="tarea.descripcion"
+                label="Descripcion" 
+                prepend-icon="rate_review"
+                :rules="userRolRules"
+                name="descripcion" 
+                type="text" />
+                <v-row align="center">
+                  <v-col cols="12" sm="6">
+                    <v-select
+                      v-model="tarea.estado"
+                      :items="listaPrioridad"
+                      label="PRORIDAD"
+                      chips
+                      persistent-hint
+                    ></v-select>
+                  </v-col>
+                  <v-col cols="12" sm="6">
+                    <v-select
+                      v-model="tarea.estado"
+                      :items="listaEstados"
+                      label="ESTADO"
+                      chips
+                      persistent-hint
+                    ></v-select>
+                  </v-col>
+                </v-row>
           </v-form>
-          <div v-else>            
-          </div>
-        </v-card-text>             
-        <v-card-actions>
-          <v-spacer />
-          <v-btn color="success" @click="saveRole()">Guardar</v-btn>
-          <v-btn color="error" @click="close()">Cancelar</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>    
-  </div>
+          </v-card-text>             
+          <v-card-actions>
+            <v-spacer />
+            <v-btn color="success" @click="saveTask()">Guardar</v-btn>
+            <v-btn color="error" @click="close()">Cancelar</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog> 
+    </v-card>   
+  </v-app>
 
 </template>
 
 <script>
-const axios = require('axios');
+//const axios = require('axios');
   export default {
     data: () => ({
       dialog: false,
       items:[],
       validForm  : false,
-      showRoleForm: false,
-      showPermissionsForm: true,        
-      rol : {
+      showTaskForm: false,
+      showPermissionsForm: true,   
+      editMode: false,     
+      tarea : {
         id : null,
         nombre : null,
+        version: null,
+        prioridad: null,
+        estado: null,   
         descripcion : null,
-        permisos: [],
+        observacion: null, 
+        id_tarea_padre: null
       },
       listaEstados: [
-        'ABM Proyecto', 'ABM Usuario', 'ABM Permisos',
+        'iniciado', 'pendiente', 'finalizado',
+      ],
+      listaPrioridad: [
+        'alto', 'medio', 'bajo',
       ],
       headers: [
         { text: 'Nombre Tarea', value: 'nombre' },
         { text: 'Descripción', value: 'descripcion' },
+        { text: 'Estado', value: 'estado' },
         { text: 'Actions', value: 'actions', sortable: false },
       ],
-      listatareas: [],
+      listatareas: [
+        {
+          id: '1',
+          nombre: 'tarea 1',
+          descripcion : 'laland'
+        },
+        {
+          id: '2',
+          nombre: 'tarea 2',
+          descripcion : 'laland'
+        },
+        {
+          id: '2',
+          nombre: 'tarea 3',
+          descripcion : 'laland'
+        }
+      ],
       /*Almacena permisos por rol*/
       permisosrol: [],
-      editedRol: -1,
+      editedTask: -1,
       nameRolRules: [
         v => !!v || "Nombre Rol es requerido"
       ],
@@ -132,32 +161,33 @@ const axios = require('axios');
     },
     methods: {
       createTask(){
-        this.rol.id = ""
-        this.rol.nombre = ""
-        this.rol.descripcion = ""
-        this.rol.permisos = []
+        this.tarea.id = ""
+        this.tarea.nombre = ""
+        this.tarea.descripcion = ""
+        this.tarea.prioridad= ""
+        this.tarea.estado= ""
         this.editMode = true
-        this.showRoleForm = true
+        this.showTaskForm = true
       },
       saveTask(){
-        if (this.editedRol > -1) {
-          Object.assign(this.listatareas[this.editedRol], this.rol)
+        console.log(this.tarea)
+        if (this.editedTask > -1) {
+          Object.assign(this.listatareas[this.editedTask], this.tarea)
           //axios update
         } else {
-          this.listatareas.push(this.rol)
+          this.listatareas.push(this.tarea)
           //axios save
         }
         this.close()
-        this.showRoleForm = false
+        this.showTaskForm = false
         this.editMode = false
       },
       editTask (item) {
-        //alert(`estas editando el Rol ${item.nombre}`)
-        this.editedRol = this.listatareas.indexOf(item)
-        this.rol = Object.assign({}, item)
+        this.editedTask = this.listatareas.indexOf(item)
+        this.tarea = Object.assign({}, item)
         this.editMode = true
-        this.showRoleForm = true
-        //axios edit role
+        this.showTaskForm = true
+        //axios edit task
       },
       deleteTask (item) {
         //alert(`estas borrando el Rol ${item.nombre}`)
@@ -167,22 +197,22 @@ const axios = require('axios');
       },
       close () {
         this.dialog = false
-        this.showRoleForm = false
+        this.showTaskForm = false
         setTimeout(() => {
           this.editedItem = Object.assign({}, this.defaultItem)
-          this.editedRol = -1
+          this.editedTask = -1
         }, 300)
       },
     },
     mounted: function() {
-      axios.get("http://localhost:8081/api/roles")
-      .then(response => {
-        console.log(`${response.data.listatareas}`)
-        this.listatareas = response.data.list
-      }).catch(errorResponse => {
-          this.loadingDialogShow = false
-          alert(`ERROR ${errorResponse.errorCode} - ${errorResponse.message}`)
-      })
+      //axios.get("http://localhost:8081/api/roles")
+      //.then(response => {
+       // console.log(`${response.data.listatareas}`)
+       // this.listatareas = response.data.list
+      //}).catch(errorResponse => {
+      //    this.loadingDialogShow = false
+       //   alert(`ERROR ${errorResponse.errorCode} - ${errorResponse.message}`)
+      //})
     }
   }
 </script>
