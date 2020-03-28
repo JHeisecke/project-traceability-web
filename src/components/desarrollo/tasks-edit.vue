@@ -26,10 +26,10 @@
         <template v-slot:item.actions="{ item }">
                   <tr>
                     <td>
-                        <v-btn class="mx-1" fab dark small color="blue" @click="viewRole(item)">
+                        <v-btn class="mx-1" fab dark small color="blue" @click="viewTask(item)">
                             <v-icon dark>mdi-eye</v-icon>
                         </v-btn>                 
-                        <v-btn class="mx-1" fab dark small color="blue" @click="editRole(item)">
+                        <v-btn class="mx-1" fab dark small color="blue" @click="editTask(item)">
                             <v-icon dark>mdi-lead-pencil</v-icon>
                         </v-btn>                  
                         <v-btn class="mx-1" fab dark small color="blue" @click="deleteRole(item)">
@@ -67,7 +67,7 @@
                 <v-row align="center">
                   <v-col cols="12" sm="6">
                     <v-select
-                      v-model="tarea.estado"
+                      v-model="tarea.prioridad"
                       :items="listaPrioridad"
                       label="PRORIDAD"
                       chips
@@ -83,7 +83,35 @@
                       persistent-hint
                     ></v-select>
                   </v-col>
+                  <v-col cols="12" sm="6">
+                    <v-select
+                      v-model="tarea.id_tarea_padre"
+                      :items="listatareas"
+                      label="TAREA PADRE"
+                      chips
+                      item-value="id"
+                      item-text="nombre"
+                      persistent-hint
+                    ></v-select>
+                  </v-col>
+                  <v-col cols="12" sm="6">
+                    <v-text-field 
+                    v-model="tarea.version"
+                    label="VERSION" 
+                    prepend-icon="rate_review"
+                    :rules="userRolRules"
+                    name="version"
+                    :readonly="true" 
+                    type="text" />
+                  </v-col>
                 </v-row>
+                <v-text-field 
+                v-model="tarea.observacion"
+                label="Observacion" 
+                prepend-icon="rate_review"
+                :rules="userRolRules"
+                name="observacion" 
+                type="text" />
           </v-form>
           </v-card-text>             
           <v-card-actions>
@@ -134,17 +162,24 @@
         {
           id: '1',
           nombre: 'tarea 1',
-          descripcion : 'laland'
+          descripcion : 'laland',
+          estado: 'pendiente',
+          version: 1,
         },
         {
           id: '2',
           nombre: 'tarea 2',
-          descripcion : 'laland'
+          descripcion : 'laland',
+          estado: 'pendiente',
+          version: 1,
         },
         {
-          id: '2',
+          id: '3',
           nombre: 'tarea 3',
-          descripcion : 'laland'
+          descripcion : 'laland',
+          estado: 'pendiente',
+          version: 1,
+
         }
       ],
       /*Almacena permisos por rol*/
@@ -161,11 +196,11 @@
     },
     methods: {
       createTask(){
-        this.tarea.id = ""
         this.tarea.nombre = ""
         this.tarea.descripcion = ""
         this.tarea.prioridad= ""
         this.tarea.estado= ""
+        this.tarea.version= 1
         this.editMode = true
         this.showTaskForm = true
       },
@@ -205,13 +240,13 @@
       },
     },
     mounted: function() {
-      //axios.get("http://localhost:8081/api/roles")
+      //axios.get("http://localhost:8081/api/item/1")
       //.then(response => {
-       // console.log(`${response.data.listatareas}`)
-       // this.listatareas = response.data.list
+        //console.log(`${response.data.listatareas}`)
+      // this.listatareas = response.data.list
       //}).catch(errorResponse => {
-      //    this.loadingDialogShow = false
-       //   alert(`ERROR ${errorResponse.errorCode} - ${errorResponse.message}`)
+      //   this.loadingDialogShow = false
+      //   alert(`ERROR ${errorResponse.errorCode} - ${errorResponse.message}`)
       //})
     }
   }
