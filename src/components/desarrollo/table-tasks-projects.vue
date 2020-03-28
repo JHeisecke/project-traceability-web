@@ -13,7 +13,7 @@
           <template v-slot:item.actions="{ item }">
                 <tr>
                   <td>               
-                        <v-btn class="mx-1" fab dark small color="blue" @click="editTasks(item.projectCode)">
+                        <v-btn class="mx-1" fab dark small color="blue" @click="editTasks(item)">
                             <v-icon dark>mdi-lead-pencil</v-icon>
                         </v-btn>                                          
                   </td>
@@ -60,8 +60,9 @@ const axios = require('axios');
         else if (estate == "EN CURSO") return 'blue'
         else return 'green'
       },
-      editTasks (codigo) {
-        alert(`estas editando tareas del proyecto ${codigo}`)
+      editTasks (item) {
+        alert(`estas editando tareas del proyecto ${item.nombre}`)
+        this.project = item
         this.$router.push({name: 'desarrollo-task-edit'});
       }
     },
