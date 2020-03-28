@@ -28,19 +28,19 @@
                     <td>
                         <v-btn class="mx-1" fab dark small color="blue" @click="viewTask(item)">
                             <v-icon dark>mdi-eye</v-icon>
-                        </v-btn>                 
+                        </v-btn>
                         <v-btn class="mx-1" fab dark small color="blue" @click="editTask(item)">
                             <v-icon dark>mdi-lead-pencil</v-icon>
-                        </v-btn>                  
-                        <v-btn class="mx-1" fab dark small color="blue" @click="deleteRole(item)">
+                        </v-btn>
+                        <v-btn class="mx-1" fab dark small color="blue" @click="deleteTask(item)">
                             <v-icon dark>mdi-delete</v-icon>
-                        </v-btn>                           
+                        </v-btn>
                     </td>
                   </tr>
           </template>
       </v-data-table>
       <!--Form crear Role--->
-      <v-dialog width=800 v-model="showTaskForm" persistent>      
+      <v-dialog width=800 v-model="showTaskForm" persistent>
         <v-card class="elevation-12">
           <v-toolbar color="primary" dark flat >
             <v-toolbar-title>TAREA</v-toolbar-title>
@@ -50,19 +50,19 @@
           </v-toolbar>
           <v-card-text>
             <v-form v-model="validForm" ref="form" v-if="editMode">
-              <v-text-field  
+              <v-text-field
                 v-model="tarea.nombre"
-                label="Nombre Tarea" 
+                label="Nombre Tarea"
                 prepend-icon="rate_review"
                 :rules="nameRolRules"
-                name="nombre" 
+                name="nombre"
                 type="text" />
-              <v-text-field 
+              <v-text-field
                 v-model="tarea.descripcion"
-                label="Descripcion" 
+                label="Descripcion"
                 prepend-icon="rate_review"
                 :rules="userRolRules"
-                name="descripcion" 
+                name="descripcion"
                 type="text" />
                 <v-row align="center">
                   <v-col cols="12" sm="6">
@@ -95,33 +95,33 @@
                     ></v-select>
                   </v-col>
                   <v-col cols="12" sm="6">
-                    <v-text-field 
+                    <v-text-field
                     v-model="tarea.version"
-                    label="VERSION" 
+                    label="VERSION"
                     prepend-icon="rate_review"
                     :rules="userRolRules"
                     name="version"
-                    :readonly="true" 
+                    :readonly="true"
                     type="text" />
                   </v-col>
                 </v-row>
-                <v-text-field 
+                <v-text-field
                 v-model="tarea.observacion"
-                label="Observacion" 
+                label="Observacion"
                 prepend-icon="rate_review"
                 :rules="userRolRules"
-                name="observacion" 
+                name="observacion"
                 type="text" />
           </v-form>
-          </v-card-text>             
+          </v-card-text>
           <v-card-actions>
             <v-spacer />
             <v-btn color="success" @click="saveTask()">Guardar</v-btn>
             <v-btn color="error" @click="close()">Cancelar</v-btn>
           </v-card-actions>
         </v-card>
-      </v-dialog> 
-    </v-card>   
+      </v-dialog>
+    </v-card>
   </v-app>
 
 </template>
@@ -137,16 +137,16 @@ const axios = require('axios');
       items:[],
       validForm  : false,
       showTaskForm: false,
-      showPermissionsForm: true,   
-      editMode: false,     
+      showPermissionsForm: true,
+      editMode: false,
       tarea : {
         id : null,
         nombre : null,
         version: null,
         prioridad: null,
-        estado: null,   
+        estado: null,
         descripcion : null,
-        observacion: null, 
+        observacion: null,
         id_tarea_padre: null
       },
       listaEstados: [
@@ -247,8 +247,17 @@ const axios = require('axios');
       deleteTask (item) {
         //alert(`estas borrando el Rol ${item.nombre}`)
         const index = this.listatareas.indexOf(item)
-        confirm('Are you sure you want to delete this role?') && this.listatareas.splice(index, 1)
-        //axios delete role
+        if (confirm('Are you sure you want to delete this role?') && this.listatareas.splice(index, 1)){
+          //axios delete task
+            axios.delete(`http://localhost:8081/api/item/delete/${item.id}`)
+              .then(response => {
+                console.log(`${response.data.listatareas}`)
+              }).catch(errorResponse => {
+                this.loadingDialogShow = false
+                alert(`ERROR ${errorResponse.errorCode} - ${errorResponse.message}`)
+              })
+              //window.location.reload()
+        }
       },
       close () {
         this.dialog = false
