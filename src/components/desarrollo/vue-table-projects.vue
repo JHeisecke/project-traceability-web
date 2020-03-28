@@ -1,5 +1,5 @@
 <template>
-  <div id="projects">
+  <v-container>
     <loadingDialog :loadingMessage="loadingMessage" :loadingDialogShow="loadingDialogShow"></loadingDialog>
     <div class="text-center pt-2">
         <v-btn color="primary" class="mr-2" @click="createProject()">NUEVO PROJECTO</v-btn>
@@ -32,6 +32,14 @@
                 </td>
               </tr>
         </template>
+
+        <template v-slot:item.tareas="{ item }">
+                <tr>
+                  <td>
+                    <v-btn color="primary" class="mr-2" @click="editTasks(item)">EDITAR TAREAS</v-btn>                                                         
+                  </td>
+                </tr>
+          </template>
     </v-data-table>
 
     <!--Form crear Proyecto--->
@@ -139,7 +147,7 @@
       </v-card>
     </v-dialog>
 
-  </div>
+  </v-container>
 </template>
 
 <script>
@@ -184,6 +192,7 @@ const axios = require('axios');
           { text: 'Proyecto', value: 'nombre' },
           { text: 'Estado', value: 'estado' },
           { text: 'Acciones', value: 'actions' },
+          { text: 'Tareas', value: 'tareas' },
       ],
       listEstados: [
         'EN CURSO', 'EN PRODUCCIÓN', 'ANÁLISIS'
@@ -315,6 +324,9 @@ const axios = require('axios');
               console.log(errorResponse)
               alert(`ERROR ${errorResponse.errorCode} - ${errorResponse}`)
             }) 
+      },
+      editTasks (item) {
+        this.$router.push({name: 'desarrollo-task-edit', params : {id: item.id}});
       },
       refreshList(){
         axios.get("http://localhost:8081/api/proyectos")
