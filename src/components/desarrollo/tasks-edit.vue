@@ -39,7 +39,7 @@
                   </tr>
           </template>
       </v-data-table>
-      <!--Form crear Role--->
+      <!--Form crear TAREA--->
       <v-dialog width=800 v-model="showTaskForm" persistent>
         <v-card class="elevation-12">
           <v-toolbar color="primary" dark flat >
@@ -147,7 +147,8 @@ const axios = require('axios');
         estado: null,
         descripcion : null,
         observacion: null,
-        id_tarea_padre: null
+        id_tarea_padre: null,
+        idProyecto : null
       },
       listaEstados: [
         'iniciado', 'pendiente', 'finalizado',
@@ -204,6 +205,7 @@ const axios = require('axios');
         this.tarea.prioridad= ""
         this.tarea.estado= ""
         this.tarea.version= 1
+        this.tarea.idProyecto = this.$route.params.id
         this.editMode = true
         this.showTaskForm = true
       },
@@ -212,27 +214,18 @@ const axios = require('axios');
         if (this.editedTask > -1) {
           Object.assign(this.listatareas[this.editedTask], this.tarea)
           //axios update
-          axios.post("http://localhost:8081/api/item/save",this.tarea,{headers:{'X-Requested-With':'XMLHttpRequest'}})
-            .then(response => {
-              console.log(`${response.data.listatareas}`)
-            this.listatareas = response.data.list
-            }).catch(errorResponse => {
-              this.loadingDialogShow = false
-              alert(`ERROR ${errorResponse.errorCode} - ${errorResponse.message}`)
-            })
         } else {
           this.listatareas.push(this.tarea)
           //axios save
-          axios.post("http://localhost:8081/api/item/save",this.tarea,{headers:{'X-Requested-With':'XMLHttpRequest'}})
-            .then(response => {
-              console.log(`${response.data.listatareas}`)
-            this.listatareas = response.data.list
-            }).catch(errorResponse => {
-              this.loadingDialogShow = false
-              alert(`ERROR ${errorResponse.errorCode} - ${errorResponse.message}`)
-            })
-            window.location.reload()
         }
+        axios.post("http://localhost:8081/api/item/save",this.tarea,{headers:{'X-Requested-With':'XMLHttpRequest'}})
+          .then(response => {
+            console.log(`${response}`)
+          }).catch(errorResponse => {
+            this.loadingDialogShow = false
+            alert(`ERROR ${errorResponse.errorCode} - ${errorResponse.message}`)
+          })
+        //window.location.reload()
         this.close()
         this.showTaskForm = false
         this.editMode = false
@@ -269,11 +262,11 @@ const axios = require('axios');
       },
     },
     mounted: function() {
-      //var URL = `http://localhost:8081/api/item/${this.projecto.id}`
-      var URL = `http://localhost:8081/api/item/1`
+      // Obtiene id de proyecto del route
+      var URL = `http://localhost:8081/api/item/${this.$route.params.id}`
       axios.get(URL)
       .then(response => {
-        console.log(`${response.data.listatareas}`)
+        //console.log(`${response.data.listatareas}`)
        this.listatareas = response.data.list
       }).catch(errorResponse => {
          this.loadingDialogShow = false

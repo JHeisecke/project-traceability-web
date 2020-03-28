@@ -61,9 +61,7 @@ const axios = require('axios');
         else return 'green'
       },
       editTasks (item) {
-        alert(`estas editando tareas del proyecto ${item.nombre}`)
-        this.project = item
-        this.$router.push({name: 'desarrollo-task-edit'});
+        this.$router.push({name: 'desarrollo-task-edit', params : {id: item.id}});
       }
     },
     mounted: function() {

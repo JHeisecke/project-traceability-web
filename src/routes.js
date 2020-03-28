@@ -18,6 +18,6 @@ const routes = [
   { path: '/trazabilidad/administracion/usuarios', component: UserMenu, name: 'administration-user-menu'},
   { path: '/trazabilidad/administracion/roles', component: RolMenu, name: 'administration-rol-menu'},
   { path: '/trazabilidad/desarrollo/taskmenu', component: ProjectTasks, name: 'desarrollo-task-menu'},
-  { path: '/trazabilidad/desarrollo/taskmenu/edit', component: TasksEdit, name: 'desarrollo-task-edit'},                
+  { path: '/trazabilidad/desarrollo/tareas/:id', component: TasksEdit, name: 'desarrollo-task-edit'},                
 ]
 export default routes;
