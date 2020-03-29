@@ -67,6 +67,12 @@
                 <v-col cols="12" sm="6">
                   <v-subheader v-text="'PERMISOS'"></v-subheader>
                 </v-col>
+              </v-row>
+              <!-- SELECTS CON PERMISOS POR RECURSOS -->
+              <v-row align="center">
+                <v-col cols="12" sm="6">
+                  <v-subheader v-text="'Sistema'"></v-subheader>
+                </v-col>                
                 <v-col cols="12" sm="6">
                   <v-select
                     v-model="rol.permisos"
@@ -81,6 +87,60 @@
                   ></v-select>
                 </v-col>
               </v-row>
+              <v-row align="center">
+                <v-col cols="12" sm="6">
+                  <v-subheader v-text="'Modulo de Administración'"></v-subheader>
+                </v-col>                
+                <v-col cols="12" sm="6">
+                  <v-select
+                    v-model="rol.permisos"
+                    :items="listpermissions"
+                    :rules="emptyRolRules"
+                    :readonly="editMode"
+                    label="Select"
+                    multiple
+                    chips
+                    hint="Que permisos desea asignar?"
+                    persistent-hint
+                  ></v-select>
+                </v-col>
+              </v-row>
+              <v-row align="center">
+                <v-col cols="12" sm="6">
+                  <v-subheader v-text="'Módulo de Desarrollo'"></v-subheader>
+                </v-col>                
+                <v-col cols="12" sm="6">
+                  <v-select
+                    v-model="rol.permisos"
+                    :items="listpermissions"
+                    :rules="emptyRolRules"
+                    :readonly="editMode"
+                    label="Select"
+                    multiple
+                    chips
+                    hint="Que permisos desea asignar?"
+                    persistent-hint
+                  ></v-select>
+                </v-col>
+              </v-row>
+              <v-row align="center">
+                <v-col cols="12" sm="6">
+                  <v-subheader v-text="'Módulo de Configuración'"></v-subheader>
+                </v-col>                
+                <v-col cols="12" sm="6">
+                  <v-select
+                    v-model="rol.permisos"
+                    :items="listpermissions"
+                    :rules="emptyRolRules"
+                    :readonly="editMode"
+                    label="Select"
+                    multiple
+                    chips
+                    hint="Que permisos desea asignar?"
+                    persistent-hint
+                  ></v-select>
+                </v-col>
+              </v-row>                                      
           </v-form>
         </v-card-text>             
         <v-card-actions>
