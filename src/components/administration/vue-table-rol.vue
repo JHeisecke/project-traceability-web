@@ -71,15 +71,15 @@
               <!-- SELECTS CON PERMISOS POR RECURSOS -->
               <v-row align="center">
                 <v-col cols="12" sm="6">
-                  <v-subheader v-text="'Sistema'"></v-subheader>
+                  <v-subheader v-text="'Visualizar'"></v-subheader>
                 </v-col>                
                 <v-col cols="12" sm="6">
                   <v-select
                     v-model="rol.permisos"
-                    :items="listpermissions"
+                    :items="listaRecursos"
                     :rules="emptyRolRules"
                     :readonly="editMode"
-                    label="Select"
+                    label="Módulos"
                     multiple
                     chips
                     hint="Que permisos desea asignar?"
@@ -89,15 +89,15 @@
               </v-row>
               <v-row align="center">
                 <v-col cols="12" sm="6">
-                  <v-subheader v-text="'Modulo de Administración'"></v-subheader>
+                  <v-subheader v-text="'Crear'"></v-subheader>
                 </v-col>                
                 <v-col cols="12" sm="6">
                   <v-select
                     v-model="rol.permisos"
-                    :items="listpermissions"
+                    :items="listaRecursos"
                     :rules="emptyRolRules"
                     :readonly="editMode"
-                    label="Select"
+                    label="Módulos"
                     multiple
                     chips
                     hint="Que permisos desea asignar?"
@@ -107,15 +107,15 @@
               </v-row>
               <v-row align="center">
                 <v-col cols="12" sm="6">
-                  <v-subheader v-text="'Módulo de Desarrollo'"></v-subheader>
+                  <v-subheader v-text="'Editar'"></v-subheader>
                 </v-col>                
                 <v-col cols="12" sm="6">
                   <v-select
                     v-model="rol.permisos"
-                    :items="listpermissions"
+                    :items="listaRecursos"
                     :rules="emptyRolRules"
                     :readonly="editMode"
-                    label="Select"
+                    label="Módulos"
                     multiple
                     chips
                     hint="Que permisos desea asignar?"
@@ -125,15 +125,15 @@
               </v-row>
               <v-row align="center">
                 <v-col cols="12" sm="6">
-                  <v-subheader v-text="'Módulo de Configuración'"></v-subheader>
+                  <v-subheader v-text="'Borrar'"></v-subheader>
                 </v-col>                
                 <v-col cols="12" sm="6">
                   <v-select
                     v-model="rol.permisos"
-                    :items="listpermissions"
+                    :items="listaRecursos"
                     :rules="emptyRolRules"
                     :readonly="editMode"
-                    label="Select"
+                    label="Módulos"
                     multiple
                     chips
                     hint="Que permisos desea asignar?"
@@ -174,9 +174,7 @@ import loadingDialog from '@/components/loading-dialog.vue';
         descripcion : null,
         permisos: [],
       },
-      listpermissions: [
-        'ABM Proyecto', 'ABM Usuario', 'ABM Permisos',
-      ],
+      listaRecursos: [],
       headers: [
         { text: 'Nombre Rol', value: 'nombre' },
         { text: 'Descripción', value: 'descripcion' },
@@ -221,7 +219,7 @@ import loadingDialog from '@/components/loading-dialog.vue';
           console.log(response.data.dto)
           this.listaroles.push(this.rol)          
           this.loadingDialogShow = false
-          this.refreshList()
+          //this.refreshList()
         }).catch(errorResponse => {
           console.log(errorResponse)
           alert(`ERROR ${errorResponse.errorCode} - ${errorResponse}`)
@@ -250,7 +248,7 @@ import loadingDialog from '@/components/loading-dialog.vue';
         axios.delete(`http://localhost:8081/api/rol/delete/${item.id}`).then(r =>{
           console.log(r)
           this.loadingDialogShow = false
-          this.refreshList()
+          //this.refreshList()
         }).catch(errorResponse => {
           console.log(errorResponse)
           alert(`ERROR ${errorResponse.errorCode} - ${errorResponse}`)
@@ -266,6 +264,11 @@ import loadingDialog from '@/components/loading-dialog.vue';
       },
     },
     mounted: function() {
+      let recursos = [{value:1,text: "Sistema"},
+                      {value:2,text: "Modulo de Administracion"},
+                      {value:3,text: "Modulo de Configuracion"},
+                      {value:4,text: "Modulo de Desarollo"}]
+      this.listaRecursos = recursos
       this.loadingDialogShow = true
       this.loadingMessage = "Obteniendo Roles"
       axios.get("http://localhost:8081/api/roles")
