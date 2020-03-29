@@ -1,7 +1,7 @@
 
 <template>
   <div id="app">
-    
+    <loadingDialog :loadingMessage="loadingMessage" :loadingDialogShow="loadingDialogShow"></loadingDialog>
     <v-data-table
       :headers="headers"
       :items="listaroles"
@@ -96,8 +96,12 @@
 
 <script>
 const axios = require('axios');
+import loadingDialog from '@/components/loading-dialog.vue';
+
   export default {
     data: () => ({
+      loadingDialogShow : false,
+      loadingMessage  : "",
       editMode: true,
       dialog: false,
       items:[],
@@ -130,6 +134,9 @@ const axios = require('axios');
         v => !!v || "El campo es requerido"
       ],
     }),
+    components : {
+      loadingDialog
+    },
     watch: {
       dialog (val) {
         val || this.close()
@@ -145,13 +152,20 @@ const axios = require('axios');
         this.showRoleForm = true
       },
       saveRole(){
-        if (this.editedRol > -1) {
+        this.loadingDialogShow = true
+        this.loadingMessage = "Guardando Rol" 
+        if(this.editedRol > -1){
           Object.assign(this.listaroles[this.editedRol], this.rol)
-          //axios update
-        } else {
-          this.listaroles.push(this.rol)
-          //axios save
         }
+        axios.post(`http://localhost:8081/api/rol/save`,this.rol).then(response => {
+          console.log(response.data.dto)
+          this.listaroles.push(this.rol)          
+          this.loadingDialogShow = false
+          this.refreshList()
+        }).catch(errorResponse => {
+          console.log(errorResponse)
+          alert(`ERROR ${errorResponse.errorCode} - ${errorResponse}`)
+        })
         this.close()
         this.showRoleForm = false
         this.editMode = false
@@ -161,7 +175,6 @@ const axios = require('axios');
         this.rol = Object.assign({}, item)
         this.editMode = false
         this.showRoleForm = true
-        //axios edit role
       },
       viewRole (item) {
         this.editedRol = this.listaroles.indexOf(item)
@@ -170,9 +183,18 @@ const axios = require('axios');
         this.showRoleForm = true
       },
       deleteRole (item) {
-        const index = this.listaroles.indexOf(item)
-        confirm('Are you sure you want to delete this role?') && this.listaroles.splice(index, 1)
-        //axios delete role
+        //const index = this.listaroles.indexOf(item)
+        //confirm('Are you sure you want to delete this role?') && this.listaroles.splice(index, 1)
+        this.loadingDialogShow = true
+        this.loadingMessage = "Borrando rol"
+        axios.delete(`http://localhost:8081/api/rol/delete/${item.id}`).then(r =>{
+          console.log(r)
+          this.loadingDialogShow = false
+          this.refreshList()
+        }).catch(errorResponse => {
+          console.log(errorResponse)
+          alert(`ERROR ${errorResponse.errorCode} - ${errorResponse}`)
+        }) 
       },
       close () {
         this.dialog = false
@@ -184,12 +206,15 @@ const axios = require('axios');
       },
     },
     mounted: function() {
+      this.loadingDialogShow = true
+      this.loadingMessage = "Obteniendo Roles"
       axios.get("http://localhost:8081/api/roles")
       .then(response => {
         this.listaroles = response.data.list
+        this.loadingDialogShow = false
       }).catch(errorResponse => {
-          this.loadingDialogShow = false
-          alert(`ERROR ${errorResponse.errorCode} - ${errorResponse.message}`)
+        this.loadingDialogShow = false
+        alert(`ERROR ${errorResponse.errorCode} - ${errorResponse.message}`)
       })
     }
   }
