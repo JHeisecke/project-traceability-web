@@ -39,9 +39,6 @@
             <v-list-item link>
               <v-list-item-title @click="showingProjects()">Proyectos</v-list-item-title>
             </v-list-item>
-            <v-list-item link>
-              <v-list-item-title @click="showingTaskMenu()">Tareas</v-list-item-title>
-            </v-list-item>
         </v-list-group>
       </v-list>
     </v-navigation-drawer>
