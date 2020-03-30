@@ -75,7 +75,7 @@
                 </v-col>                
                 <v-col cols="12" sm="6">
                   <v-select
-                    v-model="rol.permisos"
+                    v-model="permisosVisualizar"
                     :items="listaRecursos"
                     :rules="emptyRolRules"
                     :readonly="editMode"
@@ -93,7 +93,7 @@
                 </v-col>                
                 <v-col cols="12" sm="6">
                   <v-select
-                    v-model="rol.permisos"
+                    v-model="permisosCrear"
                     :items="listaRecursos"
                     :rules="emptyRolRules"
                     :readonly="editMode"
@@ -111,7 +111,7 @@
                 </v-col>                
                 <v-col cols="12" sm="6">
                   <v-select
-                    v-model="rol.permisos"
+                    v-model="permisosEditar"
                     :items="listaRecursos"
                     :rules="emptyRolRules"
                     :readonly="editMode"
@@ -129,7 +129,7 @@
                 </v-col>                
                 <v-col cols="12" sm="6">
                   <v-select
-                    v-model="rol.permisos"
+                    v-model="permisosBorrar"
                     :items="listaRecursos"
                     :rules="emptyRolRules"
                     :readonly="editMode"
@@ -175,6 +175,10 @@ import loadingDialog from '@/components/loading-dialog.vue';
         permisos: [],
       },
       listaRecursos: [],
+      permisosBorrar: [],
+      permisosCrear: [],
+      permisosEditar: [],
+      permisosVisualizar: [],
       headers: [
         { text: 'Nombre Rol', value: 'nombre' },
         { text: 'Descripción', value: 'descripcion' },
@@ -182,7 +186,6 @@ import loadingDialog from '@/components/loading-dialog.vue';
       ],
       listaroles: [],
       /*Almacena permisos por rol*/
-      permisosrol: [],
       editedRol: -1,
       nameRolRules: [
         v => !!v || "Nombre Rol es requerido"
@@ -208,6 +211,36 @@ import loadingDialog from '@/components/loading-dialog.vue';
         this.rol.permisos = []
         this.editMode = false
         this.showRoleForm = true
+        this.permisosBorrar = []
+        this.permisosCrear = []
+        this.permisosEditar = []
+        this.permisosVisualizar = []   
+      },
+      editRole (item) {
+        this.editedRol = this.listaroles.indexOf(item)
+        this.rol = Object.assign({}, item)
+        this.editMode = false
+        this.showRoleForm = true
+        console.log(item)
+        for (var index in item.permisos) {
+          let recursos
+          console.log(item.permisos[index].nombre)
+          for (var indexRecurso in item.permisos[index].recursos) {
+            recursos = {}
+            console.log(item.permisos[index].recursos[indexRecurso].id +" "+item.permisos[index].recursos[indexRecurso].nombre)
+            recursos["value"] = item.permisos[index].recursos[indexRecurso].id
+            recursos["text"] = item.permisos[index].recursos[indexRecurso].nombre
+          }
+          if(item.permisos[index].nombre == "visualizar"){
+            this.permisosVisualizar.push(recursos)
+          }else if(item.permisos[index].nombre == "crear"){
+            this.permisosCrear.push(recursos)
+          }else if(item.permisos[index].nombre == "editar"){
+            this.permisosEditar.push(recursos)
+          }else{
+            this.permisosBorrar.push(recursos)
+          }
+        } 
       },
       saveRole(){
         this.loadingDialogShow = true
@@ -227,13 +260,7 @@ import loadingDialog from '@/components/loading-dialog.vue';
         this.close()
         this.showRoleForm = false
         this.editMode = false
-      },
-      editRole (item) {
-        this.editedRol = this.listaroles.indexOf(item)
-        this.rol = Object.assign({}, item)
-        this.editMode = false
-        this.showRoleForm = true
-      },
+      },      
       viewRole (item) {
         this.editedRol = this.listaroles.indexOf(item)
         this.rol = Object.assign({}, item)
@@ -257,6 +284,10 @@ import loadingDialog from '@/components/loading-dialog.vue';
       close () {
         this.dialog = false
         this.showRoleForm = false
+        this.permisosVisualizar = []
+        this.permisosCrear = []
+        this.permisosEditar = []
+        this.permisosBorrar = []        
         setTimeout(() => {
           this.editedItem = Object.assign({}, this.defaultItem)
           this.editedRol = -1
