@@ -238,17 +238,17 @@ import loadingDialog from '@/components/loading-dialog.vue';
             recursos = {}
             recursos["value"] = item.permisos[index].recursos[indexRecurso].id
             recursos["text"] = item.permisos[index].recursos[indexRecurso].nombre
-          }
-          if(item.permisos[index].nombre == "visualizar") {
-            this.permisosVisualizar.push(recursos)
-          }else if(item.permisos[index].nombre == "crear") {
-            this.permisosCrear.push(recursos)
-          }else if(item.permisos[index].nombre == "editar") {
-            this.permisosEditar.push(recursos)
-          }else if(item.permisos[index].nombre == "eliminar") {
-            this.permisosBorrar.push(recursos)
-          }else {
-            alert("epa! que hiciste ahi")
+            if(item.permisos[index].nombre == "visualizar") {
+              this.permisosVisualizar.push(recursos)
+            }else if(item.permisos[index].nombre == "crear") {
+              this.permisosCrear.push(recursos)
+            }else if(item.permisos[index].nombre == "editar") {
+              this.permisosEditar.push(recursos)
+            }else if(item.permisos[index].nombre == "eliminar") {
+              this.permisosBorrar.push(recursos)
+            }else {
+              alert("epa! que hiciste ahi")
+            }
           }
         }  
       },
