@@ -261,8 +261,9 @@ import loadingDialog from '@/components/loading-dialog.vue';
         let permiso = {}
         this.rol.permisos = []
         // Recursos para el permiso visualizar
+        //TODO CUANDO ES UNA OPCION LA SELECCIONADA EXPLOTA
         for(let indexRecursoSeleccionado in  this.permisosVisualizar) {  
-          let index = Number(indexRecursoSeleccionado)+1         
+          let index = this.permisosVisualizar[indexRecursoSeleccionado]        
           let recurso = {}
           recurso.id = index
           recurso.nombre = this.diccionarioRecursos[index]
@@ -277,8 +278,9 @@ import loadingDialog from '@/components/loading-dialog.vue';
 
         // Recursos para el permiso crear
         recursos = []
+        permiso = {}
         for(let indexRecursoSeleccionado in  this.permisosCrear) {          
-          let index = Number(indexRecursoSeleccionado)+1 
+          let index = this.permisosCrear[indexRecursoSeleccionado] 
           let recurso = {}
           recurso.id = index
           recurso.nombre = this.diccionarioRecursos[index]
@@ -293,8 +295,9 @@ import loadingDialog from '@/components/loading-dialog.vue';
 
         // Recursos para el permiso editar
         recursos = []
+        permiso = {}
         for(let indexRecursoSeleccionado in  this.permisosEditar) {          
-          let index = Number(indexRecursoSeleccionado)+1 
+          let index = this.permisosEditar[indexRecursoSeleccionado] 
           let recurso = {}
           recurso.id = index
           recurso.nombre = this.diccionarioRecursos[index]
@@ -309,8 +312,9 @@ import loadingDialog from '@/components/loading-dialog.vue';
 
         // Recursos para el permiso borrar
         recursos = []
+        permiso = {}
         for(let indexRecursoSeleccionado in this.permisosBorrar) { 
-          let index = Number(indexRecursoSeleccionado)+1  
+          let index = this.permisosBorrar[indexRecursoSeleccionado] 
           let recurso = {}
           recurso.id = index
           recurso.nombre = this.diccionarioRecursos[index]
