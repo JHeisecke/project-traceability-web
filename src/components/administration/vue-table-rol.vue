@@ -233,19 +233,15 @@ import loadingDialog from '@/components/loading-dialog.vue';
         this.editMode = false
         this.showRoleForm = true
         for (var index in item.permisos) {
-          let recursos
           for (var indexRecurso in item.permisos[index].recursos) {
-            recursos = {}
-            recursos["value"] = item.permisos[index].recursos[indexRecurso].id
-            recursos["text"] = item.permisos[index].recursos[indexRecurso].nombre
             if(item.permisos[index].nombre == "visualizar") {
-              this.permisosVisualizar.push(recursos)
+              this.permisosVisualizar.push(item.permisos[index].recursos[indexRecurso].id)
             }else if(item.permisos[index].nombre == "crear") {
-              this.permisosCrear.push(recursos)
+              this.permisosCrear.push(item.permisos[index].recursos[indexRecurso].id)
             }else if(item.permisos[index].nombre == "editar") {
-              this.permisosEditar.push(recursos)
+              this.permisosEditar.push(item.permisos[index].recursos[indexRecurso].id)
             }else if(item.permisos[index].nombre == "eliminar") {
-              this.permisosBorrar.push(recursos)
+              this.permisosBorrar.push(item.permisos[index].recursos[indexRecurso].id)
             }else {
               alert("epa! que hiciste ahi")
             }
@@ -313,8 +309,8 @@ import loadingDialog from '@/components/loading-dialog.vue';
         // Recursos para el permiso borrar
         recursos = []
         permiso = {}
-        for(let indexRecursoSeleccionado in this.permisosBorrar) { 
-          let index = this.permisosBorrar[indexRecursoSeleccionado] 
+        for(let indexRecursoSeleccionado in this.permisosBorrar) {
+          let index = this.permisosBorrar[indexRecursoSeleccionado]
           let recurso = {}
           recurso.id = index
           recurso.nombre = this.diccionarioRecursos[index]
@@ -346,6 +342,21 @@ import loadingDialog from '@/components/loading-dialog.vue';
         this.rol = Object.assign({}, item)
         this.editMode = true
         this.showRoleForm = true
+        for (var index in item.permisos) {
+          for (var indexRecurso in item.permisos[index].recursos) {
+            if(item.permisos[index].nombre == "visualizar") {
+              this.permisosVisualizar.push(item.permisos[index].recursos[indexRecurso].id)
+            }else if(item.permisos[index].nombre == "crear") {
+              this.permisosCrear.push(item.permisos[index].recursos[indexRecurso].id)
+            }else if(item.permisos[index].nombre == "editar") {
+              this.permisosEditar.push(item.permisos[index].recursos[indexRecurso].id)
+            }else if(item.permisos[index].nombre == "eliminar") {
+              this.permisosBorrar.push(item.permisos[index].recursos[indexRecurso].id)
+            }else {
+              alert("epa! que hiciste ahi")
+            }
+          }
+        }          
       },
       deleteRole (item) {
         //const index = this.listaroles.indexOf(item)
