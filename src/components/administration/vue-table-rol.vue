@@ -1,7 +1,7 @@
 
 <template>
   <div id="app">
-    
+    <loadingDialog :loadingMessage="loadingMessage" :loadingDialogShow="loadingDialogShow"></loadingDialog>
     <v-data-table
       :headers="headers"
       :items="listaroles"
@@ -67,13 +67,19 @@
                 <v-col cols="12" sm="6">
                   <v-subheader v-text="'PERMISOS'"></v-subheader>
                 </v-col>
+              </v-row>
+              <!-- SELECTS CON PERMISOS POR RECURSOS -->
+              <v-row align="center">
+                <v-col cols="12" sm="6">
+                  <v-subheader v-text="'Visualizar'"></v-subheader>
+                </v-col>                
                 <v-col cols="12" sm="6">
                   <v-select
-                    v-model="rol.permisos"
-                    :items="listpermissions"
+                    v-model="permisosVisualizar"
+                    :items="listaRecursos"
                     :rules="emptyRolRules"
                     :readonly="editMode"
-                    label="Select"
+                    label="Módulos"
                     multiple
                     chips
                     hint="Que permisos desea asignar?"
@@ -81,6 +87,60 @@
                   ></v-select>
                 </v-col>
               </v-row>
+              <v-row align="center">
+                <v-col cols="12" sm="6">
+                  <v-subheader v-text="'Crear'"></v-subheader>
+                </v-col>                
+                <v-col cols="12" sm="6">
+                  <v-select
+                    v-model="permisosCrear"
+                    :items="listaRecursos"
+                    :rules="emptyRolRules"
+                    :readonly="editMode"
+                    label="Módulos"
+                    multiple
+                    chips
+                    hint="Que permisos desea asignar?"
+                    persistent-hint
+                  ></v-select>
+                </v-col>
+              </v-row>
+              <v-row align="center">
+                <v-col cols="12" sm="6">
+                  <v-subheader v-text="'Editar'"></v-subheader>
+                </v-col>                
+                <v-col cols="12" sm="6">
+                  <v-select
+                    v-model="permisosEditar"
+                    :items="listaRecursos"
+                    :rules="emptyRolRules"
+                    :readonly="editMode"
+                    label="Módulos"
+                    multiple
+                    chips
+                    hint="Que permisos desea asignar?"
+                    persistent-hint
+                  ></v-select>
+                </v-col>
+              </v-row>
+              <v-row align="center">
+                <v-col cols="12" sm="6">
+                  <v-subheader v-text="'Eliminar'"></v-subheader>
+                </v-col>                
+                <v-col cols="12" sm="6">
+                  <v-select
+                    v-model="permisosBorrar"
+                    :items="listaRecursos"
+                    :rules="emptyRolRules"
+                    :readonly="editMode"
+                    label="Módulos"
+                    multiple
+                    chips
+                    hint="Que permisos desea asignar?"
+                    persistent-hint
+                  ></v-select>
+                </v-col>
+              </v-row>                                      
           </v-form>
         </v-card-text>             
         <v-card-actions>
@@ -96,8 +156,12 @@
 
 <script>
 const axios = require('axios');
+import loadingDialog from '@/components/loading-dialog.vue';
+
   export default {
     data: () => ({
+      loadingDialogShow : false,
+      loadingMessage  : "",
       editMode: true,
       dialog: false,
       items:[],
@@ -110,9 +174,12 @@ const axios = require('axios');
         descripcion : null,
         permisos: [],
       },
-      listpermissions: [
-        'ABM Proyecto', 'ABM Usuario', 'ABM Permisos',
-      ],
+      listaRecursos: [],
+      diccionarioRecursos : [], //En esta variable se guardan los recursos con estructura {id: nombre}
+      permisosBorrar: [],
+      permisosCrear: [],
+      permisosEditar: [],
+      permisosVisualizar: [],
       headers: [
         { text: 'Nombre Rol', value: 'nombre' },
         { text: 'Descripción', value: 'descripcion' },
@@ -120,7 +187,6 @@ const axios = require('axios');
       ],
       listaroles: [],
       /*Almacena permisos por rol*/
-      permisosrol: [],
       editedRol: -1,
       nameRolRules: [
         v => !!v || "Nombre Rol es requerido"
@@ -130,12 +196,25 @@ const axios = require('axios');
         v => !!v || "El campo es requerido"
       ],
     }),
+    components : {
+      loadingDialog
+    },
     watch: {
       dialog (val) {
         val || this.close()
       }
     },
     methods: {
+      getRoles(){
+        axios.get("http://localhost:8081/api/roles")
+        .then(response => {
+          this.listaroles = response.data.list
+          this.loadingDialogShow = false
+        }).catch(errorResponse => {
+          this.loadingDialogShow = false
+          alert(`ERROR ${errorResponse.errorCode} - ${errorResponse.message}`)
+        })
+      },
       createRole(){
         this.rol.id = ""
         this.rol.nombre = ""
@@ -143,40 +222,161 @@ const axios = require('axios');
         this.rol.permisos = []
         this.editMode = false
         this.showRoleForm = true
-      },
-      saveRole(){
-        if (this.editedRol > -1) {
-          Object.assign(this.listaroles[this.editedRol], this.rol)
-          //axios update
-        } else {
-          this.listaroles.push(this.rol)
-          //axios save
-        }
-        this.close()
-        this.showRoleForm = false
-        this.editMode = false
+        this.permisosBorrar = []
+        this.permisosCrear = []
+        this.permisosEditar = []
+        this.permisosVisualizar = []   
       },
       editRole (item) {
         this.editedRol = this.listaroles.indexOf(item)
         this.rol = Object.assign({}, item)
         this.editMode = false
         this.showRoleForm = true
-        //axios edit role
+        for (var index in item.permisos) {
+          for (var indexRecurso in item.permisos[index].recursos) {
+            if(item.permisos[index].nombre == "visualizar") {
+              this.permisosVisualizar.push(item.permisos[index].recursos[indexRecurso].id)
+            }else if(item.permisos[index].nombre == "crear") {
+              this.permisosCrear.push(item.permisos[index].recursos[indexRecurso].id)
+            }else if(item.permisos[index].nombre == "editar") {
+              this.permisosEditar.push(item.permisos[index].recursos[indexRecurso].id)
+            }else if(item.permisos[index].nombre == "eliminar") {
+              this.permisosBorrar.push(item.permisos[index].recursos[indexRecurso].id)
+            }else {
+              alert("epa! que hiciste ahi")
+            }
+          }
+        }  
       },
+      saveRole(){
+        this.loadingDialogShow = true
+        this.loadingMessage = "Guardando Rol"
+        //Recorrer recursos y seleccionar
+        // Construimos a mano el array de permisos con objetos permiso con array de recursos
+        let recursos = []
+        let permiso = {}
+        this.rol.permisos = []
+        // Recursos para el permiso visualizar
+        //TODO CUANDO ES UNA OPCION LA SELECCIONADA EXPLOTA
+        for(let indexRecursoSeleccionado in  this.permisosVisualizar) {  
+          let index = this.permisosVisualizar[indexRecursoSeleccionado]        
+          let recurso = {}
+          recurso.id = index
+          recurso.nombre = this.diccionarioRecursos[index]
+          recurso.descripcion = null
+          recursos.push(recurso)
+        }
+        permiso.id = 1
+        permiso.nombre = 'visualizar'
+        permiso.descripcion = null
+        permiso.recursos = recursos
+        this.rol.permisos.push(permiso)  
+
+        // Recursos para el permiso crear
+        recursos = []
+        permiso = {}
+        for(let indexRecursoSeleccionado in  this.permisosCrear) {          
+          let index = this.permisosCrear[indexRecursoSeleccionado] 
+          let recurso = {}
+          recurso.id = index
+          recurso.nombre = this.diccionarioRecursos[index]
+          recurso.descripcion = null
+          recursos.push(recurso)
+        }
+        permiso.id = 2
+        permiso.nombre = 'crear'
+        permiso.descripcion = null
+        permiso.recursos = recursos
+        this.rol.permisos.push(permiso)
+
+        // Recursos para el permiso editar
+        recursos = []
+        permiso = {}
+        for(let indexRecursoSeleccionado in  this.permisosEditar) {          
+          let index = this.permisosEditar[indexRecursoSeleccionado] 
+          let recurso = {}
+          recurso.id = index
+          recurso.nombre = this.diccionarioRecursos[index]
+          recurso.descripcion = null
+          recursos.push(recurso)
+        }
+        permiso.id = 3
+        permiso.nombre = 'editar'
+        permiso.descripcion = null
+        permiso.recursos = recursos
+        this.rol.permisos.push(permiso)
+
+        // Recursos para el permiso borrar
+        recursos = []
+        permiso = {}
+        for(let indexRecursoSeleccionado in this.permisosBorrar) {
+          let index = this.permisosBorrar[indexRecursoSeleccionado]
+          let recurso = {}
+          recurso.id = index
+          recurso.nombre = this.diccionarioRecursos[index]
+          recurso.descripcion = null
+          recursos.push(recurso)
+        }
+        permiso.id = 4
+        permiso.nombre = 'eliminar'
+        permiso.descripcion = null
+        permiso.recursos = recursos
+        this.rol.permisos.push(permiso)
+
+        axios.post(`http://localhost:8081/api/rol/save`,this.rol).then(response => {
+          console.log(response.data.dto)
+          this.listaroles.push(this.rol)          
+          this.loadingDialogShow = false
+          this.getRoles()
+        }).catch(errorResponse => {
+          console.log(errorResponse)
+          this.loadingDialogShow = false
+          alert(`ERROR ${errorResponse.errorCode} - ${errorResponse}`)
+        })
+        this.close()
+        this.showRoleForm = false
+        this.editMode = false
+      },      
       viewRole (item) {
         this.editedRol = this.listaroles.indexOf(item)
         this.rol = Object.assign({}, item)
         this.editMode = true
         this.showRoleForm = true
+        for (var index in item.permisos) {
+          for (var indexRecurso in item.permisos[index].recursos) {
+            if(item.permisos[index].nombre == "visualizar") {
+              this.permisosVisualizar.push(item.permisos[index].recursos[indexRecurso].id)
+            }else if(item.permisos[index].nombre == "crear") {
+              this.permisosCrear.push(item.permisos[index].recursos[indexRecurso].id)
+            }else if(item.permisos[index].nombre == "editar") {
+              this.permisosEditar.push(item.permisos[index].recursos[indexRecurso].id)
+            }else if(item.permisos[index].nombre == "eliminar") {
+              this.permisosBorrar.push(item.permisos[index].recursos[indexRecurso].id)
+            }else {
+              alert("epa! que hiciste ahi")
+            }
+          }
+        }          
       },
       deleteRole (item) {
-        const index = this.listaroles.indexOf(item)
-        confirm('Are you sure you want to delete this role?') && this.listaroles.splice(index, 1)
-        //axios delete role
+        this.loadingDialogShow = true
+        this.loadingMessage = "Borrando rol"
+        axios.delete(`http://localhost:8081/api/rol/delete/${item.id}`).then(r =>{
+          console.log(r)
+          this.getRoles()
+        }).catch(errorResponse => {
+          console.log(errorResponse)          
+          alert(`ERROR ${errorResponse.errorCode} - ${errorResponse}`)
+        }) 
+        this.loadingDialogShow = false
       },
       close () {
         this.dialog = false
         this.showRoleForm = false
+        this.permisosVisualizar = []
+        this.permisosCrear = []
+        this.permisosEditar = []
+        this.permisosBorrar = []        
         setTimeout(() => {
           this.editedItem = Object.assign({}, this.defaultItem)
           this.editedRol = -1
@@ -184,13 +384,36 @@ const axios = require('axios');
       },
     },
     mounted: function() {
-      axios.get("http://localhost:8081/api/roles")
+      /*
+      let recursos = [{value:1, text: "Sistema"},
+      {value:2, text: "Modulo de Administracion"},
+      {value:3, text: "Modulo de Configuracion"},
+      {value:4, text: "Modulo de Desarollo"}]
+      */
+      this.loadingDialogShow = true
+      this.loadingMessage = "Obteniendo Recursos"
+      axios.get("http://localhost:8081/api/recursos")
       .then(response => {
-        this.listaroles = response.data.list
+        this.listaRecursosSinModificacion = response.data.list
+        let recurso
+        for(var index in response.data.list){
+          recurso = {}
+          //Listado para mostrar en el select
+          recurso["value"] = response.data.list[index].id  
+          recurso["text"] = response.data.list[index].descripcion
+          this.listaRecursos.push(recurso)
+
+          //aqui creamos el diccionario
+          recurso = {}
+          this.diccionarioRecursos[response.data.list[index].id] = response.data.list[index].nombre
+        }
+        console.log(this.listaRecursos)
       }).catch(errorResponse => {
-          this.loadingDialogShow = false
-          alert(`ERROR ${errorResponse.errorCode} - ${errorResponse.message}`)
-      })
+        alert(`ERROR ${errorResponse.errorCode} - ${errorResponse.message}`)
+      })  
+
+      this.loadingMessage = "Obteniendo Roles"
+      this.getRoles()
     }
   }
 </script>
