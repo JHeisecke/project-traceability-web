@@ -359,18 +359,16 @@ import loadingDialog from '@/components/loading-dialog.vue';
         }          
       },
       deleteRole (item) {
-        //const index = this.listaroles.indexOf(item)
-        //confirm('Are you sure you want to delete this role?') && this.listaroles.splice(index, 1)
         this.loadingDialogShow = true
         this.loadingMessage = "Borrando rol"
-        axios.delete(`http://localhost:8081/api/roles/delete/${item.id}`).then(r =>{
+        axios.delete(`http://localhost:8081/api/rol/delete/${item.id}`).then(r =>{
           console.log(r)
-          this.loadingDialogShow = false
           this.getRoles()
         }).catch(errorResponse => {
-          console.log(errorResponse)
+          console.log(errorResponse)          
           alert(`ERROR ${errorResponse.errorCode} - ${errorResponse}`)
         }) 
+        this.loadingDialogShow = false
       },
       close () {
         this.dialog = false
