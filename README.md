@@ -8,6 +8,7 @@ Integrantes:
 
 ## Project setup
 ```
+cd project-traceability-web/
 npm install
 ```
 
