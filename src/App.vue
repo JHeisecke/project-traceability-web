@@ -10,7 +10,7 @@
         </v-list-item-content>
       </v-list-item>
       <v-list dense>
-        <v-list-group prepend-icon="mdi-settings" value="true" v-show="Viewconfig">
+        <v-list-group prepend-icon="mdi-settings" value="true" v-show="viewConfig">
           <template v-slot:activator>
             <v-list-item-title>Gestion de Configuración</v-list-item-title>
           </template>
@@ -18,7 +18,7 @@
               <v-list-item-title>Linea Bases</v-list-item-title>
             </v-list-item>
         </v-list-group>
-        <v-list-group prepend-icon="folder_open" value="true" v-show="Viewadmin">
+        <v-list-group prepend-icon="folder_open" value="true" v-show="viewAdmin">
           <template v-slot:activator>
             <v-list-item-title>Administración</v-list-item-title>
           </template>
@@ -32,7 +32,7 @@
             <v-list-item-title @click="showingAdminstrationPermissions()">Permisos</v-list-item-title>
           </v-list-item>
         </v-list-group>
-        <v-list-group prepend-icon="mdi-code-array" value="true" v-show="Viewdesarrollo">
+        <v-list-group prepend-icon="mdi-code-array" value="true" v-show="viewDesarrollo">
           <template v-slot:activator>
             <v-list-item-title>Desarrollo</v-list-item-title>
           </template>
@@ -93,12 +93,11 @@
     data: () => ({
       //Permisos por modulo
       // permite acceso total a modulo administracion
-      Viewadmin: false ,
+      viewAdmin: false,
       // permite acceso total a modulo desarrollo
-      Viewdesarrollo: false ,
+      viewDesarrollo: false,
       // permite acceso total a modulo configuracion
-      Viewconfig: false ,
-      //###################
+      viewConfig: false,
       authenticated : false,
       showLogin     : false,
       drawer        : null,
@@ -109,17 +108,19 @@
       if (localStorage.authenticated) {
         this.authenticated = localStorage.authenticated;
         this.userDTO = JSON.parse(localStorage.usuarioDTO);
-        var permososdto = this.userDTO.roles 
-        console.log(permososdto[0].nombre)
+        var rolesDTO = this.userDTO.roles 
+        console.log(rolesDTO)
         //Control de permisos
-        if(permososdto[0].nombre == 'sysadmin'){
-          this.Viewadmin = true
-          this.Viewconfig = true
-          this.Viewdesarrollo = true
-        }if(permososdto[0].nombre == 'Developer') {
-          this.Viewdesarrollo = true
-        }if(permososdto[0].nombre == 'Team Leader'){
-          this.Viewadmin = true
+        for(let rolIndex in rolesDTO){
+          if(rolesDTO[rolIndex].nombre == 'sysadmin'){
+            this.viewAdmin = true
+            this.viewConfig = true
+            this.viewDesarrollo = true
+          }if(rolesDTO[rolIndex].nombre == 'Developer') {
+            this.viewDesarrollo = true
+          }if(rolesDTO[rolIndex].nombre == 'Team Leader'){
+            this.viewAdmin = true
+          }
         }
 
       }
