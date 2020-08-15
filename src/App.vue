@@ -10,7 +10,7 @@
         </v-list-item-content>
       </v-list-item>
       <v-list dense>
-        <v-list-group prepend-icon="mdi-settings" value="true" v-show="Viewconfig">
+        <v-list-group prepend-icon="mdi-settings" value="true">
           <template v-slot:activator>
             <v-list-item-title>Gestion de Configuración</v-list-item-title>
           </template>
@@ -18,7 +18,7 @@
               <v-list-item-title>Linea Bases</v-list-item-title>
             </v-list-item>
         </v-list-group>
-        <v-list-group prepend-icon="folder_open" value="true" v-show="Viewadmin">
+        <v-list-group prepend-icon="folder_open" value="true">
           <template v-slot:activator>
             <v-list-item-title>Administración</v-list-item-title>
           </template>
@@ -32,7 +32,7 @@
             <v-list-item-title @click="showingAdminstrationPermissions()">Permisos</v-list-item-title>
           </v-list-item>
         </v-list-group>
-        <v-list-group prepend-icon="mdi-code-array" value="true" v-show="Viewdesarrollo">
+        <v-list-group prepend-icon="mdi-code-array" value="true">
           <template v-slot:activator>
             <v-list-item-title>Desarrollo</v-list-item-title>
           </template>
@@ -91,40 +91,18 @@
       source: String,
     },
     data: () => ({
-      //Permisos por modulo
-      // permite acceso total a modulo administracion
-      Viewadmin: false ,
-      // permite acceso total a modulo desarrollo
-      Viewdesarrollo: false ,
-      // permite acceso total a modulo configuracion
-      Viewconfig: false ,
-      //###################
       authenticated : false,
       showLogin     : false,
       drawer        : null,
-      userDTO       : {},
+      userDTO       : {}
     }),
     mounted: function() {
       // Crea el objeto autenticated en el storage cliente
       if (localStorage.authenticated) {
         this.authenticated = localStorage.authenticated;
         this.userDTO = JSON.parse(localStorage.usuarioDTO);
-        var permososdto = this.userDTO.roles 
-        console.log(permososdto[0].nombre)
-        //Control de permisos
-        if(permososdto[0].nombre == 'sysadmin'){
-          this.Viewadmin = true
-          this.Viewconfig = true
-          this.Viewdesarrollo = true
-        }if(permososdto[0].nombre == 'Developer') {
-          this.Viewdesarrollo = true
-        }if(permososdto[0].nombre == 'Team Leader'){
-          this.Viewadmin = true
-        }
-
+        console.log(this.userDTO)
       }
-      
-
     },
     methods: {
       setAuthentication(userDTO){
