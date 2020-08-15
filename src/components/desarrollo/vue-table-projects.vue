@@ -161,8 +161,6 @@ const axios = require('axios');
       source: String,
     },
     data: () => ({
-      editMode : true ,
-      loadingMessage  : "",
       loadingDialogShow : false,
       //Permite seleccionar una fecha nueva en menuDate
       date: new Date().toISOString().substr(0, 10),
