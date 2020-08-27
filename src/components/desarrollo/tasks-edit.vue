@@ -54,14 +54,14 @@
                 v-model="tarea.nombre"
                 label="Nombre Tarea"
                 prepend-icon="rate_review"
-                :rules="nameRolRules"
+                :rules="taskFormRules"
                 name="nombre"
                 type="text" />
               <v-text-field
                 v-model="tarea.descripcion"
                 label="Descripcion"
                 prepend-icon="rate_review"
-                :rules="userRolRules"
+                :rules="taskFormRules"
                 name="descripcion"
                 type="text" />
                 <v-row align="center">
@@ -99,7 +99,7 @@
                     v-model="tarea.version"
                     label="VERSION"
                     prepend-icon="rate_review"
-                    :rules="userRolRules"
+                    :rules="taskFormRules"
                     name="version"
                     :readonly="true"
                     type="text" />
@@ -109,7 +109,7 @@
                 v-model="tarea.observacion"
                 label="Observacion"
                 prepend-icon="rate_review"
-                :rules="userRolRules"
+                :rules="taskFormRules"
                 name="observacion"
                 type="text" />
           </v-form>
@@ -189,8 +189,8 @@ const axios = require('axios');
       /*Almacena permisos por rol*/
       permisosrol: [],
       editedTask: -1,
-      nameRolRules: [
-        v => !!v || "Nombre Rol es requerido"
+      taskFormRules: [
+        v => !!v || "El campo es requerido"
       ],
     }),
     watch: {
@@ -200,24 +200,21 @@ const axios = require('axios');
     },
     methods: {
       createTask(){
-        this.tarea.nombre = ""
-        this.tarea.descripcion = ""
-        this.tarea.prioridad= ""
-        this.tarea.estado= ""
-        this.tarea.version= 1
+        this.tarea.id = null,
+        this.tarea.nombre = "",
+        this.tarea.version = 1,
+        this.tarea.prioridad = null,
+        this.tarea.estado = null,
+        this.tarea.descripcion  = "",
+        this.tarea.observacion = "",
+        this.tarea.id_tarea_padre = null,
         this.tarea.idProyecto = this.$route.params.id
         this.editMode = true
         this.showTaskForm = true
+        this.editedTask = -1
       },
       saveTask(){
         console.log(this.tarea)
-        if (this.editedTask > -1) {
-          Object.assign(this.listatareas[this.editedTask], this.tarea)
-          //axios update
-        } else {
-          this.listatareas.push(this.tarea)
-          //axios save
-        }
         axios.post("http://localhost:8081/api/item/save",this.tarea,{headers:{'X-Requested-With':'XMLHttpRequest'}})
           .then(response => {
             console.log(`${response}`)
@@ -226,9 +223,11 @@ const axios = require('axios');
             alert(`ERROR ${errorResponse.errorCode} - ${errorResponse.message}`)
           })
         //window.location.reload()
-        this.close()
         this.showTaskForm = false
         this.editMode = false
+        this.tarea = null
+        this.refreshList()
+        this.close()
       },
       editTask (item) {
         this.editedTask = this.listatareas.indexOf(item)
@@ -256,10 +255,22 @@ const axios = require('axios');
         this.dialog = false
         this.showTaskForm = false
         setTimeout(() => {
-          this.editedItem = Object.assign({}, this.defaultItem)
+          //this.editedItem = Object.assign({}, this.defaultItem)
           this.editedTask = -1
         }, 300)
       },
+      refreshList(){
+          // Recarga lista sin necesidad de reiniciar componente
+          var URL = `http://localhost:8081/api/item/${this.$route.params.id}`
+          axios.get(URL)
+          .then(response => {
+            //console.log(`${response.data.listatareas}`)
+          this.listatareas = response.data.list
+          }).catch(errorResponse => {
+            this.loadingDialogShow = false
+            alert(`ERROR ${errorResponse.errorCode} - ${errorResponse.message}`)
+          })
+      }
     },
     mounted: function() {
       // Obtiene id de proyecto del route
