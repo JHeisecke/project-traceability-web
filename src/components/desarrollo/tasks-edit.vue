@@ -1,5 +1,6 @@
 
 <template>
+<v-container>
   <v-app id="app">
     <v-card>
       <v-card-title>
@@ -23,7 +24,7 @@
         sort-by="calories"
         class="elevation-1"
       >
-        <template v-slot:item.actions="{ item }">
+        <template v-slot:[`item.actions`]="{ item }">
                   <tr>
                     <td>
                         <v-btn class="mx-1" fab dark small color="blue" @click="viewTask(item)">
@@ -123,7 +124,7 @@
       </v-dialog>
     </v-card>
   </v-app>
-
+</v-container>
 </template>
 
 <script>

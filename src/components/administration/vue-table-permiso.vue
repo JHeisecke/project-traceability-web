@@ -1,4 +1,5 @@
 <template>
+<v-container>
   <div id="app">
     <loadingDialog :loadingMessage="loadingMessage" :loadingDialogShow="loadingDialogShow"></loadingDialog>
     <v-data-table
@@ -14,7 +15,7 @@
       </template>
     </v-data-table>  
   </div>
-
+</v-container>
 </template>
 
 <script>

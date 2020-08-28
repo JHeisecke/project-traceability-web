@@ -1,5 +1,6 @@
 
 <template>
+<v-container>
   <div id="app">
     <loadingDialog :loadingMessage="loadingMessage" :loadingDialogShow="loadingDialogShow"></loadingDialog>
     <v-data-table
@@ -16,7 +17,7 @@
           <v-spacer></v-spacer>
         </v-toolbar>
       </template>
-      <template v-slot:item.actions="{ item }">
+      <template v-slot:[`item.actions`]="{ item }">
                 <tr>
                   <td>
                       <v-btn class="mx-1" fab dark small color="blue" @click="viewRole(item)">
@@ -151,7 +152,7 @@
       </v-card>
     </v-dialog>    
   </div>
-
+</v-container>
 </template>
 
 <script>

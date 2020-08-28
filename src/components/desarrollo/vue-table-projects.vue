@@ -10,11 +10,11 @@
         :items-per-page="itemsPerPage"
         class="elevation-1">
         
-        <template v-slot:item.estado="{ item }">
+        <template v-slot:[`item.actions`]="{ item }">
           <v-chip :color="getColor(item.estado)" dark>{{ item.estado }}</v-chip>
         </template>
 
-        <template v-slot:item.actions="{ item }">
+        <template v-slot:[`item.actions`]="{ item }">
               <tr>
                 <td>
                       <v-btn class="mx-1" fab dark small color="blue" @click="viewProject(item)">
