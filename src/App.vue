@@ -139,6 +139,9 @@
       showingAdminstrationRoles() {
         this.$router.push({name: 'administration-rol-menu'});
       },
+      showingAdminstrationPermissions() {
+        this.$router.push({name: 'administration-permissions-menu'});
+      },
       showingProjects() {
         this.$router.push({name: 'traceability-menu'});
       },

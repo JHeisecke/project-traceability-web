@@ -1,5 +1,6 @@
 
 <template>
+<v-container>
   <v-app id="app">
     <v-card>
       <v-card-title>
@@ -23,7 +24,7 @@
         sort-by="calories"
         class="elevation-1"
       >
-        <template v-slot:item.actions="{ item }">
+        <template v-slot:[`item.actions`]="{ item }">
                   <tr>
                     <td>
                         <v-btn class="mx-1" fab dark small color="blue" @click="viewTask(item)">
@@ -123,7 +124,7 @@
       </v-dialog>
     </v-card>
   </v-app>
-
+</v-container>
 </template>
 
 <script>
@@ -162,30 +163,7 @@ const axios = require('axios');
         { text: 'Estado', value: 'estado' },
         { text: 'Actions', value: 'actions', sortable: false },
       ],
-      listatareas: [
-        {
-          id: '1',
-          nombre: 'tarea 1',
-          descripcion : 'laland',
-          estado: 'pendiente',
-          version: 1,
-        },
-        {
-          id: '2',
-          nombre: 'tarea 2',
-          descripcion : 'laland',
-          estado: 'pendiente',
-          version: 1,
-        },
-        {
-          id: '3',
-          nombre: 'tarea 3',
-          descripcion : 'laland',
-          estado: 'pendiente',
-          version: 1,
-
-        }
-      ],
+      listatareas: [],
       /*Almacena permisos por rol*/
       permisosrol: [],
       editedTask: -1,
@@ -211,16 +189,14 @@ const axios = require('axios');
       },
       saveTask(){
         console.log(this.tarea)
-        if (this.editedTask > -1) {
-          Object.assign(this.listatareas[this.editedTask], this.tarea)
-          //axios update
-        } else {
-          this.listatareas.push(this.tarea)
-          //axios save
-        }
         axios.post("http://localhost:8081/api/item/save",this.tarea,{headers:{'X-Requested-With':'XMLHttpRequest'}})
           .then(response => {
-            console.log(`${response}`)
+            this.tarea = response.data.dto
+            if (this.editedTask > -1) {
+              Object.assign(this.listatareas[this.editedTask], this.tarea)
+            } else {             
+              this.listatareas.push(this.tarea)
+            }
           }).catch(errorResponse => {
             this.loadingDialogShow = false
             alert(`ERROR ${errorResponse.errorCode} - ${errorResponse.message}`)

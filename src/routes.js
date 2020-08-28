@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import Home from './views/Home.vue'
 import UserMenu from './components/administration/vue-table-users.vue'
 import RolMenu from './components/administration/vue-table-rol.vue'
+import PermisoMenu from './components/administration/vue-table-permiso.vue'
 import Projects from './components/desarrollo/vue-table-projects.vue'
 import TasksEdit from './components/desarrollo/tasks-edit.vue'
 
@@ -16,6 +17,7 @@ const routes = [
   { path: '/trazabilidad', component: Projects, name: 'traceability-menu' },
   { path: '/trazabilidad/administracion/usuarios', component: UserMenu, name: 'administration-user-menu'},
   { path: '/trazabilidad/administracion/roles', component: RolMenu, name: 'administration-rol-menu'},
+  { path: '/trazabilidad/administracion/permisos', component: PermisoMenu, name: 'administration-permissions-menu'},
   { path: '/trazabilidad/desarrollo/tareas/:id', component: TasksEdit, name: 'desarrollo-task-edit'},                
 ]
 export default routes;
