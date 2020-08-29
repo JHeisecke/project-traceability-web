@@ -7,6 +7,7 @@ import PermisoMenu from './components/administration/vue-table-permiso.vue'
 import Projects from './components/desarrollo/vue-table-projects.vue'
 import TasksEdit from './components/desarrollo/tasks-edit.vue'
 import ProjectsConfig from './components/configuracion/vue-table-projects-config.vue'
+import baseLine from './components/configuracion/vue-table-baseLine.vue'
 
 
 Vue.use(VueRouter)
@@ -18,6 +19,7 @@ const routes = [
   { path: '/trazabilidad/administracion/roles', component: RolMenu, name: 'administration-rol-menu'},
   { path: '/trazabilidad/administracion/permisos', component: PermisoMenu, name: 'administration-permissions-menu'},
   { path: '/trazabilidad/desarrollo/tareas/:id', component: TasksEdit, name: 'desarrollo-task-edit'},   
-  { path: '/trazabilidad/configuracion/proyectos', component: ProjectsConfig, name: 'configuration-projects-menu' },             
+  { path: '/trazabilidad/configuracion/proyectos', component: ProjectsConfig, name: 'configuration-projects-menu' }, 
+  { path: '/trazabilidad/configuracion/:id/linea-bases', component: baseLine, name: 'line-base-menu' },             
 ]
 export default routes;
