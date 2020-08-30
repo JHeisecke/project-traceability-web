@@ -6,7 +6,12 @@
         :items="listProjects"
         :items-per-page="itemsPerPage"
         class="elevation-1">
-        
+        <template v-slot:top>
+          <v-toolbar flat color="white">
+            <v-toolbar-title>PROYECTOS</v-toolbar-title>
+            <v-spacer></v-spacer>
+          </v-toolbar>
+        </template>        
         <template v-slot:[`item.estado`]="{ item }">
           <v-chip :color="getColor(item.estado)" dark>{{ item.estado }}</v-chip>
         </template>
@@ -14,7 +19,7 @@
         <template v-slot:[`item.tareas`]="{ item }">
                 <tr>
                   <td>
-                    <v-btn class="mx-1" fab dark small color="blue" @click="editBaseLine(item)">
+                    <v-btn class="mx-1" fab dark small color="blue" @click="editProjectBaseLine(item)">
                       <v-icon dark>mdi-lead-pencil</v-icon>
                     </v-btn> 
                   </td>
@@ -58,7 +63,7 @@ const axios = require('axios');
         else if (estado == "EN CURSO") return 'blue'
         else return 'green'
       },
-      editBaseLine (item) {
+      editProjectBaseLine (item) {
         this.$router.push({name: 'line-base-menu', params : {id: item.id}});
       },
     },

@@ -9,9 +9,13 @@
         <template v-slot:top>
           <v-toolbar flat>
             <v-toolbar-title>LINEA BASES</v-toolbar-title>
-            <v-spacer></v-spacer>            
+            <v-spacer></v-spacer>   
+            <div class="text-center pt-2">
+              <v-btn color="primary" class="mr-2" @click="createBaseLine()">NUEVA LINEA BASE</v-btn>
+            </div>                         
           </v-toolbar>
-        </template>        
+        </template>   
+ 
         <template v-slot:[`item.estado`]="{ item }">
           <v-chip :color="getColor(item.estado)" dark>{{ item.estado }}</v-chip>
         </template>
@@ -27,6 +31,68 @@
         </template>
     </v-data-table>
 
+    <!--Form crear Linea Base--->
+    <v-dialog width=800 v-model="showBaseLineForm" persistent>      
+      <v-card class="elevation-12">
+        <v-toolbar color="primary" dark flat >
+          <v-toolbar-title>LINEA BASE</v-toolbar-title>
+          <v-spacer/>
+          <v-tooltip bottom>
+          </v-tooltip>
+        </v-toolbar>
+        <v-card-text>
+          <v-form v-model="validForm" ref="form" v-if="editMode">
+            <v-row align="center">
+              <v-col>
+                <v-select
+                  v-model="baseLine.idFase"
+                  :items="fases"
+                  label="ID FASE"
+                  :rules="emptyRules"
+                  hint="Elegir fase del proyecto"
+                  persistent-hint
+                ></v-select>                
+                <v-select
+                  v-model="baseLine.estado"
+                  :items="fases"
+                  label="ESTADO"
+                  :rules="emptyRules"
+                  hint="Que estado desea asignar?"
+                  persistent-hint
+                ></v-select>
+<!--                <template v-slot:activator="{ on }">
+                  <v-text-field
+                    v-model="baseLine.fechaCreacion"
+                    label="Fecha Creacion"
+                    hint="DD/MM/YYYY format"
+                    :rules="emptyRules"
+                    persistent-hint
+                    prepend-icon="event"
+                    @blur="baseLine.fechaCreacion = formatDate(baseLine.fechaCreacion)"
+                    v-on="on"
+                  ></v-text-field> 
+                </template>    -->  
+                  <v-select
+                    v-model="baseLine.items"
+                    :items="tasks"
+                    :rules="emptyRolRules"
+                    label="TAREAS"
+                    multiple
+                    chips
+                    hint="Que tareas deshabilitará?"
+                    persistent-hint
+                  ></v-select>                                       
+              </v-col>
+            </v-row>
+          </v-form>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer />
+          <v-btn color="success" @click="saveBaseLine()">Guardar</v-btn>
+          <v-btn color="error" @click="close()">Cancelar</v-btn>
+        </v-card-actions>        
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
@@ -42,7 +108,11 @@ import loadingDialog from '@/components/loading-dialog.vue';
     },
     data: () => ({
       loadingDialogShow : false,
+      showBaseLineForm : false,
+      loadingMessage: "",
+      validForm : false,
       itemsPerPage: 10,
+      editMode : true,
       baseLineList: [
         {
           id: 1,
@@ -81,7 +151,9 @@ import loadingDialog from '@/components/loading-dialog.vue';
           fechaCreacion: "16/02/2020"
         }         
       ],
-      loadingMessage: "",
+      stateList: [
+        'ABIERTO', 'CERRADO'
+      ],      
       headers: [
           {
             text: 'Código',
@@ -94,6 +166,20 @@ import loadingDialog from '@/components/loading-dialog.vue';
           { text: 'Fecha Creación', value: 'fechaCreacion' },
           { text: 'Acciones', value: 'actions' },
       ],
+      fases : [1, 2, 3],
+      tasks : [1, 2, 3],
+      baseLine : {
+        id : null,
+        idFase : null,
+        estado : null,
+        fechaCreacion : null,
+        fechaModificacion : null,
+        items : []
+      },
+      // Reglas para campos de fOrmulario
+      emptyRules: [
+        v => !!v || "El campo es requerido"
+      ]      
     }),
     methods: {
       getColor (estado) {
@@ -101,9 +187,30 @@ import loadingDialog from '@/components/loading-dialog.vue';
         else if (estado == "ABIERTO") return 'blue'
         else return 'green'
       },
+      close(){
+        this.showBaseLineForm = false
+      },
       editBaseLine (item) {
         console.log(`${item}`)
-        //this.$router.push({name: 'desarrollo-task-edit', params : {id: item.id}});
+        this.showBaseLineForm = true      
+      },
+      createBaseLine () {      
+        this.baseLine.id = null
+        this.baseLine.idFase = null
+        this.baseLine.estado = null
+        this.baseLine.fechaCreacion = this.date
+        this.baseLine.fechaModificacion = this.date
+        this.baseLine.items = []
+        this.editMode = true
+        this.showBaseLineForm = true
+      },
+      saveBaseLine () {
+        this.showBaseLineForm = false
+      }
+    },
+    watch: {
+      date () {
+        this.dateFormatted = this.formatDate(this.date)
       },
     },
     mounted: function() {
