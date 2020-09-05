@@ -19,7 +19,13 @@
         <template v-slot:[`item.estado`]="{ item }">
           <v-chip :color="getColor(item.estado)" dark>{{ item.estado }}</v-chip>
         </template>
-
+        <template v-slot:[`item.fechaAlta`]="{ item }">
+          <tr>
+            <td>
+              {{ showFormattedDate(item.fechaAlta) }}
+            </td>
+          </tr>
+        </template>
         <template v-slot:[`item.actions`]="{ item }">
                 <tr>
                   <td>
@@ -47,14 +53,14 @@
                 <v-select
                   v-model="baseLine.idFase"
                   :items="fases"
-                  label="ID FASE"
+                  label="FASE"
                   :rules="emptyRules"
                   hint="Elegir fase del proyecto"
                   persistent-hint
                 ></v-select>                
                 <v-select
                   v-model="baseLine.estado"
-                  :items="fases"
+                  :items="stateList"
                   label="ESTADO"
                   :rules="emptyRules"
                   hint="Que estado desea asignar?"
@@ -62,16 +68,16 @@
                 ></v-select>
 <!--                <template v-slot:activator="{ on }">
                   <v-text-field
-                    v-model="baseLine.fechaCreacion"
+                    v-model="baseLine.fechaAlta"
                     label="Fecha Creacion"
                     hint="DD/MM/YYYY format"
                     :rules="emptyRules"
                     persistent-hint
                     prepend-icon="event"
-                    @blur="baseLine.fechaCreacion = formatDate(baseLine.fechaCreacion)"
+                    @blur="baseLine.fechaAlta = formatDate(baseLine.fechaAlta)"
                     v-on="on"
                   ></v-text-field> 
-                </template>    -->  
+                </template>     
                   <v-select
                     v-model="baseLine.items"
                     :items="tasks"
@@ -79,9 +85,9 @@
                     label="TAREAS"
                     multiple
                     chips
-                    hint="Que tareas deshabilitará?"
+                    hint="Que tareas desea bloquear?"
                     persistent-hint
-                  ></v-select>                                       
+                  ></v-select>     -->                                   
               </v-col>
             </v-row>
           </v-form>
@@ -98,7 +104,7 @@
 
 <script>
 import loadingDialog from '@/components/loading-dialog.vue';
-//const axios = require('axios');
+const axios = require('axios');
   export default {
     components: {
       loadingDialog
@@ -113,44 +119,7 @@ import loadingDialog from '@/components/loading-dialog.vue';
       validForm : false,
       itemsPerPage: 10,
       editMode : true,
-      baseLineList: [
-        {
-          id: 1,
-          idFase: 1,
-          estado: "CERRADO",
-          fechaCreacion: "10/02/2020"
-        },
-        {
-          id: 2,
-          idFase: 1,
-          estado: "CERRADO",
-          fechaCreacion: "11/02/2020"
-        },
-        {
-          id: 3,
-          idFase: 1,
-          estado: "CERRADO",
-          fechaCreacion: "13/02/2020"
-        },
-        {
-          id: 4,
-          idFase: 2,
-          estado: "ABIERTO",
-          fechaCreacion: "14/02/2020"
-        },
-        {
-          id: 5,
-          idFase: 2,
-          estado: "ABIERTO",
-          fechaCreacion: "15/02/2020"
-        },
-        {
-          id: 6,
-          idFase: 1,
-          estado: "ABIERTO",
-          fechaCreacion: "16/02/2020"
-        }         
-      ],
+      baseLineList: [],
       stateList: [
         'ABIERTO', 'CERRADO'
       ],      
@@ -163,7 +132,7 @@ import loadingDialog from '@/components/loading-dialog.vue';
           },
           { text: 'Fase', value: 'idFase' },
           { text: 'Estado', value: 'estado' },
-          { text: 'Fecha Creación', value: 'fechaCreacion' },
+          { text: 'Fecha Creación', value: 'fechaAlta' },
           { text: 'Acciones', value: 'actions' },
       ],
       fases : [1, 2, 3],
@@ -172,7 +141,7 @@ import loadingDialog from '@/components/loading-dialog.vue';
         id : null,
         idFase : null,
         estado : null,
-        fechaCreacion : null,
+        fechaAlta : null,
         fechaModificacion : null,
         items : []
       },
@@ -184,8 +153,12 @@ import loadingDialog from '@/components/loading-dialog.vue';
     methods: {
       getColor (estado) {
         if (estado == "CERRADO") return 'red'
-        else if (estado == "ABIERTO") return 'blue'
-        else return 'green'
+        else if (estado == "ABIERTO") return 'green'
+        else return 'blue'
+      },
+      showFormattedDate(fechaAlta) {
+        let d = new Date(fechaAlta)
+        return d.getDate()+"/"+d.getMonth()+"/"+d.getFullYear()
       },
       close(){
         this.showBaseLineForm = false
@@ -198,7 +171,7 @@ import loadingDialog from '@/components/loading-dialog.vue';
         this.baseLine.id = null
         this.baseLine.idFase = null
         this.baseLine.estado = null
-        this.baseLine.fechaCreacion = this.date
+        this.baseLine.fechaAlta = this.date
         this.baseLine.fechaModificacion = this.date
         this.baseLine.items = []
         this.editMode = true
@@ -214,16 +187,16 @@ import loadingDialog from '@/components/loading-dialog.vue';
       },
     },
     mounted: function() {
-      /*this.loadingDialogShow = true
-      this.loadingMessage = "Obteniendo proyectos"
-      axios.get("http://localhost:8081/api/proyectos")
+      this.loadingDialogShow = true
+      this.loadingMessage = "Obteniendo lineas base"
+      axios.get(`http://localhost:8081/api/linea-base/${this.$route.params.id}`)
       .then(response => {
-        this.listProjects = response.data.list
+        this.baseLineList = response.data.dto
         this.loadingDialogShow = false
       }).catch(errorResponse => {
           this.loadingDialogShow = false
           alert(`ERROR ${errorResponse.errorCode} - ${errorResponse.message}`)
-      })*/
+      })
     }
   }
 </script>
