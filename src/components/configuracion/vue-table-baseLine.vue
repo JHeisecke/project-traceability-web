@@ -29,9 +29,7 @@
         <template v-slot:[`item.actions`]="{ item }">
                 <tr>
                   <td>
-                    <v-btn class="mx-1" fab dark small color="blue" @click="editBaseLine(item)">
-                      <v-icon dark>mdi-lead-pencil</v-icon>
-                    </v-btn> 
+                    <v-btn color="primary" class="mr-2" @click="asignTasks(item)">ASIGNAR TAREAS</v-btn> 
                   </td>
                 </tr>
         </template>
@@ -58,26 +56,8 @@
                   hint="Elegir fase del proyecto"
                   persistent-hint
                 ></v-select>                
-                <v-select
-                  v-model="baseLine.estado"
-                  :items="stateList"
-                  label="ESTADO"
-                  :rules="emptyRules"
-                  hint="Que estado desea asignar?"
-                  persistent-hint
-                ></v-select>
-<!--                <template v-slot:activator="{ on }">
-                  <v-text-field
-                    v-model="baseLine.fechaAlta"
-                    label="Fecha Creacion"
-                    hint="DD/MM/YYYY format"
-                    :rules="emptyRules"
-                    persistent-hint
-                    prepend-icon="event"
-                    @blur="baseLine.fechaAlta = formatDate(baseLine.fechaAlta)"
-                    v-on="on"
-                  ></v-text-field> 
-                </template>     
+                ESTADO: <v-chip :color="getColor('ABIERTO')" dark>ABIERTO</v-chip>
+<!--           </template>     
                   <v-select
                     v-model="baseLine.items"
                     :items="tasks"
@@ -135,15 +115,12 @@ const axios = require('axios');
           { text: 'Fecha Creación', value: 'fechaAlta' },
           { text: 'Acciones', value: 'actions' },
       ],
-      fases : [1, 2, 3],
-      tasks : [1, 2, 3],
+      fases : [],
+      tasks : [],
       baseLine : {
         id : null,
         idFase : null,
         estado : null,
-        fechaAlta : null,
-        fechaModificacion : null,
-        items : []
       },
       // Reglas para campos de fOrmulario
       emptyRules: [
@@ -163,22 +140,38 @@ const axios = require('axios');
       close(){
         this.showBaseLineForm = false
       },
-      editBaseLine (item) {
+      asignTasks (item) {
         console.log(`${item}`)
         this.showBaseLineForm = true      
       },
       createBaseLine () {      
         this.baseLine.id = null
         this.baseLine.idFase = null
-        this.baseLine.estado = null
-        this.baseLine.fechaAlta = this.date
-        this.baseLine.fechaModificacion = this.date
-        this.baseLine.items = []
+        this.baseLine.idProyecto = this.$route.params.id
+        this.baseLine.estado = "ABIERTO"
         this.editMode = true
         this.showBaseLineForm = true
       },
       saveBaseLine () {
         this.showBaseLineForm = false
+        this.loadingDialogShow = true
+        this.loadingMessage = "Guardando linea base"
+        axios.post(`http://localhost:8081/api/linea-base/save`,this.baseLine,{headers:{'X-Requested-With':'XMLHttpRequest'}})
+        .then(response => {
+          console.log(response)
+          this.refreshList()
+        }).catch(errorResponse => {
+          alert(`ERROR ${errorResponse.errorCode} - ${errorResponse.message}`)
+        })
+        this.loadingDialogShow = false
+      },
+      refreshList() {
+        axios.get(`http://localhost:8081/api/linea-base/${this.$route.params.id}`)
+        .then(response => {
+          this.baseLineList = response.data.dto
+        }).catch(errorResponse => {
+            alert(`ERROR ${errorResponse.errorCode} - ${errorResponse.message}`)
+        })        
       }
     },
     watch: {
@@ -188,15 +181,24 @@ const axios = require('axios');
     },
     mounted: function() {
       this.loadingDialogShow = true
-      this.loadingMessage = "Obteniendo lineas base"
+      this.loadingMessage = "Obteniendo lineas base por proyecto"
       axios.get(`http://localhost:8081/api/linea-base/${this.$route.params.id}`)
       .then(response => {
         this.baseLineList = response.data.dto
-        this.loadingDialogShow = false
       }).catch(errorResponse => {
-          this.loadingDialogShow = false
           alert(`ERROR ${errorResponse.errorCode} - ${errorResponse.message}`)
       })
+
+      this.loadingMessage = "Obteniendo fases por proyecto"
+      axios.get(`http://localhost:8081/api/fase/proyecto/${this.$route.params.id}`)
+      .then(response => {
+        this.fases = response.data.list.map(a => a.id)
+        console.log(this.fases)
+      }).catch(errorResponse => {
+          alert(`ERROR ${errorResponse.errorCode} - ${errorResponse.message}`)
+      })
+
+      this.loadingDialogShow = false
     }
   }
 </script>
