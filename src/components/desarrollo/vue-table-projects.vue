@@ -10,11 +10,11 @@
         :items-per-page="itemsPerPage"
         class="elevation-1">
         
-        <template v-slot:[`item.actions`]="{ item }">
+        <template v-slot:[`item.estado`]="{ item }">
           <v-chip :color="getColor(item.estado)" dark>{{ item.estado }}</v-chip>
         </template>
 
-        <template v-slot:[`item.actions`]="{ item }">
+        <template v-slot:[`item.tareas`]="{ item }">
               <tr>
                 <td>
                       <v-btn class="mx-1" fab dark small color="blue" @click="viewProject(item)">
@@ -33,10 +33,10 @@
               </tr>
         </template>
 
-        <template v-slot:item.tareas="{ item }">
+        <template v-slot:[`item.descripcion`]="{ item }">
                 <tr>
                   <td>
-                    <v-btn color="primary" class="mr-2" @click="editTasks(item)">EDITAR TAREAS</v-btn>                                                         
+                    <v-btn color="primary" class="mr-2" @click="editTasks(item)">EDITAR FASES</v-btn>                                                         
                   </td>
                 </tr>
           </template>
@@ -166,6 +166,8 @@ const axios = require('axios');
       date: new Date().toISOString().substr(0, 10),
       validForm  : false,
       showProjectForm: false,
+      editMode: false,
+      loadingMessage: "cargando",
       itemsPerPage: 10,
       editedProject: -1,
       listProjects: [],
@@ -191,8 +193,8 @@ const axios = require('axios');
           },
           { text: 'Proyecto', value: 'nombre' },
           { text: 'Estado', value: 'estado' },
-          { text: 'Acciones', value: 'actions' },
-          { text: 'Tareas', value: 'tareas' },
+          { text: 'Acciones', value: 'tareas' },
+          { text: 'FASES', value: 'descripcion' },
       ],
       listEstados: [
         'EN CURSO', 'EN PRODUCCIÓN', 'ANÁLISIS'
@@ -253,7 +255,7 @@ const axios = require('axios');
           this.editedProject = -1
         }, 300)
       },
-      getColor (estado) {
+      getColor(estado) {
         if (estado == "ANÁLISIS") return 'red'
         else if (estado == "EN CURSO") return 'blue'
         else return 'green'
@@ -326,7 +328,7 @@ const axios = require('axios');
             }) 
       },
       editTasks (item) {
-        this.$router.push({name: 'desarrollo-task-edit', params : {id: item.id}});
+        this.$router.push({name: 'desarrollo-phase-edit', params : {id: item.id}});
       },
       refreshList(){
         axios.get("http://localhost:8081/api/proyectos")
