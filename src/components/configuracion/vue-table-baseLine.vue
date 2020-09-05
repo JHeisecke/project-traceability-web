@@ -56,17 +56,7 @@
                   hint="Elegir fase del proyecto"
                   persistent-hint
                 ></v-select>                
-                ESTADO: <v-chip :color="getColor('ABIERTO')" dark>ABIERTO</v-chip>
-<!--            <v-select
-                    v-model="baseLine.items"
-                    :items="tasks"
-                    :rules="emptyRolRules"
-                    label="TAREAS"
-                    multiple
-                    chips
-                    hint="Que tareas desea bloquear?"
-                    persistent-hint
-                  ></v-select>     -->                                   
+                ESTADO: <v-chip :color="getColor('ABIERTO')" dark>ABIERTO</v-chip>                                  
               </v-col>
             </v-row>
           </v-form>
@@ -93,7 +83,7 @@
             <v-row align="center">
               <v-col>
                 <v-select
-                    v-model="baseLine.items"
+                    v-model="assignedTasks"
                     :items="tasks"
                     :rules="emptyRolRules"
                     label="TAREAS"
@@ -101,8 +91,7 @@
                     chips
                     hint="Que tareas desea bloquear?"
                     persistent-hint
-                  ></v-select>    
-                  
+                  ></v-select>                    
                   <p style="color: red;">ATENCIÓN: Una vez guardada la línea base, automaticamente pasará a cerrada y no se podrá editar</p>                           
               </v-col>
             </v-row>
@@ -154,6 +143,7 @@ const axios = require('axios');
       ],
       fases : [],
       tasks : [],
+      assignedTasks: [],
       baseLine : {
         id : null,
         idFase : null,
@@ -179,6 +169,7 @@ const axios = require('axios');
       },
       asignTasks (item) {
         console.log(`${item}`)
+        this.getItemsByPhase()
         this.showTasksAssignment = true      
       },
       createBaseLine () {      
@@ -207,14 +198,24 @@ const axios = require('axios');
         this.loadingMessage = "Obteniendo items por fase seleccionada"
         axios.get(`http://localhost:8081/api/item/${this.$route.params.id}`)
         .then(response => {
-          this.baseLineList = response.data.dto
+          let item
+          for(var index in response.data.list){
+            item = {}
+            //Listado para mostrar en el select
+            item["value"] = response.data.list[index].id  
+            item["text"] = response.data.list[index].nombre
+            this.tasks.push(item)
+
+            //aqui creamos el diccionario
+            //this.diccionarioRecursos[response.data.list[index].id] = response.data.list[index].nombre
+          }
         }).catch(errorResponse => {
             alert(`ERROR ${errorResponse.errorCode} - ${errorResponse.message}`)
         })        
       },
       saveTasksAssigned () {
 
-      } ,  
+      },  
       refreshList() {
         axios.get(`http://localhost:8081/api/linea-base/${this.$route.params.id}`)
         .then(response => {
