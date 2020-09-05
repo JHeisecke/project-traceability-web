@@ -29,7 +29,8 @@
         <template v-slot:[`item.actions`]="{ item }">
                 <tr>
                   <td>
-                    <v-btn color="primary" class="mr-2" @click="asignTasks(item)">ASIGNAR TAREAS</v-btn> 
+                    <v-btn color="primary" v-if="isOpen(item)" class="mr-2" @click="assignTasks(item)">ASIGNAR TAREAS</v-btn> 
+                    <v-btn color="primary" v-else class="mr-2" @click="seeAssignedTasks(item)">VER TAREAS</v-btn> 
                   </td>
                 </tr>
         </template>
@@ -85,7 +86,7 @@
                 <v-select
                     v-model="assignedTasks"
                     :items="tasks"
-                    :rules="emptyRolRules"
+                    :rules="emptyRules"
                     label="TAREAS"
                     multiple
                     chips
@@ -103,7 +104,28 @@
           <v-btn color="error" @click="showTasksAssignment = !showTasksAssignment">Cancelar</v-btn>
         </v-card-actions>        
       </v-card>
-    </v-dialog>    
+    </v-dialog>  
+
+    <!-- FORM PARA VER TAREAS ASGINADAS A UNA LINEA BASE -->
+    <v-dialog v-model="showAssignedTasks" max-width="800px">
+    <v-card>
+      <v-card-title class="headline blue white--text" primary-title >
+        TAREAS ASGINADAS
+      </v-card-title>
+      <v-card-text>
+        <v-data-table 
+          :headers="tasksHeaders" 
+          :items="assignedTasks" 
+          hide-actions>
+        </v-data-table>
+      </v-card-text>
+      <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="error" flat @click="showAssignedTasks = !showAssignedTasks">Cerrar</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>  
+
   </v-container>
 </template>
 
@@ -121,6 +143,7 @@ const axios = require('axios');
       loadingDialogShow : false,
       showBaseLineForm : false,
       showTasksAssignment : false,
+      showAssignedTasks : false,
       loadingMessage: "",
       validForm : false,
       itemsPerPage: 10,
@@ -141,6 +164,36 @@ const axios = require('axios');
           { text: 'Fecha Creación', value: 'fechaAlta' },
           { text: 'Acciones', value: 'actions' },
       ],
+      tasksHeaders: [
+        {
+          text: 'Nombre',
+          align: 'center',
+          sortable: false,
+          value: 'nombre',
+          class: ['subheading', 'grey lighten-3', 'font-weight-black']
+        },
+        {
+          text: 'Descripcion',
+          align: 'center',
+          sortable: false,
+          value: 'descripcion',
+          class: ['subheading', 'grey lighten-3', 'font-weight-black']
+        },
+        {
+          text: 'Estado', 
+          sortable: false, 
+          align: 'center', 
+          value: 'estado',
+          class: ['subheading', 'grey lighten-3', 'font-weight-black']
+        },
+        {
+          text: 'Version', 
+          sortable: false, 
+          align: 'center', 
+          value: 'version',
+          class: ['subheading', 'grey lighten-3', 'font-weight-black']
+        }
+      ],
       fases : [],
       tasks : [],
       assignedTasks: [],
@@ -155,6 +208,10 @@ const axios = require('axios');
       ]      
     }),
     methods: {
+      isOpen(item){
+        if(item.estado == "ABIERTO") return true
+        return false
+      },
       getColor (estado) {
         if (estado == "CERRADO") return 'red'
         else if (estado == "ABIERTO") return 'green'
@@ -167,9 +224,10 @@ const axios = require('axios');
       close(){
         this.showBaseLineForm = false
       },
-      asignTasks (item) {
-        console.log(`${item}`)
+      assignTasks (item) {
         this.getItemsByPhase()
+        this.baseLine.id = item.id
+        console.log(`${this.baseLine}`)
         this.showTasksAssignment = true      
       },
       createBaseLine () {      
@@ -187,11 +245,13 @@ const axios = require('axios');
         axios.post(`http://localhost:8081/api/linea-base/save`,this.baseLine,{headers:{'X-Requested-With':'XMLHttpRequest'}})
         .then(response => {
           console.log(response)
+          this.loadingDialogShow = false
           this.refreshList()
         }).catch(errorResponse => {
           alert(`ERROR ${errorResponse.errorCode} - ${errorResponse.message}`)
+          this.loadingDialogShow = false
         })
-        this.loadingDialogShow = false
+        
       },
       getItemsByPhase () {
         this.loadingDialogShow = true
@@ -211,11 +271,23 @@ const axios = require('axios');
           }
         }).catch(errorResponse => {
             alert(`ERROR ${errorResponse.errorCode} - ${errorResponse.message}`)
-        })        
+        }) 
+        this.loadingDialogShow = false       
       },
       saveTasksAssigned () {
-
-      },  
+        this.showTasksAssignment = !this.showTasksAssignment
+        this.baseLine.estado = "CERRADO"
+        //TODO axios para asignar items a una linea base
+      },
+      seeAssignedTasks (item) {
+        this.showAssignedTasks = true
+        axios.get(`http://localhost:8081/api/item/linea-base/${item.id}`)
+        .then(response => {
+          this.assignedTasks = response.data.list
+        }).catch(errorResponse => {
+            alert(`ERROR ${errorResponse.errorCode} - ${errorResponse.message}`)
+        })
+      },
       refreshList() {
         axios.get(`http://localhost:8081/api/linea-base/${this.$route.params.id}`)
         .then(response => {
