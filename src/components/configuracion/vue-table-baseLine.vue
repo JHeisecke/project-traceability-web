@@ -57,8 +57,7 @@
                   persistent-hint
                 ></v-select>                
                 ESTADO: <v-chip :color="getColor('ABIERTO')" dark>ABIERTO</v-chip>
-<!--           </template>     
-                  <v-select
+<!--            <v-select
                     v-model="baseLine.items"
                     :items="tasks"
                     :rules="emptyRolRules"
@@ -79,6 +78,43 @@
         </v-card-actions>        
       </v-card>
     </v-dialog>
+
+    <!-- Form para asignar tareas a lineas bases-->
+    <v-dialog width=800 v-model="showTasksAssignment" persistent>      
+      <v-card class="elevation-12">
+        <v-toolbar color="primary" dark flat >
+          <v-toolbar-title>ASIGNACIÓN DE TAREAS</v-toolbar-title>
+          <v-spacer/>
+          <v-tooltip bottom>
+          </v-tooltip>
+        </v-toolbar>
+        <v-card-text>
+          <v-form v-model="validForm" ref="form" v-if="editMode">
+            <v-row align="center">
+              <v-col>
+                <v-select
+                    v-model="baseLine.items"
+                    :items="tasks"
+                    :rules="emptyRolRules"
+                    label="TAREAS"
+                    multiple
+                    chips
+                    hint="Que tareas desea bloquear?"
+                    persistent-hint
+                  ></v-select>    
+                  
+                  <p style="color: red;">ATENCIÓN: Una vez guardada la línea base, automaticamente pasará a cerrada y no se podrá editar</p>                           
+              </v-col>
+            </v-row>
+          </v-form>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer />
+          <v-btn color="success" @click="saveTasksAssigned()">Guardar</v-btn>
+          <v-btn color="error" @click="showTasksAssignment = !showTasksAssignment">Cancelar</v-btn>
+        </v-card-actions>        
+      </v-card>
+    </v-dialog>    
   </v-container>
 </template>
 
@@ -95,6 +131,7 @@ const axios = require('axios');
     data: () => ({
       loadingDialogShow : false,
       showBaseLineForm : false,
+      showTasksAssignment : false,
       loadingMessage: "",
       validForm : false,
       itemsPerPage: 10,
@@ -142,7 +179,7 @@ const axios = require('axios');
       },
       asignTasks (item) {
         console.log(`${item}`)
-        this.showBaseLineForm = true      
+        this.showTasksAssignment = true      
       },
       createBaseLine () {      
         this.baseLine.id = null
@@ -165,6 +202,19 @@ const axios = require('axios');
         })
         this.loadingDialogShow = false
       },
+      getItemsByPhase () {
+        this.loadingDialogShow = true
+        this.loadingMessage = "Obteniendo items por fase seleccionada"
+        axios.get(`http://localhost:8081/api/item/${this.$route.params.id}`)
+        .then(response => {
+          this.baseLineList = response.data.dto
+        }).catch(errorResponse => {
+            alert(`ERROR ${errorResponse.errorCode} - ${errorResponse.message}`)
+        })        
+      },
+      saveTasksAssigned () {
+
+      } ,  
       refreshList() {
         axios.get(`http://localhost:8081/api/linea-base/${this.$route.params.id}`)
         .then(response => {
