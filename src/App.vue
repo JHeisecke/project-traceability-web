@@ -154,6 +154,9 @@
         this.authenticated = false
         location.reload()
       },
+      editMode(){
+        console.log("javier bobo")
+      },
       showPopupLogin() {
         this.showLogin = !this.showLogin
       },
