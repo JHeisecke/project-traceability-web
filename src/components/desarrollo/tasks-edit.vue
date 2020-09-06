@@ -194,7 +194,6 @@ const axios = require('axios');
         this.tarea.idFase = this.$route.params.idFase
         this.editMode = true
         this.showTaskForm = true        
-        console.log(this.fases)
         if(this.listaTareas.length == 0 && this.fases.length > 1){
           let currentIndex = this.fases.indexOf(parseInt(this.tarea.idFase))
           var URL = `http://localhost:8081/api/item/fase/last/${this.fases[currentIndex+1]}`
@@ -211,7 +210,6 @@ const axios = require('axios');
         }
       },
       saveTask(){
-        //console.log(this.tarea)
         axios.post("http://localhost:8081/api/item/save",this.tarea,{headers:{'X-Requested-With':'XMLHttpRequest'}})
           .then(response => {
             this.tarea = response.data.dto
@@ -224,7 +222,6 @@ const axios = require('axios');
             this.loadingDialogShow = false
             alert(`ERROR ${errorResponse.errorCode} - ${errorResponse.message}`)
           })
-        //window.location.reload()
         this.close()
         this.showTaskForm = false
         this.editMode = false
@@ -234,7 +231,17 @@ const axios = require('axios');
         this.tarea = Object.assign({}, item)
         this.editMode = true
         this.showTaskForm = true
-        this.listaTareasPadre = this.listaTareas
+        this.listaTareasPadre = []
+        if (this.listaTareasPadre.indexOf(item.idItemPadre) == -1) {
+          axios.get(`http://localhost:8081/api/item/data/${item.idItemPadre}`)
+          .then(response => {
+            this.listaTareasPadre.push(response.data.dto)
+          }).catch(errorResponse => {
+              alert(`ERROR ${errorResponse.errorCode} - ${errorResponse.message}`)
+          })
+        } else {
+          this.listaTareasPadre = this.listaTareas
+        }
       },
       deleteTask (item) {
         const index = this.listaTareas.indexOf(item)
