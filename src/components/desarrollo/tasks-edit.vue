@@ -232,15 +232,19 @@ const axios = require('axios');
         this.editMode = true
         this.showTaskForm = true
         this.listaTareasPadre = []
-        if (this.listaTareasPadre.indexOf(item.idItemPadre) == -1) {
-          axios.get(`http://localhost:8081/api/item/data/${item.idItemPadre}`)
-          .then(response => {
-            this.listaTareasPadre.push(response.data.dto)
-          }).catch(errorResponse => {
-              alert(`ERROR ${errorResponse.errorCode} - ${errorResponse.message}`)
-          })
-        } else {
-          this.listaTareasPadre = this.listaTareas
+        if (item.idItemPadre != null) {
+          if (this.listaTareasPadre.indexOf(item.idItemPadre) == -1) {
+            axios.get(`http://localhost:8081/api/item/data/${item.idItemPadre}`)
+            .then(response => {
+              this.listaTareasPadre.push(response.data.dto)
+            }).catch(errorResponse => {
+                alert(`ERROR ${errorResponse.errorCode} - ${errorResponse.message}`)
+            })
+          } else {
+            this.listaTareasPadre = this.listaTareas
+          }
+        }else {
+            this.listaTareasPadre = this.listaTareas
         }
       },
       deleteTask (item) {
