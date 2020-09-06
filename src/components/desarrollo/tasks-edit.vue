@@ -24,6 +24,9 @@
         sort-by="calories"
         class="elevation-1"
       >
+        <template v-slot:[`item.estado`]="{ item }">
+          <v-chip :color="getColor(item.estado)" dark>{{ item.estado }}</v-chip>
+        </template>
         <template v-slot:[`item.actions`]="{ item }">
                   <tr>
                     <td>
@@ -150,7 +153,7 @@ const axios = require('axios');
         idProyecto : null
       },
       listaEstados: [
-        'iniciado', 'pendiente', 'finalizado',
+        'INICIADO', 'PENDIENTE', 'FINALIZADO',
       ],
       listaPrioridad: [
         'alto', 'medio', 'bajo',
@@ -226,6 +229,12 @@ const axios = require('axios');
               })
               //window.location.reload()
         }
+      },
+      getColor(estado) {
+        //'INICIADO', 'PENDIENTE', 'FINALIZADO',
+        if (estado == "PENDIENTE") return 'orange'
+        else if (estado == "INICIADO") return 'blue'
+        else if (estado == "FINALIZADO") return 'green'
       },
       close () {
         this.dialog = false
