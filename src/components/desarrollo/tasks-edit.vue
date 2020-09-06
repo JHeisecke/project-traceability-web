@@ -92,7 +92,7 @@
                   </v-col>
                   <v-col cols="12" sm="6">
                     <v-select
-                      v-model="tarea.idTareaPadre"
+                      v-model="tarea.idItemPadre"
                       :items="listaTareasPadre"
                       label="TAREA PADRE"
                       chips
@@ -154,7 +154,7 @@ const axios = require('axios');
         estado: null,
         descripcion : null,
         observacion: null,
-        idTareaPadre: null,
+        idItemPadre: null,
         idProyecto : null
       },
       listaEstados: [
@@ -200,7 +200,7 @@ const axios = require('axios');
           var URL = `http://localhost:8081/api/item/fase/last/${this.fases[currentIndex+1]}`
           axios.get(URL)
           .then(response => {
-            //this.tarea.idTareaPadre = response.data.dto.id
+            //this.tarea.idItemPadre = response.data.dto.id
             this.listaTareasPadre.push(response.data.dto)
           }).catch(errorResponse => {
             this.loadingDialogShow = false
@@ -249,7 +249,7 @@ const axios = require('axios');
         }
       },
       getColor(estado) {
-        //'INICIADO', 'PENDIENTE', 'FINALIZADO',
+        //'INICIADO', 'PENDIENTE', 'FINALIZADO'
         if (estado == "PENDIENTE") return 'orange'
         else if (estado == "INICIADO") return 'blue'
         else if (estado == "FINALIZADO") return 'green'
