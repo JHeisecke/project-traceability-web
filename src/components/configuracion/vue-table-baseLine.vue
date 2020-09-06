@@ -226,6 +226,7 @@ const axios = require('axios');
       },
       assignTasks (item) {
         this.getItemsByPhase()
+        this.assignedTasks = null
         this.baseLine.id = item.id
         console.log(`${this.baseLine}`)
         this.showTasksAssignment = true      
