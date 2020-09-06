@@ -225,7 +225,7 @@ const axios = require('axios');
         this.showBaseLineForm = false
       },
       assignTasks (item) {
-        this.getItemsByPhase()
+        this.getItemsByPhase(item.idFase)
         this.assignedTasks = null
         this.baseLine.id = item.id
         console.log(`${this.baseLine}`)
@@ -254,10 +254,11 @@ const axios = require('axios');
         })
         
       },
-      getItemsByPhase () {
+      getItemsByPhase (idFase) {
         this.loadingDialogShow = true
         this.loadingMessage = "Obteniendo items por fase seleccionada"
-        axios.get(`http://localhost:8081/api/item/${this.$route.params.id}`)
+        this.tasks = []
+        axios.get(`http://localhost:8081/api/item/${this.$route.params.id}/${idFase}`)
         .then(response => {
           let item
           for(var index in response.data.list){
