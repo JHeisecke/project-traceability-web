@@ -261,7 +261,7 @@ const axios = require('axios');
         this.loadingDialogShow = true
         this.loadingMessage = "Obteniendo items por fase seleccionada"
         this.tasks = []
-        axios.get(`http://localhost:8081/api/item/${this.$route.params.id}/${idFase}`)
+        axios.get(`http://localhost:8081/api/item/linea-base/${this.$route.params.id}/${idFase}`)
         .then(response => {
           let item
           for(var index in response.data.list){
