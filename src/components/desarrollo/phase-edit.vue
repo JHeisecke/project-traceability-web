@@ -24,7 +24,10 @@
         sort-by="calories"
         class="elevation-1"
       >
-        <template v-slot:item.actions="{ item }">
+        <template v-slot:[`item.estado`]="{ item }">
+          <v-chip :color="getColor(item.estado)" dark>{{ item.estado }}</v-chip>
+        </template>
+        <template v-slot:[`item.actions`]="{ item }">
                   <tr>
                     <td>
                         <v-btn color="primary" class="mr-2" @click="tasksEdit(item)">EDITAR TAREAS</v-btn>
@@ -32,9 +35,11 @@
                         <v-btn class="mx-1" fab dark small color="blue" @click="editPhase(item)">
                             <v-icon dark>mdi-lead-pencil</v-icon>
                         </v-btn>
+                        <!--
                         <v-btn class="mx-1" fab dark small color="blue" @click="deletePhase(item)">
                             <v-icon dark>mdi-delete</v-icon>
                         </v-btn>
+                        -->
                     </td>
                   </tr>
           </template>
@@ -51,8 +56,16 @@
           <v-card-text>
             <v-form v-model="validForm" ref="form" v-if="editMode">
               <v-text-field
-                v-model="phase.id"
-                label="Fase"
+                v-model="phase.idProyecto"
+                item-value= this.$route.params.id
+                label="Proyecto"
+                prepend-icon="rate_review"
+                name="Proyecto"
+                :readonly="true"
+                type="text" />
+              <v-text-field
+                v-model="phase.orden"
+                label="Orden"
                 prepend-icon="rate_review"
                 name="nombre"
                 type="text" />
@@ -144,12 +157,13 @@ const axios = require('axios');
         id : null,
         idProyecto : null,
         estado: null,
+        orden: null,
         fechaAlta : null,
         fechaModificacion: null,
         high_user: null
       },
       listaEstados: [
-        'inicial', 'desarrollo', 'para revisión', 'completa'
+        'INICIAL', 'DESARROLLO', 'REVISIÓN', 'COMPLETA'
       ],
       listaPrioridad: [
         'alto', 'medio', 'bajo',
@@ -164,31 +178,8 @@ const axios = require('axios');
         {
           id : 1,
           idProyecto : 1,
+          orden: 1,
           estado: "inicial",
-          fechaAlta : "20/01/2020",
-          modification_user: "mfare",
-          high_user: "mfare"
-        },
-        {
-          id : 2,
-          idProyecto : 1,
-          estado: "desarrollo",
-          fechaAlta : "20/01/2020",
-          modification_user: "mfare",
-          high_user: "mfare"
-        },
-        {
-          id : 3,
-          idProyecto : 1,
-          estado: "para revisión",
-          fechaAlta : "20/01/2020",
-          modification_user: "mfare",
-          high_user: "mfare"
-        },
-        {
-          id : 4,
-          idProyecto : 1,
-          estado: "completa",
           fechaAlta : "20/01/2020",
           modification_user: "mfare",
           high_user: "mfare"
@@ -212,18 +203,17 @@ const axios = require('axios');
         this.phase.id = null
         this.phase.idProyecto = this.$route.params.id
         this.phase.estado= ""
+        this.phase.orden= null
         this.phase.fechaAlta= ""
         this.phase.fechaModificacion= ""
-        this.phase.high_user= ""
+        this.editedPhase = -1
         this.editMode = true
       },
-      tasksEdit(){
-        //tasksEdit(item) -- recibir item para cuando tenga endpoint tareas por fase
-       // this.$router.push({name: 'desarrollo-task-edit', params : {id: item.id}});
-        this.$router.push({name: 'desarrollo-task-edit', params : {id: this.$route.params.id}});
+      tasksEdit(item){
+        //this.$router.push({name: 'desarrollo-task-edit', params : {id: this.$route.params.id}});
+        this.$router.push({name: 'desarrollo-task-edit', params : {id: this.$route.params.id, idFase: item.id}});
       },
       savePhase(){
-        console.log(this.phase)
         axios.post("http://localhost:8081/api/fase/save",this.phase,{headers:{'X-Requested-With':'XMLHttpRequest'}})
           .then(response => {
             this.tarea = response.data.dto
@@ -244,8 +234,9 @@ const axios = require('axios');
       editPhase (item) {
         this.editMode = true
         this.showPhaseForm = true
+        this.phase.idProyecto = this.$route.params.id
         this.editedPhase = this.listafases.indexOf(item)
-        this.tarea = Object.assign({}, item)
+        this.phase = Object.assign({}, item)
         //axios edit Phase
       },
       deletePhase (item) {
@@ -265,6 +256,13 @@ const axios = require('axios');
               //window.location.reload()
         }
         */
+      },
+      getColor(estado) {
+        //'INICIAL', 'DESARROLLO', 'REVISIÓN', 'COMPLETA'
+        if (estado == "INICIAL") return 'red'
+        else if (estado == "DESARROLLO") return 'blue'
+        else if (estado == "REVISIÓN") return 'orange'
+        else return 'green'
       },
       close () {
         this.dialog = false

@@ -62,7 +62,6 @@
                 v-model="tarea.descripcion"
                 label="Descripcion"
                 prepend-icon="rate_review"
-                :rules="userRolRules"
                 name="descripcion"
                 type="text" />
                 <v-row align="center">
@@ -100,7 +99,6 @@
                     v-model="tarea.version"
                     label="VERSION"
                     prepend-icon="rate_review"
-                    :rules="userRolRules"
                     name="version"
                     :readonly="true"
                     type="text" />
@@ -110,7 +108,6 @@
                 v-model="tarea.observacion"
                 label="Observacion"
                 prepend-icon="rate_review"
-                :rules="userRolRules"
                 name="observacion"
                 type="text" />
           </v-form>
@@ -145,6 +142,7 @@ const axios = require('axios');
         nombre : null,
         version: null,
         prioridad: null,
+        idFase: null,
         estado: null,
         descripcion : null,
         observacion: null,
@@ -184,11 +182,12 @@ const axios = require('axios');
         this.tarea.estado= ""
         this.tarea.version= 1
         this.tarea.idProyecto = this.$route.params.id
+        this.tarea.idFase = this.$route.params.idFase
         this.editMode = true
         this.showTaskForm = true
       },
       saveTask(){
-        console.log(this.tarea)
+        //console.log(this.tarea)
         axios.post("http://localhost:8081/api/item/save",this.tarea,{headers:{'X-Requested-With':'XMLHttpRequest'}})
           .then(response => {
             this.tarea = response.data.dto
@@ -239,7 +238,9 @@ const axios = require('axios');
     },
     mounted: function() {
       // Obtiene id de proyecto del route
-      var URL = `http://localhost:8081/api/item/${this.$route.params.id}`
+      let idProject = this.$route.params.id
+      let idPhase = this.$route.params.idFase
+      var URL = `http://localhost:8081/api/item/${idProject}/${idPhase}`
       axios.get(URL)
       .then(response => {
         //console.log(`${response.data.listatareas}`)

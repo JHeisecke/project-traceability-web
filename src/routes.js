@@ -19,7 +19,7 @@ const routes = [
   { path: '/trazabilidad/administracion/usuarios', component: UserMenu, name: 'administration-user-menu'},
   { path: '/trazabilidad/administracion/roles', component: RolMenu, name: 'administration-rol-menu'},
   { path: '/trazabilidad/administracion/permisos', component: PermisoMenu, name: 'administration-permissions-menu'},
-  { path: '/trazabilidad/desarrollo/tareas/:id', component: TasksEdit, name: 'desarrollo-task-edit'},
+  { path: '/trazabilidad/desarrollo/tareas/:id/:idFase', component: TasksEdit, name: 'desarrollo-task-edit'},
   { path: '/trazabilidad/desarrollo/fases/:id', component: PhaseEdit, name: 'desarrollo-phase-edit'},                
                 
 ]
