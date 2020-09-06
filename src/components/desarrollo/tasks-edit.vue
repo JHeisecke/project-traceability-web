@@ -21,7 +21,7 @@
       </v-card-title>
       <v-data-table
         :headers="headers"
-        :items="listatareas"
+        :items="listaTareas"
         sort-by="calories"
         class="elevation-1"
       >
@@ -92,8 +92,8 @@
                   </v-col>
                   <v-col cols="12" sm="6">
                     <v-select
-                      v-model="tarea.id_tarea_padre"
-                      :items="listatareas"
+                      v-model="tarea.idTareaPadre"
+                      :items="listaTareasPadre"
                       label="TAREA PADRE"
                       chips
                       item-value="id"
@@ -140,6 +140,7 @@ const axios = require('axios');
       },
       dialog: false,
       items:[],
+      fases:[],
       validForm  : false,
       showTaskForm: false,
       showPermissionsForm: true,
@@ -153,7 +154,7 @@ const axios = require('axios');
         estado: null,
         descripcion : null,
         observacion: null,
-        id_tarea_padre: null,
+        idTareaPadre: null,
         idProyecto : null
       },
       listaEstados: [
@@ -168,7 +169,8 @@ const axios = require('axios');
         { text: 'Estado', value: 'estado' },
         { text: 'Actions', value: 'actions', sortable: false },
       ],
-      listatareas: [],
+      listaTareas: [],
+      listaTareasPadre: [],
       /*Almacena permisos por rol*/
       permisosrol: [],
       editedTask: -1,
@@ -191,7 +193,22 @@ const axios = require('axios');
         this.tarea.idProyecto = this.$route.params.id
         this.tarea.idFase = this.$route.params.idFase
         this.editMode = true
-        this.showTaskForm = true
+        this.showTaskForm = true        
+        console.log(this.fases)
+        if(this.listaTareas.length == 0 && this.fases.length > 1){
+          let currentIndex = this.fases.indexOf(parseInt(this.tarea.idFase))
+          var URL = `http://localhost:8081/api/item/fase/last/${this.fases[currentIndex+1]}`
+          axios.get(URL)
+          .then(response => {
+            //this.tarea.idTareaPadre = response.data.dto.id
+            this.listaTareasPadre.push(response.data.dto)
+          }).catch(errorResponse => {
+            this.loadingDialogShow = false
+            alert(`ERROR ${errorResponse.errorCode} - ${errorResponse.message}`)
+          })          
+        } else {
+          this.listaTareasPadre = this.listaTareas
+        }
       },
       saveTask(){
         //console.log(this.tarea)
@@ -199,9 +216,9 @@ const axios = require('axios');
           .then(response => {
             this.tarea = response.data.dto
             if (this.editedTask > -1) {
-              Object.assign(this.listatareas[this.editedTask], this.tarea)
+              Object.assign(this.listaTareas[this.editedTask], this.tarea)
             } else {             
-              this.listatareas.push(this.tarea)
+              this.listaTareas.push(this.tarea)
             }
           }).catch(errorResponse => {
             this.loadingDialogShow = false
@@ -213,25 +230,22 @@ const axios = require('axios');
         this.editMode = false
       },
       editTask (item) {
-        this.editedTask = this.listatareas.indexOf(item)
+        this.editedTask = this.listaTareas.indexOf(item)
         this.tarea = Object.assign({}, item)
         this.editMode = true
         this.showTaskForm = true
-        //axios edit task
+        this.listaTareasPadre = this.listaTareas
       },
       deleteTask (item) {
-        //alert(`estas borrando el Rol ${item.nombre}`)
-        const index = this.listatareas.indexOf(item)
-        if (confirm('Quieres eliminar esta tarea?') && this.listatareas.splice(index, 1)){
-          //axios delete task
+        const index = this.listaTareas.indexOf(item)
+        if (confirm('Quieres eliminar esta tarea?') && this.listaTareas.splice(index, 1)){
             axios.delete(`http://localhost:8081/api/item/delete/${item.id}`)
               .then(response => {
-                console.log(`${response.data.listatareas}`)
+                console.log(`${response.data.listaTareas}`)
               }).catch(errorResponse => {
                 this.loadingDialogShow = false
                 alert(`ERROR ${errorResponse.errorCode} - ${errorResponse.message}`)
               })
-              //window.location.reload()
         }
       },
       getColor(estado) {
@@ -260,11 +274,19 @@ const axios = require('axios');
       var URL = `http://localhost:8081/api/item/${idProject}/${idPhase}`
       axios.get(URL)
       .then(response => {
-        //console.log(`${response.data.listatareas}`)
-       this.listatareas = response.data.list
+        //console.log(`${response.data.listaTareas}`)
+       this.listaTareas = response.data.list
       }).catch(errorResponse => {
          this.loadingDialogShow = false
          alert(`ERROR ${errorResponse.errorCode} - ${errorResponse.message}`)
+      })
+
+      URL = `http://localhost:8081/api/fase/proyecto/${idProject}`
+      axios.get(URL)
+      .then(response => {
+        this.fases = response.data.list.map(a => a.id)
+      }).catch(errorResponse => {
+        alert(`ERROR ${errorResponse.errorCode} - ${errorResponse.message}`)
       })
     }
   }
