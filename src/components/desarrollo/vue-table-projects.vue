@@ -1,15 +1,20 @@
 <template>
   <v-container>
     <loadingDialog :loadingMessage="loadingMessage" :loadingDialogShow="loadingDialogShow"></loadingDialog>
-    <div class="text-center pt-2">
-        <v-btn color="primary" class="mr-2" @click="createProject()">NUEVO PROJECTO</v-btn>
-    </div>
     <v-data-table
         :headers="headers"
         :items="listProjects"
         :items-per-page="itemsPerPage"
         class="elevation-1">
-        
+        <template v-slot:top>
+          <v-toolbar flat>
+            <v-toolbar-title>PROYECTOS</v-toolbar-title>
+            <v-spacer></v-spacer>   
+            <div class="text-center pt-2">
+              <v-btn color="primary" class="mr-2" @click="createProject()">NUEVO PROYECTO</v-btn>
+            </div>                         
+          </v-toolbar>
+        </template>           
         <template v-slot:[`item.estado`]="{ item }">
           <v-chip :color="getColor(item.estado)" dark>{{ item.estado }}</v-chip>
         </template>

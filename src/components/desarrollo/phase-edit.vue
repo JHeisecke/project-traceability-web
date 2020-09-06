@@ -6,8 +6,9 @@
       <v-card-title>
         FASES DEL PROYECTO
         <v-spacer></v-spacer>
+        <div class="text-center pt-2">
           <v-btn color="primary" class="mr-2" @click="createPhase()">NUEVA FASE</v-btn>
-        <v-spacer></v-spacer>
+        </div>
         <!-- BUSCADOR
         <v-text-field
           v-model="search"
