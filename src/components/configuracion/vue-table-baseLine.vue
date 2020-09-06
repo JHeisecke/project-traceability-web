@@ -200,6 +200,7 @@ const axios = require('axios');
       baseLine : {
         id : null,
         idFase : null,
+        idProyecto : null,
         estado : null,
       },
       // Reglas para campos de fOrmulario
@@ -228,6 +229,8 @@ const axios = require('axios');
         this.getItemsByPhase(item.idFase)
         this.assignedTasks = null
         this.baseLine.id = item.id
+        this.baseLine.idFase = item.idFase
+        this.baseLine.idProyecto = this.$route.params.id
         console.log(`${this.baseLine}`)
         this.showTasksAssignment = true      
       },
