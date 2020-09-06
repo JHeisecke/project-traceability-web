@@ -206,10 +206,6 @@ const axios = require('axios');
       ],
       listTeamLider: [
         {
-          id : 0,
-          nombre: 'fare',    
-        },
-        {
           id : 1,
           nombre: 'javier',    
         },

@@ -100,7 +100,7 @@
                   <v-col cols="12" sm="6">
                     <v-select
                       v-model="tarea.id_tarea_padre"
-                      :items="listatareas"
+                      :items="listafases"
                       label="TAREA PADRE"
                       chips
                       item-value="id"
@@ -221,7 +221,7 @@ const axios = require('axios');
             if (this.editedPhase > -1) {
               Object.assign(this.listafases[this.editedPhase], this.phase)
             } else {             
-              this.listatareas.push(this.tarea)
+              this.listafases.push(this.tarea)
             }
           }).catch(errorResponse => {
             this.loadingDialogShow = false
@@ -242,14 +242,14 @@ const axios = require('axios');
       },
       deletePhase (item) {
         //alert(`estas borrando el Rol ${item.nombre}`)
-        const index = this.listatareas.indexOf(item)
+        const index = this.listafases.indexOf(item)
         print(index)
         /*
-        if (confirm('Are you sure you want to delete this role?') && this.listatareas.splice(index, 1)){
+        if (confirm('Are you sure you want to delete this role?') && this.listafases.splice(index, 1)){
           //axios delete Phase
             axios.delete(`http://localhost:8081/api/item/delete/${item.id}`)
               .then(response => {
-                console.log(`${response.data.listatareas}`)
+                console.log(`${response.data.listafases}`)
               }).catch(errorResponse => {
                 this.loadingDialogShow = false
                 alert(`ERROR ${errorResponse.errorCode} - ${errorResponse.message}`)
@@ -279,7 +279,7 @@ const axios = require('axios');
       var URL = `http://localhost:8081/api/fase/proyecto/${this.$route.params.id}`
       axios.get(URL)
       .then(response => {
-        console.log(`${response.data.listatareas}`)
+        console.log(`${response.data.listafases}`)
        this.listafases = response.data.list
       }).catch(errorResponse => {
          this.loadingDialogShow = false
