@@ -17,15 +17,15 @@
         <template v-slot:[`item.tareas`]="{ item }">
               <tr>
                 <td>
-                      <v-btn class="mx-1" fab dark small color="blue" @click="viewProject(item)">
+                      <!--<v-btn class="mx-1" fab dark small color="blue" @click="viewProject(item)">
                           <v-icon dark>mdi-eye</v-icon>
-                      </v-btn>                 
+                      </v-btn>  -->              
                       <v-btn class="mx-1" fab dark small color="blue" @click="editProject(item)">
                           <v-icon dark>mdi-lead-pencil</v-icon>
                       </v-btn>                  
-                      <v-btn class="mx-1" fab dark small color="blue" @click="listProjectUsers(item)">
+                     <!-- <v-btn class="mx-1" fab dark small color="blue" @click="listProjectUsers(item)">
                           <v-icon dark>mdi-account-edit</v-icon>
-                      </v-btn>
+                      </v-btn>-->
                       <v-btn class="mx-1" fab dark small color="red" @click="deleteProject(item)">
                           <v-icon dark>restore_from_trash</v-icon>
                       </v-btn>                           
