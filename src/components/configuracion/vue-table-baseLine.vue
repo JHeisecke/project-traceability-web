@@ -267,9 +267,6 @@ const axios = require('axios');
             item["value"] = response.data.list[index].id  
             item["text"] = response.data.list[index].nombre
             this.tasks.push(item)
-
-            //aqui creamos el diccionario
-            //this.diccionarioRecursos[response.data.list[index].id] = response.data.list[index].nombre
           }
         }).catch(errorResponse => {
             alert(`ERROR ${errorResponse.errorCode} - ${errorResponse.message}`)
@@ -279,7 +276,31 @@ const axios = require('axios');
       saveTasksAssigned () {
         this.showTasksAssignment = !this.showTasksAssignment
         this.baseLine.estado = "CERRADO"
-        //TODO axios para asignar items a una linea base
+        let tasksResponse = []
+        // Recursos para el permiso visualizar
+        for(let indexTask in  this.assignedTasks) {  
+          let index = this.assignedTasks[indexTask]        
+          let taskResponse = {}
+          taskResponse.id = index
+          tasksResponse.push(taskResponse)
+        }
+
+        axios.post(`http://localhost:8081/api/item/linea-base/asignar?idLineaBase=${this.baseLine.id}`,tasksResponse,{headers:{'X-Requested-With':'XMLHttpRequest'}})
+        .then(response => {
+          this.loadingDialogShow = false
+          console.log(response)
+          axios.post(`http://localhost:8081/api/linea-base/save`,this.baseLine,{headers:{'X-Requested-With':'XMLHttpRequest'}})
+            .then(response => {
+              console.log(response)
+              this.refreshList()
+            }).catch(errorResponse => {
+              alert(`ERROR ${errorResponse.errorCode} - ${errorResponse.message}`)
+              this.loadingDialogShow = false
+            })
+        }).catch(errorResponse => {
+          alert(`ERROR ${errorResponse.errorCode} - ${errorResponse.message}`)
+          this.loadingDialogShow = false
+        })
       },
       seeAssignedTasks (item) {
         this.showAssignedTasks = true
