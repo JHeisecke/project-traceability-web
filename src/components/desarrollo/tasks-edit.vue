@@ -30,12 +30,15 @@
         <template v-slot:[`item.actions`]="{ item }">
                   <tr>
                     <td>
-                        <v-btn class="mx-1" fab dark small color="blue" @click="viewTask(item)">
+                        <!--<v-btn class="mx-1" fab dark small color="blue" @click="viewTask(item)">
                             <v-icon dark>mdi-eye</v-icon>
-                        </v-btn>
-                        <v-btn class="mx-1" fab dark small color="blue" @click="editTask(item)">
+                        </v-btn>-->
+                        <v-btn class="mx-1"  v-if="canEdit(item)" fab dark small color="blue" @click="editTask(item)">
                             <v-icon dark>mdi-lead-pencil</v-icon>
                         </v-btn>
+                        <v-btn class="mx-1"  v-else fab dark small color="gray">
+                            <v-icon dark>mdi-lead-pencil</v-icon>
+                        </v-btn>                        
                         <v-btn class="mx-1" fab dark small color="blue" @click="deleteTask(item)">
                             <v-icon dark>mdi-delete</v-icon>
                         </v-btn>
@@ -218,7 +221,7 @@ const axios = require('axios');
       deleteTask (item) {
         //alert(`estas borrando el Rol ${item.nombre}`)
         const index = this.listatareas.indexOf(item)
-        if (confirm('Are you sure you want to delete this role?') && this.listatareas.splice(index, 1)){
+        if (confirm('Quieres eliminar esta tarea?') && this.listatareas.splice(index, 1)){
           //axios delete task
             axios.delete(`http://localhost:8081/api/item/delete/${item.id}`)
               .then(response => {
@@ -244,6 +247,10 @@ const axios = require('axios');
           this.editedTask = -1
         }, 300)
       },
+      canEdit(item) {
+        if(item.idLineaBase == null) return true
+        return false
+      }
     },
     mounted: function() {
       // Obtiene id de proyecto del route
