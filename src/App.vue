@@ -15,7 +15,7 @@
             <v-list-item-title>Gestion de Configuración</v-list-item-title>
           </template>
             <v-list-item link>
-              <v-list-item-title>Linea Bases</v-list-item-title>
+              <v-list-item-title @click="showingConfigurationProjects()">Linea Bases</v-list-item-title>
             </v-list-item>
         </v-list-group>
         <v-list-group prepend-icon="folder_open" value="true" v-show="viewAdmin">
@@ -147,6 +147,9 @@
       },
       showingTaskMenu() {
         this.$router.push({name: 'desarrollo-task-menu'});
+      },
+      showingConfigurationProjects(){
+        this.$router.push({name: 'configuration-projects-menu'});
       },
       logOut(){
         this.$router.push({name: 'home'});

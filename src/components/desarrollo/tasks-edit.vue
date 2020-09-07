@@ -6,8 +6,9 @@
       <v-card-title>
         TAREAS DEL PROYECTO
         <v-spacer></v-spacer>
+        <div class="text-center pt-2">
           <v-btn color="primary" class="mr-2" @click="createTask()">NUEVA TAREA</v-btn>
-        <v-spacer></v-spacer>
+        </div>
         <!-- BUSCADOR
         <v-text-field
           v-model="search"
@@ -20,7 +21,7 @@
       </v-card-title>
       <v-data-table
         :headers="headers"
-        :items="listatareas"
+        :items="listaTareas"
         sort-by="calories"
         class="elevation-1"
       >
@@ -30,15 +31,21 @@
         <template v-slot:[`item.actions`]="{ item }">
                   <tr>
                     <td>
-                        <v-btn class="mx-1" fab dark small color="blue" @click="viewTask(item)">
+                        <!--<v-btn class="mx-1" fab dark small color="blue" @click="viewTask(item)">
                             <v-icon dark>mdi-eye</v-icon>
-                        </v-btn>
-                        <v-btn class="mx-1" fab dark small color="blue" @click="editTask(item)">
+                        </v-btn>-->
+                        <v-btn class="mx-1"  v-if="canEdit(item)" fab dark small color="blue" @click="editTask(item)">
                             <v-icon dark>mdi-lead-pencil</v-icon>
                         </v-btn>
-                        <v-btn class="mx-1" fab dark small color="blue" @click="deleteTask(item)">
+                        <v-btn class="mx-1"  v-else fab dark small color="gray">
+                            <v-icon dark>mdi-lead-pencil</v-icon>
+                        </v-btn>                        
+                        <v-btn class="mx-1" v-if="canEdit(item)" fab dark small color="blue" @click="deleteTask(item)">
                             <v-icon dark>mdi-delete</v-icon>
                         </v-btn>
+                        <v-btn class="mx-1"  v-else fab dark small color="gray">
+                            <v-icon dark>mdi-delete</v-icon>
+                        </v-btn>                            
                     </td>
                   </tr>
           </template>
@@ -88,8 +95,8 @@
                   </v-col>
                   <v-col cols="12" sm="6">
                     <v-select
-                      v-model="tarea.id_tarea_padre"
-                      :items="listatareas"
+                      v-model="tarea.idItemPadre"
+                      :items="listaTareasPadre"
                       label="TAREA PADRE"
                       chips
                       item-value="id"
@@ -136,6 +143,7 @@ const axios = require('axios');
       },
       dialog: false,
       items:[],
+      fases:[],
       validForm  : false,
       showTaskForm: false,
       showPermissionsForm: true,
@@ -149,7 +157,7 @@ const axios = require('axios');
         estado: null,
         descripcion : null,
         observacion: null,
-        id_tarea_padre: null,
+        idItemPadre: null,
         idProyecto : null
       },
       listaEstados: [
@@ -164,7 +172,8 @@ const axios = require('axios');
         { text: 'Estado', value: 'estado' },
         { text: 'Actions', value: 'actions', sortable: false },
       ],
-      listatareas: [],
+      listaTareas: [],
+      listaTareasPadre: [],
       /*Almacena permisos por rol*/
       permisosrol: [],
       editedTask: -1,
@@ -187,51 +196,74 @@ const axios = require('axios');
         this.tarea.idProyecto = this.$route.params.id
         this.tarea.idFase = this.$route.params.idFase
         this.editMode = true
-        this.showTaskForm = true
+        this.showTaskForm = true        
+        if(this.listaTareas.length == 0 && this.fases.length > 1){
+          let currentIndex = this.fases.indexOf(parseInt(this.tarea.idFase))
+          var URL = `http://localhost:8081/api/item/fase/last/${this.fases[currentIndex+1]}`
+          axios.get(URL)
+          .then(response => {
+            //this.tarea.idItemPadre = response.data.dto.id
+            this.listaTareasPadre.push(response.data.dto)
+          }).catch(errorResponse => {
+            this.loadingDialogShow = false
+            alert(`ERROR ${errorResponse.errorCode} - ${errorResponse.message}`)
+          })          
+        } else {
+          this.listaTareasPadre = this.listaTareas
+        }
       },
       saveTask(){
-        //console.log(this.tarea)
         axios.post("http://localhost:8081/api/item/save",this.tarea,{headers:{'X-Requested-With':'XMLHttpRequest'}})
           .then(response => {
             this.tarea = response.data.dto
             if (this.editedTask > -1) {
-              Object.assign(this.listatareas[this.editedTask], this.tarea)
+              Object.assign(this.listaTareas[this.editedTask], this.tarea)
             } else {             
-              this.listatareas.push(this.tarea)
+              this.listaTareas.push(this.tarea)
             }
           }).catch(errorResponse => {
             this.loadingDialogShow = false
             alert(`ERROR ${errorResponse.errorCode} - ${errorResponse.message}`)
           })
-        //window.location.reload()
         this.close()
         this.showTaskForm = false
         this.editMode = false
       },
       editTask (item) {
-        this.editedTask = this.listatareas.indexOf(item)
+        this.editedTask = this.listaTareas.indexOf(item)
         this.tarea = Object.assign({}, item)
         this.editMode = true
         this.showTaskForm = true
-        //axios edit task
+        this.listaTareasPadre = []
+        if (item.idItemPadre != null) {
+          if (this.listaTareasPadre.indexOf(item.idItemPadre) == -1) {
+            axios.get(`http://localhost:8081/api/item/data/${item.idItemPadre}`)
+            .then(response => {
+              this.listaTareasPadre.push(response.data.dto)
+            }).catch(errorResponse => {
+                alert(`ERROR ${errorResponse.errorCode} - ${errorResponse.message}`)
+            })
+          } else {
+            this.listaTareasPadre = this.listaTareas
+          }
+        }else {
+            this.listaTareasPadre = this.listaTareas
+        }
       },
       deleteTask (item) {
-        //alert(`estas borrando el Rol ${item.nombre}`)
-        const index = this.listatareas.indexOf(item)
-        if (confirm('Are you sure you want to delete this role?') && this.listatareas.splice(index, 1)){
-          //axios delete task
+        const index = this.listaTareas.indexOf(item)
+        if (confirm('Quieres eliminar esta tarea?') && this.listaTareas.splice(index, 1)){
             axios.delete(`http://localhost:8081/api/item/delete/${item.id}`)
               .then(response => {
-                console.log(`${response.data.listatareas}`)
+                console.log(`${response.data.listaTareas}`)
               }).catch(errorResponse => {
                 this.loadingDialogShow = false
                 alert(`ERROR ${errorResponse.errorCode} - ${errorResponse.message}`)
               })
-              //window.location.reload()
         }
       },
       getColor(estado) {
-        //'INICIADO', 'PENDIENTE', 'FINALIZADO',
+        //'INICIADO', 'PENDIENTE', 'FINALIZADO'
         if (estado == "PENDIENTE") return 'orange'
         else if (estado == "INICIADO") return 'blue'
         else if (estado == "FINALIZADO") return 'green'
@@ -244,6 +276,10 @@ const axios = require('axios');
           this.editedTask = -1
         }, 300)
       },
+      canEdit(item) {
+        if(item.idLineaBase == null) return true
+        return false
+      }
     },
     mounted: function() {
       // Obtiene id de proyecto del route
@@ -252,11 +288,19 @@ const axios = require('axios');
       var URL = `http://localhost:8081/api/item/${idProject}/${idPhase}`
       axios.get(URL)
       .then(response => {
-        //console.log(`${response.data.listatareas}`)
-       this.listatareas = response.data.list
+        //console.log(`${response.data.listaTareas}`)
+       this.listaTareas = response.data.list
       }).catch(errorResponse => {
          this.loadingDialogShow = false
          alert(`ERROR ${errorResponse.errorCode} - ${errorResponse.message}`)
+      })
+
+      URL = `http://localhost:8081/api/fase/proyecto/${idProject}`
+      axios.get(URL)
+      .then(response => {
+        this.fases = response.data.list.map(a => a.id)
+      }).catch(errorResponse => {
+        alert(`ERROR ${errorResponse.errorCode} - ${errorResponse.message}`)
       })
     }
   }

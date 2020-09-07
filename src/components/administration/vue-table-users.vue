@@ -8,10 +8,12 @@
         :items="listausuarios"
         class="elevation-1">
         <template v-slot:top>
-          <v-toolbar flat color="blue darken-1">
+          <v-toolbar flat>
             <v-toolbar-title>USUARIOS</v-toolbar-title>
-            <v-divider hidden inset vertical></v-divider>
-            <v-spacer></v-spacer>            
+            <v-spacer></v-spacer>   
+            <div class="text-center pt-2">
+              <v-btn color="primary" class="mr-2" @click="createUser()">NUEVO USUARIO</v-btn>
+            </div>           
           </v-toolbar>
         </template>
         <template v-slot:[`item.actions`]="{ item }">
@@ -30,7 +32,6 @@
               </tr>
         </template>
     </v-data-table>
-              <v-btn @click="createUser()" color="indigo accent-2">NEW USER</v-btn>
 
     <!-- DIALOGO CON EL FORMULARIO PARA CREACION/EDICION DE USUARIOS-->
     <v-dialog v-model="showUserForm" persistent>      

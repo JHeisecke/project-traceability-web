@@ -15,6 +15,9 @@
           <!-- Barra Vertical -->
           <v-divider lass="mx-4" inset vertical></v-divider>
           <v-spacer></v-spacer>
+          <div class="text-center pt-2">
+              <v-btn color="primary" class="mr-2" @click="createRole()">NUEVO ROL</v-btn>
+          </div>          
         </v-toolbar>
       </template>
       <template v-slot:[`item.actions`]="{ item }">
@@ -33,9 +36,7 @@
                 </tr>
         </template>
     </v-data-table>
-    <div class="text-center pt-2">
-        <v-btn color="primary" class="mr-2" @click="createRole()">NEW ROLE</v-btn>
-    </div>
+
     <!--Form crear Role--->
     <v-dialog width=800 v-model="showRoleForm" persistent>      
       <v-card class="elevation-12">
