@@ -40,9 +40,12 @@
                         <v-btn class="mx-1"  v-else fab dark small color="gray">
                             <v-icon dark>mdi-lead-pencil</v-icon>
                         </v-btn>                        
-                        <v-btn class="mx-1" fab dark small color="blue" @click="deleteTask(item)">
+                        <v-btn class="mx-1" v-if="canEdit(item)" fab dark small color="blue" @click="deleteTask(item)">
                             <v-icon dark>mdi-delete</v-icon>
                         </v-btn>
+                        <v-btn class="mx-1"  v-else fab dark small color="gray">
+                            <v-icon dark>mdi-delete</v-icon>
+                        </v-btn>                            
                     </td>
                   </tr>
           </template>
