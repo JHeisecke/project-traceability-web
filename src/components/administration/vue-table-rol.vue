@@ -409,7 +409,6 @@ import loadingDialog from '@/components/loading-dialog.vue';
           recurso = {}
           this.diccionarioRecursos[response.data.list[index].id] = response.data.list[index].nombre
         }
-        console.log(this.listaRecursos)
       }).catch(errorResponse => {
         alert(`ERROR ${errorResponse.errorCode} - ${errorResponse.message}`)
       })  

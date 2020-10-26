@@ -124,12 +124,12 @@
               <v-row align="center">
                   <v-select
                     v-model="project.idLider"
-                    :items="listTeamLider"
+                    :items="listTeamLeader"
                     label="TEAM LEADER"
                     :rules="emptyRules"
                     persistent-hint
                     item-value="id"
-                    item-text="nombre"
+                    item-text="nombreCompleto"
                   ></v-select>
                 <v-col cols="12" sm="6">
                   <v-select
@@ -204,16 +204,7 @@ const axios = require('axios');
       listEstados: [
         'EN CURSO', 'EN PRODUCCIÓN', 'ANÁLISIS'
       ],
-      listTeamLider: [
-        {
-          id : 1,
-          nombre: 'javier',    
-        },
-        {
-          id : 2,
-          nombre: 'test',    
-        }
-      ],
+      listTeamLeader: [],
       // Reglas para campos de furmulario
       emptyRules: [
         v => !!v || "El campo es requerido"
@@ -353,6 +344,15 @@ const axios = require('axios');
           this.loadingDialogShow = false
           alert(`ERROR ${errorResponse.errorCode} - ${errorResponse.message}`)
       })
+
+      this.loadingMessage = "Obteniendo lideres de proyecto"
+      axios.get("http://localhost:8081/api/usuario/team-leaders")
+      .then(response => {
+        this.listTeamLeader = response.data.list
+      }).catch(errorResponse => {
+          alert(`ERROR ${errorResponse.errorCode} - ${errorResponse.message}`)
+      })
+      this.loadingDialogShow = false 
     }
   }
 </script>
