@@ -99,7 +99,6 @@
                       :items="listaTareasPadre"
                       label="TAREA PADRE"
                       chips
-                      :disabled="tarea.idItemPadre == null"
                       item-value="id"
                       item-text="nombre"
                       persistent-hint
@@ -192,6 +191,7 @@ const axios = require('axios');
         this.tarea.nombre = ""
         this.tarea.descripcion = ""
         this.tarea.prioridad= ""
+        //this.tarea.idItemPadre = ""
         this.tarea.estado= ""
         this.tarea.version= 1
         this.tarea.observacion = ""
@@ -204,7 +204,7 @@ const axios = require('axios');
           var URL = `http://localhost:8081/api/item/fase/last/${this.fases[currentIndex-1]}`
           axios.get(URL)
           .then(response => {
-            this.tarea.idItemPadre = response.data.dto
+            this.tarea.idItemPadre = response.data.dto.id
             this.listaTareasPadre.push(response.data.dto)
           }).catch(errorResponse => {
             this.loadingDialogShow = false
@@ -218,11 +218,7 @@ const axios = require('axios');
         axios.post("http://localhost:8081/api/item/save",this.tarea,{headers:{'X-Requested-With':'XMLHttpRequest'}})
           .then(response => {
             this.tarea = response.data.dto
-            if (this.editedTask > -1) {
-              Object.assign(this.listaTareas[this.editedTask], this.tarea)
-            } else {             
-              this.listaTareas.push(this.tarea)
-            }
+            window.location.reload()
           }).catch(errorResponse => {
             this.loadingDialogShow = false
             alert(`ERROR ${errorResponse.errorCode} - ${errorResponse.message}`)
