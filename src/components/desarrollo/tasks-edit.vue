@@ -194,16 +194,17 @@ const axios = require('axios');
         this.tarea.prioridad= ""
         this.tarea.estado= ""
         this.tarea.version= 1
+        this.tarea.observacion = ""
         this.tarea.idProyecto = this.$route.params.id
         this.tarea.idFase = this.$route.params.idFase
         this.editMode = true
         this.showTaskForm = true        
         if(this.listaTareas.length == 0 && this.fases.length > 1){
           let currentIndex = this.fases.indexOf(parseInt(this.tarea.idFase))
-          var URL = `http://localhost:8081/api/item/fase/last/${this.fases[currentIndex+1]}`
+          var URL = `http://localhost:8081/api/item/fase/last/${this.fases[currentIndex-1]}`
           axios.get(URL)
           .then(response => {
-            //this.tarea.idItemPadre = response.data.dto.id
+            this.tarea.idItemPadre = response.data.dto
             this.listaTareasPadre.push(response.data.dto)
           }).catch(errorResponse => {
             this.loadingDialogShow = false
