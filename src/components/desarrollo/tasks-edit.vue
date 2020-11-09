@@ -99,6 +99,7 @@
                       :items="listaTareasPadre"
                       label="TAREA PADRE"
                       chips
+                      :disabled="tarea.idItemPadre == null"
                       item-value="id"
                       item-text="nombre"
                       persistent-hint

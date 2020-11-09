@@ -164,7 +164,7 @@ const axios = require('axios');
         high_user: null
       },
       listaEstados: [
-        'INICIAL', 'DESARROLLO', 'REVISIÓN', 'COMPLETA'
+        'INICIAL', 'DESARROLLO', 'REVISIÓN', 'COMPLETA', 'CERRADO'
       ],
       listaPrioridad: [
         'alto', 'medio', 'bajo',
@@ -260,9 +260,10 @@ const axios = require('axios');
       },
       getColor(estado) {
         //'INICIAL', 'DESARROLLO', 'REVISIÓN', 'COMPLETA'
-        if (estado == "INICIAL") return 'red'
+        if (estado == "INICIAL") return 'cyan'
         else if (estado == "DESARROLLO") return 'blue'
         else if (estado == "REVISIÓN") return 'orange'
+        else if (estado == "CERRADO") return 'red'
         else return 'green'
       },
       close () {
