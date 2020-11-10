@@ -99,7 +99,7 @@
                       :items="listaTareasPadre"
                       label="TAREA PADRE"
                       chips
-                      :disabled="tarea.idItemPadre == null"
+                      disabled
                       item-value="id"
                       item-text="nombre"
                       persistent-hint
@@ -192,36 +192,35 @@ const axios = require('axios');
         this.tarea.nombre = ""
         this.tarea.descripcion = ""
         this.tarea.prioridad= ""
+        //this.tarea.idItemPadre = ""
         this.tarea.estado= ""
         this.tarea.version= 1
+        this.tarea.observacion = ""
         this.tarea.idProyecto = this.$route.params.id
         this.tarea.idFase = this.$route.params.idFase
         this.editMode = true
         this.showTaskForm = true        
         if(this.listaTareas.length == 0 && this.fases.length > 1){
           let currentIndex = this.fases.indexOf(parseInt(this.tarea.idFase))
-          var URL = `http://localhost:8081/api/item/fase/last/${this.fases[currentIndex+1]}`
+          var URL = `http://localhost:8081/api/item/fase/last/${this.fases[currentIndex-1]}`
           axios.get(URL)
           .then(response => {
-            //this.tarea.idItemPadre = response.data.dto.id
+            this.tarea.idItemPadre = response.data.dto.id
             this.listaTareasPadre.push(response.data.dto)
           }).catch(errorResponse => {
             this.loadingDialogShow = false
             alert(`ERROR ${errorResponse.errorCode} - ${errorResponse.message}`)
           })          
         } else {
-          this.listaTareasPadre = this.listaTareas
+          this.tarea.idItemPadre = this.listaTareas[this.listaTareas.length-1].id
+          this.listaTareasPadre.push(this.listaTareas[this.listaTareas.length-1])
         }
       },
       saveTask(){
         axios.post("http://localhost:8081/api/item/save",this.tarea,{headers:{'X-Requested-With':'XMLHttpRequest'}})
           .then(response => {
             this.tarea = response.data.dto
-            if (this.editedTask > -1) {
-              Object.assign(this.listaTareas[this.editedTask], this.tarea)
-            } else {             
-              this.listaTareas.push(this.tarea)
-            }
+            window.location.reload()
           }).catch(errorResponse => {
             this.loadingDialogShow = false
             alert(`ERROR ${errorResponse.errorCode} - ${errorResponse.message}`)
