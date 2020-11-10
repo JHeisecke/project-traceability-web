@@ -99,6 +99,7 @@
                       :items="listaTareasPadre"
                       label="TAREA PADRE"
                       chips
+                      disabled
                       item-value="id"
                       item-text="nombre"
                       persistent-hint
@@ -211,7 +212,8 @@ const axios = require('axios');
             alert(`ERROR ${errorResponse.errorCode} - ${errorResponse.message}`)
           })          
         } else {
-          this.listaTareasPadre = this.listaTareas
+          this.tarea.idItemPadre = this.listaTareas[this.listaTareas.length-1].id
+          this.listaTareasPadre.push(this.listaTareas[this.listaTareas.length-1])
         }
       },
       saveTask(){
